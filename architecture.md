@@ -90,6 +90,72 @@ Provasign calls Grove for the analysis that needs code understanding:
 | `Query(intent, limit)` | relating the captured intent to touched symbols |
 | `Status()` | index freshness checks |
 
+### Grove in action — the ICR
+
+The most concrete way to understand what Grove adds is to look at what Provasign actually puts inside a certificate: the **ICR (Isolated Change Region)**.
+
+**Scenario:** an AI agent is asked *"Fix the timing attack vulnerability in the password validation function."* One function is modified in `internal/auth/login.go`.
+
+Grove traverses the code graph from that change and returns:
+
+```
+Symbols directly changed:
+  internal/auth/login.go::validatePassword@a1b2c3d4
+
+Blast radius (symbols that call or use-type the changed symbol):
+  internal/auth/login.go::Login@e5f6a7b8
+  internal/auth/middleware.go::RequireAuth@c9d0e1f2
+  internal/api/handlers.go::PostLogin@a3b4c5d6
+
+Tests Grove identifies as covering these symbols:
+  internal/auth/login_test.go::TestValidatePassword@f7a8b9c0
+  internal/auth/login_test.go::TestLogin_WrongPassword@d1e2f3a4
+  internal/auth/integration_test.go::TestAuthFlow@b5c6d7e8
+```
+
+Provasign embeds all of this in the certificate as the ICR:
+
+```json
+{
+  "symbols": [
+    "internal/auth/login.go::validatePassword@a1b2c3d4",
+    "internal/auth/login.go::Login@e5f6a7b8",
+    "internal/auth/middleware.go::RequireAuth@c9d0e1f2",
+    "internal/api/handlers.go::PostLogin@a3b4c5d6"
+  ],
+  "files": [
+    "internal/auth/login.go",
+    "internal/auth/middleware.go",
+    "internal/api/handlers.go"
+  ],
+  "edges": 12,
+  "confidence": 0.94,
+  "hash": "sha256:7a3f9b2e1c8d4f6a0b5e3d9c7f2a4b8e1d6c3f9a2b7e4d1c8f5a3b6e9d2c7f4a"
+}
+```
+
+The `hash` is `SHA-256` of the canonical `{symbols, files}` set. It appears in the admitted commit's trailer:
+
+```
+Intent-ID:             INT-2026-06-01-fix-timing-attack-in-validatepassword
+Certificate-ID:        pvsign-cert-9c3d7a
+ICR-Hash:              sha256:7a3f9b2e...
+Effective-Config-Hash: sha256:4d8e1a...
+Signed-By:             local-ed25519:9f3a2b1c
+Signature:             MEQCIHx3... (base64)
+```
+
+**Why this matters:** a diff hash (e.g. `git show HEAD | sha256`) commits to the line changes. The ICR hash commits to the *semantic graph* of what changed — including symbols that weren't in the diff but are one hop away. Two commits that produce the same diff can have very different ICR hashes if one touches a function called by forty other things. The ICR hash is what makes the certificate a provable answer to *"what did the AI actually change?"* rather than just a signature over a log.
+
+**What an auditor can do with it:**
+
+- **Verify the certificate wasn't altered.** Recompute `SHA-256(canonical_json({symbols, files}))` from the symbol list and confirm it matches the `ICR-Hash` trailer. Any edit to the certificate to hide a symbol would break the hash.
+- **Check intent vs. scope.** The intent says *"fix timing attack in validatePassword."* The ICR shows `validatePassword` was touched. It also shows `Login`, `RequireAuth`, `PostLogin` were in the blast radius. If a billing module had appeared in the symbol list, that would be a flag.
+- **Confirm test coverage was meaningful.** The ICR names the specific tests Grove identified as covering the changed symbols — not just "tests passed" but *which tests, and why they count*.
+- **Run `provasign cert replay`** to get `byte_reproducible` / `tool_drift` / `config_drift` — re-executing the gates against the recorded changeset months later. See [Audit use case]({{ '/use-cases/audit/' | relative_url }}).
+
+Without Grove, Provasign can certify that *a build passed*. With Grove, it certifies *what changed, what it connects to, which tests cover it, and what the blast radius is* — and signs all of that as a unit.
+
 ### External analyzers are downloaded, not bundled
 
 The heavy security tooling — semgrep, gitleaks, govulncheck, eslint, ruff, sonarlint-ls, a JRE — is **not** baked into the binary. `provasign tools install` fetches pinned versions on first use (Python/Node tools via pipx/npm). This keeps the binary small and lets you pin and audit exactly which analyzer versions produced a certificate.

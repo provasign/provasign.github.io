@@ -85,6 +85,7 @@ When the code is ready, `provasign_certify` runs the full suite in a git-worktre
 - **Stage 1** — build + full test run + coverage of the *changed* symbols (measured against Grove's `tests` edges).
 - **Stage 2** — secrets (gitleaks + inline), SAST (semgrep, OWASP + your `.provasign/rulesets/`), dependency audit (govulncheck / npm audit / pip-audit), language linters.
 - **Policy gates** — `path`, `secrets`, `fileclass`, `deps`, `size`, `coverage` each return `allow` / `warn` / `deny`.
+- **ICR (Isolated Change Region)** — Grove computes the exact symbols touched, their blast radius across the code graph, and the specific tests that cover them. This is hashed and signed as part of the certificate. [See a full worked example →]({{ '/architecture/#grove-in-action--the-icr' | relative_url }})
 - **Risk heatmap** — a versioned score combining ICR, Stage 2 severity, coverage delta, and touch intensity.
 
 ## ⑤ Sign and admit
