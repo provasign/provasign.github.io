@@ -129,4 +129,4 @@ The signer is an interface: laptop mode uses a local Ed25519 key; team mode swap
 - [How It Works]({{ '/how-it-works/' | relative_url }}) — the certify → sign → replay flow end to end
 - [Features]({{ '/features/' | relative_url }}) — gates, certificates, and agent wiring
 - [Other developer tools]({{ '/other-tools/' | relative_url }}) — Prism and Fuse, which embed the same Grove engine
-- [Grove source on GitHub](https://github.com/provasign/provasign/tree/main/grove#readme)
+- [Grove source on GitHub](https://github.com/provasign/grove#readme)

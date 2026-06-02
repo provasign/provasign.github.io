@@ -60,10 +60,10 @@ Provasign's AGPL applies to the Provasign product and its Provasign-specific doc
 
 | Component | One-line | Documentation |
 |-----------|---------|--------------|
-| **Provasign** *(the product)* | Certified delivery for agent-produced code | [Overview]({{ '/provasign/' | relative_url }}) · [Provasign README](https://github.com/provasign/provasign/tree/main/provasign#readme) |
-| **Grove** | Code knowledge graph embedded in Provasign (+ standalone CLI) | [Architecture]({{ '/architecture/' | relative_url }}) · [Grove README](https://github.com/provasign/provasign/tree/main/grove#readme) |
-| **Prism** | Graph-ranked context for any AI agent | [Other Dev Tools]({{ '/other-tools/' | relative_url }}) · [Prism README](https://github.com/provasign/provasign/tree/main/prism#readme) |
-| **Fuse** | Symbol-aware git merge driver | [Other Dev Tools]({{ '/other-tools/' | relative_url }}) · [Fuse README](https://github.com/provasign/provasign/tree/main/fuse#readme) |
+| **Provasign** *(the product)* | Certified delivery for agent-produced code | [Overview]({{ '/provasign/' | relative_url }}) · [Provasign README](https://github.com/provasign/provasign#readme) |
+| **Grove** | Code knowledge graph embedded in Provasign (+ standalone CLI) | [Architecture]({{ '/architecture/' | relative_url }}) · [Grove README](https://github.com/provasign/grove#readme) |
+| **Prism** | Graph-ranked context for any AI agent | [Other Dev Tools]({{ '/other-tools/' | relative_url }}) · [Prism README](https://github.com/provasign/prism#readme) |
+| **Fuse** | Symbol-aware git merge driver | [Other Dev Tools]({{ '/other-tools/' | relative_url }}) · [Fuse README](https://github.com/provasign/fuse#readme) |
 
 ---
 

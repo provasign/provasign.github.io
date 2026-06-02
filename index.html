@@ -13,7 +13,7 @@ layout: null
   <link rel="apple-touch-icon" href="{{ '/assets/images/og-image.png' | relative_url }}">
   <meta property="og:site_name"    content="Provasign">
   <meta property="og:title"        content="Provasign — Certified delivery for AI coding agents">
-  <meta property="og:description"  content="Every AI-generated commit signed, tested, and traceable to the prompt that created it. Built on Grove + Prism + Fuse (MIT). Local-first.">
+  <meta property="og:description"  content="Every AI-generated commit signed, tested, and traceable to the prompt that created it. Pre-commit gates. Ed25519-signed certificates. Full audit replay. Local-first.">
   <meta property="og:url"          content="{{ '/' | absolute_url }}">
   <meta property="og:type"         content="website">
   <meta property="og:image"        content="{{ '/assets/images/og-image.png' | absolute_url }}">
@@ -302,9 +302,8 @@ layout: null
   </a>
   <ul class="nav-links">
     <li><a href="{{ '/provasign/' | relative_url }}" class="nav-provasign">Provasign</a></li>
-    <li><a href="https://github.com/provasign/provasign/tree/main/grove#readme">Grove</a></li>
-    <li><a href="https://github.com/provasign/provasign/tree/main/prism#readme">Prism</a></li>
-    <li><a href="https://github.com/provasign/provasign/tree/main/fuse#readme">Fuse</a></li>
+    <li><a href="{{ '/why/' | relative_url }}">Why</a></li>
+    <li><a href="{{ '/how-it-works/' | relative_url }}">How it works</a></li>
     <li><a href="{{ '/docs/' | relative_url }}">Docs</a></li>
     <li><a href="{{ '/faq/' | relative_url }}">FAQ</a></li>
   </ul>
@@ -345,18 +344,14 @@ layout: null
 
       <p class="hero-sub">
         Every AI-generated commit signed, tested, and traceable to the prompt that created it.
-        Pre-commit gates, Ed25519-signed certificates, full audit replay.
-        Built on <a href="https://github.com/provasign/provasign/tree/main/grove#readme" style="color:var(--accent);text-decoration:none">Grove</a>,
-        <a href="https://github.com/provasign/provasign/tree/main/prism#readme" style="color:var(--accent);text-decoration:none">Prism</a>, and
-        <a href="https://github.com/provasign/provasign/tree/main/fuse#readme" style="color:var(--accent);text-decoration:none">Fuse</a> — embedded.
-        One binary. No services to run.
+        Pre-commit gates. Ed25519-signed certificates. Full audit replay.
+        One binary. No services to run. No CI loop.
       </p>
 
       <div class="hero-chips">
-        <a class="chip chip-provasign" href="{{ '/provasign/' | relative_url }}">Provasign</a>
-        <a class="chip chip-plain" href="https://github.com/provasign/provasign/tree/main/grove#readme">Grove</a>
-        <a class="chip chip-plain" href="https://github.com/provasign/provasign/tree/main/prism#readme">Prism</a>
-        <a class="chip chip-plain" href="https://github.com/provasign/provasign/tree/main/fuse#readme">Fuse</a>
+        <a class="chip chip-provasign" href="{{ '/provasign/' | relative_url }}">Certified delivery</a>
+        <a class="chip chip-plain" href="{{ '/how-it-works/' | relative_url }}">How it works</a>
+        <a class="chip chip-plain" href="{{ '/use-cases/' | relative_url }}">Use cases</a>
       </div>
 
       <div class="hero-cta">
@@ -446,92 +441,55 @@ layout: null
     <div class="problem-grid">
       <div class="problem-card">
         <p><strong>Every agent still delivers through a PR → CI loop designed for humans.</strong>
-        When an agent opens a PR, CI finds issues, you send it back, CI finds more.
-        Each loop costs 5–15 minutes of human attention. The agent has lost context by the second loop.</p>
-        <div class="problem-fix">→ <a href="{{ '/provasign/' | relative_url }}">Provasign</a> moves quality gates into the agent loop. Sub-10s findings. The agent self-corrects before any PR.</div>
+        When an agent opens a PR, CI finds an issue. You send it back. CI finds another.
+        Each loop costs 5–15 minutes of human attention and the agent has lost context by the second iteration.
+        Multiply by the number of agent PRs your team merges each week.</p>
+        <div class="problem-fix">→ <a href="{{ '/how-it-works/' | relative_url }}">Provasign</a> moves the quality gate into the agent's loop. Sub-10s findings — build, tests, coverage, secrets, SAST — returned as structured results before the agent opens any PR. The agent self-corrects. CI becomes a formality, not a gatekeeper.</div>
       </div>
       <div class="problem-card">
-        <p><strong>When an audit asks what the agent did — there's no answer.</strong>
+        <p><strong>When compliance asks what the agent did — there's no answer.</strong>
         The PR says "refactor auth." CI shows green. The agent session is gone,
-        the original prompt is gone. Nobody knows which gates ran or what the agent was actually asked to do.</p>
-        <div class="problem-fix">→ <a href="{{ '/provasign/' | relative_url }}">Provasign</a> commits the original prompt as a YAML intent. Every admission is Ed25519-signed. <code>provasign cert replay</code> re-runs gates at any time.</div>
-      </div>
-      <div class="problem-card">
-        <p><strong>Agents burn tokens on the wrong code.</strong>
-        The agent reads the files you pointed at, guesses at what else matters,
-        and spends the context budget on noise. Critical dependencies are missing.</p>
-        <div class="problem-fix">→ <a href="https://github.com/provasign/provasign/tree/main/prism#readme">Prism</a> delivers graph-ranked context: 35–92% fewer tokens on first reads, ~99% on re-reads.</div>
-      </div>
-      <div class="problem-card">
-        <p><strong>Two agents just conflicted on adjacent lines of the same file.</strong>
-        Different functions. Different logic. Git declared a conflict anyway.
-        A developer spent 20 minutes resolving something that was never actually conflicting.</p>
-        <div class="problem-fix">→ <a href="https://github.com/provasign/provasign/tree/main/fuse#readme">Fuse</a> understands symbols, not lines. ~85% of those conflicts auto-resolve.</div>
+        the original prompt is gone. Nobody knows which gates ran, what the agent was asked to do,
+        or what was suppressed. This is a compliance gap today, and a regulatory exposure under the EU AI Act.</p>
+        <div class="problem-fix">→ <a href="{{ '/use-cases/audit/' | relative_url }}">Provasign</a> captures the verbatim user prompt as a signed YAML intent before any code is written. Every admission carries an Ed25519-signed certificate over the exact changeset, toolchain, policy config, and gate results. <code>provasign cert replay</code> re-runs the gates at any time and returns a cryptographic verdict.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── PRODUCTS ──────────────────────────────────────────────────── -->
+<!-- ── PRODUCT ───────────────────────────────────────────────────── -->
 <section class="section">
   <div class="section-inner">
-    <div class="section-label">The product &amp; its open-source foundation</div>
-    <h2 class="section-title">Provasign is the product.<br><span class="green">Grove, Prism, and Fuse are open source you can adopt independently.</span></h2>
-    <div class="products-grid">
+    <div class="section-label">The product</div>
+    <h2 class="section-title">One binary.<br><span class="green">The complete delivery layer for AI coding agents.</span></h2>
+    <div class="products-grid" style="grid-template-columns:1fr;">
 
-      <a class="product-card product-card-provasign" href="{{ '/provasign/' | relative_url }}">
+      <a class="product-card product-card-provasign" href="{{ '/provasign/' | relative_url }}" style="max-width:640px">
         <span class="ptag ptag-provasign">provasign · AGPL-3.0</span>
         <h3>Provasign</h3>
-        <p>Certified delivery for AI coding agents. No product in this space does what Provasign does.</p>
+        <p>Certified delivery for AI coding agents. Intent capture, pre-commit gates, Ed25519-signed admission certificates, and cryptographic audit replay — all in one local-first binary.</p>
         <ul class="pbullets">
-          <li>Captures the original user prompt as a signed YAML intent</li>
-          <li>Runs build, tests, coverage, secrets, SAST, dep audit — pre-commit</li>
-          <li>Issues Ed25519-signed certificates proving which gates ran</li>
-          <li>Audit replay: re-run gates against any historical commit</li>
-          <li>MCP integration — agent calls <code style="font-family:var(--mono);color:#86efac;font-size:.82rem">provasign_check</code> automatically</li>
+          <li>Captures the verbatim user prompt as a signed YAML intent before coding starts</li>
+          <li>Runs build, tests, coverage, secrets, SAST, dep audit — in the agent's loop, not after a PR</li>
+          <li>Issues Ed25519-signed certificates: what gates ran, what config was in force, what toolchain version</li>
+          <li>Audit replay: <code style="font-family:var(--mono);color:#86efac;font-size:.82rem">provasign cert replay</code> re-runs gates against any historical commit</li>
+          <li>MCP integration — agent calls <code style="font-family:var(--mono);color:#86efac;font-size:.82rem">provasign_check</code> automatically before every PR</li>
+          <li>Powered by Grove — an embedded code knowledge graph that maps symbols, blast radius, and test coverage for every change</li>
         </ul>
         <span class="plink">Full docs →</span>
       </a>
 
-      <a class="product-card" href="https://github.com/provasign/provasign/tree/main/grove#readme">
-        <span class="ptag ptag-other">grove · MIT</span>
-        <h3>Grove</h3>
-        <p>Code knowledge graph. Embedded in Provasign; adopt standalone too.</p>
-        <ul class="pbullets">
-          <li>11 languages, 8 edge types</li>
-          <li>SQLite WAL + FTS5</li>
-          <li>Delta SHA indexing</li>
-          <li>Go library — no daemon</li>
-        </ul>
-        <span class="plink">Learn more →</span>
-      </a>
+    </div>
 
-      <a class="product-card" href="https://github.com/provasign/provasign/tree/main/prism#readme">
-        <span class="ptag ptag-other">prism · MIT</span>
-        <h3>Prism</h3>
-        <p>Graph-ranked context. 35–92% fewer tokens.</p>
-        <ul class="pbullets">
-          <li>5-signal ranking</li>
-          <li>Progressive disclosure</li>
-          <li>Session deduplication</li>
-          <li>VS Code extension</li>
-        </ul>
-        <span class="plink">Learn more →</span>
-      </a>
-
-      <a class="product-card" href="https://github.com/provasign/provasign/tree/main/fuse#readme">
-        <span class="ptag ptag-other">fuse · MIT</span>
-        <h3>Fuse</h3>
-        <p>Symbol-level merge. ~85% of false conflicts auto-resolve.</p>
-        <ul class="pbullets">
-          <li>AST-level 3-way merge</li>
-          <li>7-phase pipeline</li>
-          <li>Grove blast radius</li>
-          <li>2-minute install</li>
-        </ul>
-        <span class="plink">Learn more →</span>
-      </a>
-
+    <div style="margin-top:2.5rem;padding:1.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;max-width:640px">
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:.75rem">
+        <strong style="color:var(--text)">Also open source, built on Grove:</strong>
+      </p>
+      <p style="font-size:.88rem;color:var(--dim);line-height:1.7">
+        <a href="https://github.com/provasign/prism" style="color:var(--accent)">Prism</a> — graph-ranked context delivery for any AI agent. Cuts token use 35–92% on first reads, ~99% on re-reads. Free, MIT licensed.
+        &nbsp;&nbsp;·&nbsp;&nbsp;
+        <a href="https://github.com/provasign/fuse" style="color:var(--accent)">Fuse</a> — symbol-aware Git merge driver. Resolves ~85% of false conflicts automatically. Free, MIT licensed.
+      </p>
     </div>
   </div>
 </section>
@@ -586,16 +544,22 @@ layout: null
   <div class="footer-inner">
     <nav class="footer-links">
       <a href="{{ '/provasign/' | relative_url }}">Provasign</a>
-      <a href="https://github.com/provasign/provasign/tree/main/grove#readme">Grove</a>
-      <a href="https://github.com/provasign/provasign/tree/main/prism#readme">Prism</a>
-      <a href="https://github.com/provasign/provasign/tree/main/fuse#readme">Fuse</a>
+      <a href="{{ '/how-it-works/' | relative_url }}">How it works</a>
+      <a href="{{ '/architecture/' | relative_url }}">Architecture</a>
+      <a href="{{ '/use-cases/' | relative_url }}">Use cases</a>
       <a href="{{ '/why/' | relative_url }}">Why Provasign</a>
       <a href="{{ '/comparisons/' | relative_url }}">Comparisons</a>
       <a href="{{ '/faq/' | relative_url }}">FAQ</a>
       <a href="{{ '/docs/' | relative_url }}">Docs</a>
       <a href="https://github.com/provasign/provasign">GitHub ↗</a>
     </nav>
-    <span class="footer-meta">Provasign &nbsp;·&nbsp; MIT &amp; AGPL-3.0 &nbsp;·&nbsp; Local-first &nbsp;·&nbsp; Zero telemetry</span>
+    <div style="margin-top:.75rem;font-size:.78rem;color:var(--dim)">
+      Open source tools built on Grove:
+      <a href="https://github.com/provasign/grove" style="color:var(--dim)">Grove</a> ·
+      <a href="https://github.com/provasign/prism" style="color:var(--dim)">Prism</a> ·
+      <a href="https://github.com/provasign/fuse" style="color:var(--dim)">Fuse</a>
+    </div>
+    <span class="footer-meta" style="margin-top:.5rem">Provasign &nbsp;·&nbsp; AGPL-3.0 &nbsp;·&nbsp; Local-first &nbsp;·&nbsp; Zero telemetry</span>
   </div>
 </footer>
 

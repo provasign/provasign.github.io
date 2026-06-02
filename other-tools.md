@@ -20,7 +20,7 @@ Prism gives an AI coding agent the *right* code instead of a dump of nearby file
 - Integrates over MCP (Claude Code, Cursor, Codex CLI, Windsurf, Continue) or as a native VS Code extension.
 - Embeds Grove in-process — no daemon, no port.
 
-[Prism README on GitHub →](https://github.com/provasign/provasign/tree/main/prism#readme){: .btn .btn-primary }
+[Prism README on GitHub →](https://github.com/provasign/prism#readme){: .btn .btn-primary }
 
 ---
 
@@ -32,7 +32,7 @@ Git merges lines; Fuse merges **symbols**. When one agent changes `Login()` and 
 - Genuinely ambiguous conflicts get markers plus a structured AI-handoff prompt at `.git/fuse/conflict-<hash>.md`.
 - Drops in as a git merge driver: `fuse merge %O %A %B %P`.
 
-[Fuse README on GitHub →](https://github.com/provasign/provasign/tree/main/fuse#readme){: .btn .btn-primary }
+[Fuse README on GitHub →](https://github.com/provasign/fuse#readme){: .btn .btn-primary }
 
 ---
 

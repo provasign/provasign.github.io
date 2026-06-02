@@ -152,8 +152,8 @@ In order of usefulness:
 
 To not bullshit you. Every claim on this page is backed by something specific:
 
-- Token savings: see [Prism README → Performance](https://github.com/provasign/provasign/tree/main/prism#performance) for the benchmark table
-- Auto-resolution rate: see [Fuse README → Conflict Classification](https://github.com/provasign/provasign/tree/main/fuse#conflict-classification)
+- Token savings: see [Prism README → Performance](https://github.com/provasign/prism/tree/main#performance) for the benchmark table
+- Auto-resolution rate: see [Fuse README → Conflict Classification](https://github.com/provasign/fuse/tree/main#conflict-classification)
 - Sub-10s pre-flight: a target, not a contract; see [Features → Capabilities]({{ '/features/#capabilities' | relative_url }})
 - Comparisons with competitors: see [Comparisons]({{ '/comparisons/' | relative_url }}) — we name names and we link to their docs
 
