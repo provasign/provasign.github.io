@@ -22,6 +22,18 @@ Provasign is certified delivery for AI coding agents: it captures the prompt, ru
 
 A small team that was tired of watching AI coding agents — which are genuinely good at writing code — get bottlenecked by infrastructure that was designed for humans. PRs, line-based merge, post-hoc CI. We built Provasign as the replacement infrastructure: local-first, open-source, and designed for the volume and accountability requirements of agent-driven development.
 
+### Why not just tell the agent to put the intent and details in the commit message?
+
+You can. A detailed commit message with the verbatim prompt, test results, and CI link is better than nothing. But it has three structural problems that matter when the stakes are real.
+
+**The agent writes its own alibi.** The commit message is produced by the same agent that wrote the code, after the code is written. There is no cryptographic separation between "what the human asked" and "what the agent chose to record." Provasign captures the intent before any code is written and hashes it. The `prompt_hash` in the signed certificate proves what was typed — the hash doesn't change even if the agent's commit message says something different.
+
+**"Tests passed" is an assertion, not evidence.** Any agent can write "all tests passed" in a commit message — including one that hallucinated the results. Provasign's certificate covers the specific symbols that changed, the tests that covered them, the exact toolchain versions, and the policy config — all signed by the tool, not the agent. `provasign cert replay <sha>` lets an auditor re-run those exact gates months later and get a cryptographic verdict: `byte_reproducible`, `tool_drift`, or `unrecoverable`. A commit message cannot be replayed.
+
+**Commit messages are mutable. Certificates aren't.** `git commit --amend`, rebase, force-push — the message can be rewritten, and on many branches it is. An Ed25519-signed certificate over `(changeset, intent_hash, gate_results, toolchain_versions, policy_config_hash, timestamp)` is independently verifiable against the public key regardless of what happens to git history.
+
+The practical dividing line: if your answer to "prove the agent's output was verified" is "look at the commit message," that works for a personal project. It does not hold up in a SOC 2 audit, an FCA review, or a post-incident investigation. Provasign is the difference between *the agent said it was fine* and *the toolchain proved it was fine*.
+
 ### Is this production-ready?
 
 Phase 1 is built and tested. We run it on our own work daily. The benchmarks in each product's README are real numbers on real hardware. That said:
