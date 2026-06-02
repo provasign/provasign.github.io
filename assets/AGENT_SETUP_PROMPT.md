@@ -363,12 +363,17 @@ export PATH="$HOME/bin:$PATH"
 echo "~/bin is now on PATH for this session"
 ```
 
-macOS — clear Gatekeeper quarantine:
+macOS — clear Gatekeeper quarantine and ad-hoc codesign:
 ```bash
 for PRODUCT in grove prism fuse provasign; do
   xattr -d com.apple.quarantine ~/bin/${PRODUCT} 2>/dev/null || true
+  codesign -f -s - ~/bin/${PRODUCT} 2>/dev/null || true
 done
 ```
+
+`xattr -d` alone is not enough on macOS — unsigned binaries still receive SIGKILL
+(exit 137) on first exec. The `codesign -f -s -` ad-hoc signature satisfies Gatekeeper
+without requiring Apple Developer credentials.
 
 ---
 
@@ -394,6 +399,7 @@ for PRODUCT in grove prism fuse provasign; do
   sudo mv "/tmp/${PRODUCT}-${VERSION}-${OS}-${ARCH}" "${INSTALL_DIR}/${PRODUCT}"
   sudo chmod +x "${INSTALL_DIR}/${PRODUCT}"
   xattr -d com.apple.quarantine "${INSTALL_DIR}/${PRODUCT}" 2>/dev/null || true
+  codesign -f -s - "${INSTALL_DIR}/${PRODUCT}" 2>/dev/null || true
   echo "✅ ${PRODUCT} installed"
 done
 ```
@@ -505,14 +511,22 @@ provasign init --stack=<stack> # pick the stack that matches your project;
                           # .cursorrules / AGENTS.md / .clinerules automatically
 provasign hook install        # installs pre-push backstop
 
+# govulncheck requires Go in PATH — check before running tools install.
+if ! command -v go &>/dev/null; then
+  if [ -x /usr/local/go/bin/go ]; then
+    export PATH="/usr/local/go/bin:$PATH"
+    echo "ℹ️  Added /usr/local/go/bin to PATH for this session"
+  else
+    echo "⚠️  Go not found — govulncheck will be skipped by tools install."
+    echo "    Install Go from https://go.dev/dl/ and re-run: provasign tools install"
+  fi
+fi
+
 # Pre-download analyzer dependencies now so there is no first-use delay.
 # (Downloads JRE + sonarlint-ls.jar + plugins; roughly 500+ MB total with --with-sonar.)
 # Ask the user before running --with-sonar if bandwidth is a concern.
 provasign tools install --with-sonar
 echo "Provasign tools installed."
-
-# govulncheck requires Go in PATH. Add it if missing:
-export PATH="/usr/local/go/bin:$PATH"
 
 # Semgrep and Ruff are Python packages; install via pipx (preferred).
 # If pipx is missing, install it first: brew install pipx (macOS) or pip install pipx.
