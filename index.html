@@ -516,8 +516,8 @@ layout: null
     </div>
 
     <div id="tab-provasign" class="tab-panel">
-<pre class="code-block"><span class="c"># Provasign bundles Grove as a library — one binary, no services, no ports, no tokens.</span>
-<span class="kw">curl -fsSL</span> <span class="ag">https://provasign.dev/assets/install.sh</span> <span class="kw">| GROVE_SUITE_PRODUCTS=provasign bash</span>
+<pre class="code-block"><span class="c"># Provasign embeds Grove — one binary, no services, no ports, no tokens.</span>
+<span class="kw">curl -fsSL</span> <span class="ag">https://raw.githubusercontent.com/provasign/provasign/main/install.sh</span> <span class="kw">| bash</span>
 
 <span class="kw">cd</span> <span class="ag">/your/project</span>
 <span class="kw">provasign init</span> <span class="ag">--stack=auto</span>   <span class="c"># scaffolds policy, generates Ed25519 key,</span>
@@ -528,7 +528,10 @@ layout: null
 
     <div id="tab-all" class="tab-panel">
 <pre class="code-block"><span class="c"># Each product is a standalone binary — install whichever you want.</span>
-<span class="kw">curl -fsSL</span> <span class="ag">https://provasign.dev/assets/install.sh</span> <span class="kw">| bash</span>
+<span class="kw">curl -fsSL</span> <span class="ag">https://raw.githubusercontent.com/provasign/grove/main/install.sh</span> <span class="kw">| bash</span>
+<span class="kw">curl -fsSL</span> <span class="ag">https://raw.githubusercontent.com/provasign/prism/main/install.sh</span> <span class="kw">| bash</span>
+<span class="kw">curl -fsSL</span> <span class="ag">https://raw.githubusercontent.com/provasign/fuse/main/install.sh</span> <span class="kw">| bash</span>
+<span class="kw">curl -fsSL</span> <span class="ag">https://raw.githubusercontent.com/provasign/provasign/main/install.sh</span> <span class="kw">| bash</span>
 
 <span class="kw">cd</span> <span class="ag">/your/project</span>
 <span class="kw">provasign init</span> <span class="ag">--stack=auto</span> <span class="kw">&amp;&amp; provasign hook install</span>   <span class="c"># certified delivery</span>

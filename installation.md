@@ -12,28 +12,41 @@ Provasign ships four single-file binaries: `grove`, `prism`, `fuse`, and `provas
 
 ## One-Command Install (Fastest)
 
-No agent required — download, checksum-verify, and install all four binaries:
+Each product has its own install script. Install the ones you need — Grove first,
+since Prism, Fuse, and Provasign all embed it as a library.
+
+**macOS / Linux:**
 
 ```bash
-curl -fsSL https://provasign.dev/assets/install.sh | bash
+# Full suite
+curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/provasign/fuse/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/provasign/provasign/main/install.sh | bash
+
+# Just one product — e.g. Provasign only:
+curl -fsSL https://raw.githubusercontent.com/provasign/provasign/main/install.sh | bash
+
+# Pin a version:
+VERSION=v0.4.0 curl -fsSL https://raw.githubusercontent.com/provasign/provasign/main/install.sh | bash
+
+# Install Provasign and initialize the current project in one step:
+PROJECT="$PWD" curl -fsSL https://raw.githubusercontent.com/provasign/provasign/main/install.sh | bash
 ```
 
-Initialize a project in the same step, or customize what gets installed:
+**Windows (PowerShell):**
 
-```bash
-# Install + index/initialize the current project
-GROVE_SUITE_PROJECT="$PWD" curl -fsSL https://provasign.dev/assets/install.sh | bash
-
-# Install only Prism (+ Grove, which it depends on) into /usr/local/bin
-GROVE_SUITE_PRODUCTS="grove prism" GROVE_SUITE_INSTALL_DIR=/usr/local/bin \
-  curl -fsSL https://provasign.dev/assets/install.sh | bash
+```powershell
+irm https://raw.githubusercontent.com/provasign/grove/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/provasign/prism/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/provasign/fuse/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/provasign/provasign/main/install.ps1 | iex
 ```
 
-Environment knobs: `GROVE_SUITE_VERSION` (default: latest), `GROVE_SUITE_PRODUCTS`,
-`GROVE_SUITE_INSTALL_DIR` (default: `~/bin`), `GROVE_SUITE_PROJECT`.
+Each script installs to `~/bin` by default. Set `INSTALL_DIR=/usr/local/bin` to override.
 
-After it finishes, open a new terminal and restart your AI coding tool so it picks
-up the MCP servers. Verify with `claude mcp list` (prism/provasign should show ✓ Connected).
+After install, open a new terminal and restart your AI coding tool so it picks up
+the MCP servers. Verify with `claude mcp list` (prism/provasign should show ✓ Connected).
 
 ## Agent Setup Prompt
 
@@ -62,9 +75,15 @@ Prefer manual installation? Use the options below.
 
 ## Pre-built Binaries (from GitHub Releases)
 
-Binaries are signed, checksummed, and built on GitHub Actions for every release tag.
+Each product is released from its own GitHub repository. Binaries are built on
+GitHub Actions for every release tag.
 
-**Releases:** [github.com/provasign/provasign/releases](https://github.com/provasign/provasign/releases)
+| Product | Releases |
+|---------|---------|
+| Grove | [github.com/provasign/grove/releases](https://github.com/provasign/grove/releases) |
+| Prism | [github.com/provasign/prism/releases](https://github.com/provasign/prism/releases) |
+| Fuse | [github.com/provasign/fuse/releases](https://github.com/provasign/fuse/releases) |
+| Provasign | [github.com/provasign/provasign/releases](https://github.com/provasign/provasign/releases) |
 
 ### Supported platforms
 
@@ -79,19 +98,20 @@ Binaries are signed, checksummed, and built on GitHub Actions for every release 
 ### macOS (Apple Silicon)
 
 ```bash
-VERSION=v0.1.0   # check https://github.com/provasign/provasign/releases/latest
+VERSION=v0.4.0   # check each repo's releases page for the latest
 
-for binary in grove prism fuse provasign; do
-  curl -L "https://github.com/provasign/provasign/releases/download/${VERSION}/${binary}-${VERSION}-darwin-arm64" -o "${binary}"
-  chmod +x "${binary}"
-  sudo mv "${binary}" /usr/local/bin/
+for product in grove prism fuse provasign; do
+  curl -L "https://github.com/provasign/${product}/releases/download/${VERSION}/${product}-${VERSION}-darwin-arm64" \
+    -o "${product}"
+  chmod +x "${product}"
+  xattr -d com.apple.quarantine "${product}" 2>/dev/null || true
+  sudo mv "${product}" /usr/local/bin/
 done
 
-# Verify
 grove version && prism version && fuse version && provasign version
 ```
 
-If macOS Gatekeeper blocks the binary on first run:
+If macOS Gatekeeper blocks a binary on first run:
 
 ```bash
 xattr -d com.apple.quarantine /usr/local/bin/grove
@@ -107,12 +127,13 @@ Same as above but replace `darwin-arm64` with `darwin-amd64`.
 ### Linux (amd64)
 
 ```bash
-VERSION=v0.1.0
+VERSION=v0.4.0
 
-for binary in grove prism fuse provasign; do
-  curl -L "https://github.com/provasign/provasign/releases/download/${VERSION}/${binary}-${VERSION}-linux-amd64" -o "${binary}"
-  chmod +x "${binary}"
-  sudo mv "${binary}" /usr/local/bin/
+for product in grove prism fuse provasign; do
+  curl -L "https://github.com/provasign/${product}/releases/download/${VERSION}/${product}-${VERSION}-linux-amd64" \
+    -o "${product}"
+  chmod +x "${product}"
+  sudo mv "${product}" /usr/local/bin/
 done
 ```
 
@@ -122,35 +143,39 @@ Same as above but replace `linux-amd64` with `linux-arm64`.
 
 ### Windows
 
-1. Open [the latest release page](https://github.com/provasign/provasign/releases/latest).
-2. Download `grove-vX.Y.Z-windows-amd64.exe`, `prism-...exe`, `fuse-...exe`, `provasign-...exe`.
-3. Move them to a folder on your `PATH`. We recommend `C:\Users\<you>\bin\` and adding that to `PATH` if it isn't already.
-4. Rename each file by removing the version suffix:
-   ```powershell
-   Rename-Item grove-v0.1.0-windows-amd64.exe grove.exe
-   Rename-Item prism-v0.1.0-windows-amd64.exe prism.exe
-   Rename-Item fuse-v0.1.0-windows-amd64.exe fuse.exe
-   Rename-Item provasign-v0.1.0-windows-amd64.exe provasign.exe
-   ```
-5. Verify in a new PowerShell window:
-   ```powershell
-   grove version
-   prism version
-   fuse version
-   provasign version
-   ```
+Each product has its own release page. Download the `.exe` for each product you want:
+
+- [Grove releases](https://github.com/provasign/grove/releases/latest)
+- [Prism releases](https://github.com/provasign/prism/releases/latest)
+- [Fuse releases](https://github.com/provasign/fuse/releases/latest)
+- [Provasign releases](https://github.com/provasign/provasign/releases/latest)
+
+Move each `.exe` to a folder on your `PATH` (e.g. `C:\Users\<you>\bin\`) and rename to remove the version suffix:
+
+```powershell
+$VERSION = "v0.4.0"
+foreach ($product in @("grove","prism","fuse","provasign")) {
+  $src = "$product-$VERSION-windows-amd64.exe"
+  Rename-Item $src "$product.exe"
+}
+```
+
+Verify in a new PowerShell window: `grove version; prism version; fuse version; provasign version`
 
 ### Verifying downloads
 
-Every release ships a `checksums.txt`. Verify integrity before running:
+When a release includes a `checksums.txt`, verify integrity before running:
 
 ```bash
-VERSION=v0.1.0
-curl -L "https://github.com/provasign/provasign/releases/download/${VERSION}/checksums.txt" -o checksums.txt
+PRODUCT=grove
+VERSION=v0.4.0
+curl -L "https://github.com/provasign/${PRODUCT}/releases/download/${VERSION}/checksums.txt" -o checksums.txt
 sha256sum -c checksums.txt --ignore-missing
 ```
 
-If any line says `FAILED`, **do not run the binary** — the download was corrupted or tampered with. Re-download or open an issue.
+If any line says `FAILED`, **do not run the binary** — re-download or open an issue.
+Not all releases include a `checksums.txt` yet; the install scripts always display
+the SHA256 of whatever they download so you can verify manually.
 
 ### Pinning a version
 
@@ -158,7 +183,7 @@ Production deployments should pin to a specific tag rather than `latest`:
 
 ```bash
 # Pin in CI / install scripts
-GROVE_SUITE_VERSION=v0.1.0
+VERSION=v0.4.0
 ```
 
 Don't pin to `main` — that's our development branch.
@@ -214,18 +239,17 @@ sudo dnf install -y golang gcc make git
 
 ### Build steps
 
-```bash
-git clone https://github.com/provasign/provasign
-cd provasign
+Each product is in its own repo. Grove must be built first.
 
-# Grove must be built first — Prism, Fuse, and Provasign depend on it
-cd grove && make install && cd ..
-cd prism && make install && cd ..
-cd fuse  && make install && cd ..
-cd provasign && make install && cd ..
+```bash
+# Clone and build each repo (Grove first)
+for product in grove prism fuse provasign; do
+  git clone https://github.com/provasign/${product}
+  cd ${product} && make install && cd ..
+done
 ```
 
-`make install` compiles to `./bin/<name>` and copies to `$GOPATH/bin` (default `~/go/bin`). Make sure that directory is on your `PATH`:
+`make install` compiles and copies to `$GOPATH/bin` (default `~/go/bin`). Make sure that directory is on your `PATH`:
 
 ```bash
 echo 'export PATH="$HOME/go/bin:$PATH"' >> ~/.zshrc   # or ~/.bashrc
@@ -235,10 +259,12 @@ source ~/.zshrc
 ### Building a specific version
 
 ```bash
-cd provasign
-git checkout v0.1.0
-cd grove && make install && cd ..
-# ... etc
+for product in grove prism fuse provasign; do
+  cd ${product}
+  git checkout v0.4.0
+  make install
+  cd ..
+done
 ```
 
 ### Running tests after build
@@ -401,7 +427,7 @@ Tree-sitter (used by Grove and Fuse) requires a C compiler.
 
 ### Port conflicts
 
-In the embedded model Grove no longer opens TCP ports. The only Grove‑Suite
+In the embedded model Grove no longer opens TCP ports. The only
 port you may need to manage is Provasign's API server (default 9000). Configure it
 via `provasign init` or the `RELAY_PORT` environment variable.
 

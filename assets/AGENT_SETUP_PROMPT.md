@@ -7,18 +7,29 @@
 ## How to Use This File
 
 **Prefer one command? (no agent required)**
+
+Each product has its own install script. Install the ones you need (grove first — others embed it):
+
 ```bash
-curl -fsSL https://provasign.dev/assets/install.sh | bash
+# Full suite (macOS / Linux) — install grove first, then the rest
+curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/provasign/fuse/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/provasign/provasign/main/install.sh | bash
+
+# Just one product, e.g. Provasign:
+curl -fsSL https://raw.githubusercontent.com/provasign/provasign/main/install.sh | bash
+
+# Windows (PowerShell) — same pattern per product:
+irm https://raw.githubusercontent.com/provasign/provasign/main/install.ps1 | iex
 ```
-This downloads, checksum-verifies, and installs all four binaries to `~/bin`.
-To also initialize a project in the same step:
-```bash
-GROVE_SUITE_PROJECT="$PWD" curl -fsSL https://provasign.dev/assets/install.sh | bash
-```
-Knobs: `GROVE_SUITE_VERSION`, `GROVE_SUITE_PRODUCTS`, `GROVE_SUITE_INSTALL_DIR`,
-`GROVE_SUITE_PROJECT`. After it finishes, restart your AI coding tool and verify
-with `claude mcp list`. The agent-driven flow below is best when you want
-guided choices (which products, install location, VS Code extension mode).
+
+Each script installs to `~/bin` by default. Set `INSTALL_DIR=/usr/local/bin` to override.
+Set `VERSION=vX.Y.Z` to pin a specific release.
+
+After install, restart your AI coding tool and verify with `claude mcp list`.
+The agent-driven flow below is best when you want guided choices (which products,
+install location, VS Code extension mode).
 
 ---
 
@@ -202,33 +213,22 @@ For any product already installed:
 
 ### Step 5 — Download Binaries
 
-Set the base URL:
-
-**Linux / macOS:**
-```bash
-BASE="https://github.com/provasign/provasign/releases/download/${VERSION}"
-```
-
-Download the checksums file first:
-
-**Linux / macOS:**
-```bash
-curl -fL "${BASE}/checksums.txt" -o /tmp/provasign-checksums.txt
-echo "Checksums downloaded."
-```
-
-**Windows (PowerShell):**
-```powershell
-$BASE = "https://github.com/provasign/provasign/releases/download/$VERSION"
-Invoke-WebRequest "$BASE/checksums.txt" -OutFile "$env:TEMP\provasign-checksums.txt"
-Write-Host "Checksums downloaded."
-```
-
-Now download each selected binary. Install **Grove first** — the others depend on it.
+Each product is released from its own GitHub repo. Use the per-product repo when
+constructing download URLs. Install **Grove first** — the others embed it.
 
 **Linux / macOS — for each product:**
 ```bash
+# Per-product repo map
+declare -A REPOS=(
+  [grove]="provasign/grove"
+  [prism]="provasign/prism"
+  [fuse]="provasign/fuse"
+  [provasign]="provasign/provasign"
+)
+
 PRODUCT=grove   # repeat for: prism, fuse, provasign
+REPO="${REPOS[$PRODUCT]}"
+BASE="https://github.com/${REPO}/releases/download/${VERSION}"
 FILENAME="${PRODUCT}-${VERSION}-${OS}-${ARCH}"
 curl -fL "${BASE}/${FILENAME}" -o "/tmp/${FILENAME}"
 echo "Downloaded ${FILENAME}"
@@ -236,7 +236,15 @@ echo "Downloaded ${FILENAME}"
 
 **Windows (PowerShell) — for each product:**
 ```powershell
-$PRODUCT = "grove"  # repeat for: prism, fuse, provasign
+$REPO_MAP = @{
+  "grove"     = "provasign/grove"
+  "prism"     = "provasign/prism"
+  "fuse"      = "provasign/fuse"
+  "provasign" = "provasign/provasign"
+}
+$PRODUCT  = "grove"  # repeat for: prism, fuse, provasign
+$REPO     = $REPO_MAP[$PRODUCT]
+$BASE     = "https://github.com/$REPO/releases/download/$VERSION"
 $FILENAME = "$PRODUCT-$VERSION-windows-$ARCH.exe"
 Invoke-WebRequest "$BASE/$FILENAME" -OutFile "$env:TEMP\$FILENAME"
 Write-Host "Downloaded $FILENAME"
@@ -246,51 +254,70 @@ Write-Host "Downloaded $FILENAME"
 
 ### Step 6 — Verify Checksums
 
-**Never skip this step.** Verify each downloaded binary against the checksums file before installing.
+Attempt to download `checksums.txt` from each product's release. If it is present,
+verify the binary against it and stop on mismatch. If it is absent (releases may
+not yet include one), compute and display the SHA256 so the user can verify
+manually if they wish — do not treat a missing checksums.txt as a hard error.
 
 **Linux / macOS:**
 ```bash
 PRODUCT=grove   # repeat for each binary
+REPO="${REPOS[$PRODUCT]}"
+BASE="https://github.com/${REPO}/releases/download/${VERSION}"
 FILENAME="${PRODUCT}-${VERSION}-${OS}-${ARCH}"
 
-EXPECTED=$(grep "^[a-f0-9]*  ${FILENAME}$\|^[a-f0-9]*  \./${FILENAME}$" \
-           /tmp/provasign-checksums.txt | awk '{print $1}')
+sha256() {
+  if command -v sha256sum &>/dev/null; then sha256sum "$1" | awk '{print $1}';
+  else shasum -a 256 "$1" | awk '{print $1}'; fi
+}
+ACTUAL=$(sha256 "/tmp/${FILENAME}")
 
-if command -v sha256sum &>/dev/null; then
-  ACTUAL=$(sha256sum "/tmp/${FILENAME}" | awk '{print $1}')
+if curl -fsSL "${BASE}/checksums.txt" -o /tmp/checksums-${PRODUCT}.txt 2>/dev/null; then
+  EXPECTED=$(grep -E "  (\./)?${FILENAME}\$" /tmp/checksums-${PRODUCT}.txt | awk '{print $1}' | head -1)
+  if [ -n "$EXPECTED" ]; then
+    if [ "$EXPECTED" = "$ACTUAL" ]; then
+      echo "✅ ${FILENAME}: checksum OK"
+    else
+      echo "❌ ${FILENAME}: CHECKSUM MISMATCH — do not install"
+      echo "   expected: $EXPECTED"
+      echo "   actual:   $ACTUAL"
+      exit 1
+    fi
+  else
+    echo "ℹ️  SHA256: ${ACTUAL}  (no entry in checksums.txt for this file)"
+  fi
 else
-  ACTUAL=$(shasum -a 256 "/tmp/${FILENAME}" | awk '{print $1}')
-fi
-
-if [ "$EXPECTED" = "$ACTUAL" ]; then
-  echo "✅ ${FILENAME}: checksum OK"
-else
-  echo "❌ ${FILENAME}: CHECKSUM MISMATCH — do not install"
-  echo "   expected: $EXPECTED"
-  echo "   actual:   $ACTUAL"
-  exit 1
+  echo "ℹ️  SHA256: ${ACTUAL}  (no checksums.txt in this release — verify manually if needed)"
 fi
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$PRODUCT = "grove"  # repeat for each binary
+$PRODUCT  = "grove"  # repeat for each binary
+$REPO     = $REPO_MAP[$PRODUCT]
+$BASE     = "https://github.com/$REPO/releases/download/$VERSION"
 $FILENAME = "$PRODUCT-$VERSION-windows-$ARCH.exe"
 
-$checksums = Get-Content "$env:TEMP\provasign-checksums.txt"
-$expected = ($checksums | Where-Object { $_ -match $FILENAME }) -split '\s+' | Select-Object -First 1
-
 $actual = (Get-FileHash "$env:TEMP\$FILENAME" -Algorithm SHA256).Hash.ToLower()
-
-if ($expected -eq $actual) {
-  Write-Host "✅ $FILENAME checksum OK"
-} else {
-  Write-Error "❌ $FILENAME CHECKSUM MISMATCH — do not install"
-  exit 1
+try {
+  Invoke-WebRequest "$BASE/checksums.txt" -OutFile "$env:TEMP\checksums-$PRODUCT.txt" -ErrorAction Stop
+  $lines    = Get-Content "$env:TEMP\checksums-$PRODUCT.txt"
+  $expected = ($lines | Where-Object { $_ -match [regex]::Escape($FILENAME) }) -split '\s+' | Select-Object -First 1
+  if ($expected) {
+    if ($expected -ne $actual) {
+      Write-Error "❌ $FILENAME CHECKSUM MISMATCH — do not install"
+      exit 1
+    }
+    Write-Host "✅ $FILENAME checksum OK"
+  } else {
+    Write-Host "ℹ️  SHA256: $actual  (no entry in checksums.txt)"
+  }
+} catch {
+  Write-Host "ℹ️  SHA256: $actual  (no checksums.txt in this release — verify manually if needed)"
 }
 ```
 
-If any checksum fails, stop. Do not install the binary. Tell the user and suggest re-downloading.
+If a checksum is present and fails, stop. Do not install the binary. Tell the user and suggest re-downloading.
 
 ---
 
