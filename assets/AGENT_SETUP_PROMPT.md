@@ -405,7 +405,6 @@ fi
 
 # Pre-download analyzer dependencies now so there is no first-use delay.
 # (Downloads JRE + sonarlint-ls.jar + plugins; roughly 500+ MB total with --with-sonar.)
-# Ask the user before running --with-sonar if bandwidth is a concern.
 provasign tools install --with-sonar
 echo "Provasign tools installed."
 
