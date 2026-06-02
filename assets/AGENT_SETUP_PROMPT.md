@@ -211,224 +211,95 @@ For any product already installed:
 
 ---
 
-### Step 5 — Download Binaries
+### Step 5 — Install Binaries
 
-Each product is released from its own GitHub repo. Use the per-product repo when
-constructing download URLs. Install **Grove first** — the others embed it.
-
-**Linux / macOS — for each product:**
-```bash
-# Per-product repo map
-declare -A REPOS=(
-  [grove]="provasign/grove"
-  [prism]="provasign/prism"
-  [fuse]="provasign/fuse"
-  [provasign]="provasign/provasign"
-)
-
-PRODUCT=grove   # repeat for: prism, fuse, provasign
-REPO="${REPOS[$PRODUCT]}"
-BASE="https://github.com/${REPO}/releases/download/${VERSION}"
-FILENAME="${PRODUCT}-${VERSION}-${OS}-${ARCH}"
-curl -fL "${BASE}/${FILENAME}" -o "/tmp/${FILENAME}"
-echo "Downloaded ${FILENAME}"
-```
-
-**Windows (PowerShell) — for each product:**
-```powershell
-$REPO_MAP = @{
-  "grove"     = "provasign/grove"
-  "prism"     = "provasign/prism"
-  "fuse"      = "provasign/fuse"
-  "provasign" = "provasign/provasign"
-}
-$PRODUCT  = "grove"  # repeat for: prism, fuse, provasign
-$REPO     = $REPO_MAP[$PRODUCT]
-$BASE     = "https://github.com/$REPO/releases/download/$VERSION"
-$FILENAME = "$PRODUCT-$VERSION-windows-$ARCH.exe"
-Invoke-WebRequest "$BASE/$FILENAME" -OutFile "$env:TEMP\$FILENAME"
-Write-Host "Downloaded $FILENAME"
-```
-
----
-
-### Step 6 — Verify Checksums
-
-Attempt to download `checksums.txt` from each product's release. If it is present,
-verify the binary against it and stop on mismatch. If it is absent (releases may
-not yet include one), compute and display the SHA256 so the user can verify
-manually if they wish — do not treat a missing checksums.txt as a hard error.
-
-**Linux / macOS:**
-```bash
-PRODUCT=grove   # repeat for each binary
-REPO="${REPOS[$PRODUCT]}"
-BASE="https://github.com/${REPO}/releases/download/${VERSION}"
-FILENAME="${PRODUCT}-${VERSION}-${OS}-${ARCH}"
-
-sha256() {
-  if command -v sha256sum &>/dev/null; then sha256sum "$1" | awk '{print $1}';
-  else shasum -a 256 "$1" | awk '{print $1}'; fi
-}
-ACTUAL=$(sha256 "/tmp/${FILENAME}")
-
-if curl -fsSL "${BASE}/checksums.txt" -o /tmp/checksums-${PRODUCT}.txt 2>/dev/null; then
-  EXPECTED=$(grep -E "  (\./)?${FILENAME}\$" /tmp/checksums-${PRODUCT}.txt | awk '{print $1}' | head -1)
-  if [ -n "$EXPECTED" ]; then
-    if [ "$EXPECTED" = "$ACTUAL" ]; then
-      echo "✅ ${FILENAME}: checksum OK"
-    else
-      echo "❌ ${FILENAME}: CHECKSUM MISMATCH — do not install"
-      echo "   expected: $EXPECTED"
-      echo "   actual:   $ACTUAL"
-      exit 1
-    fi
-  else
-    echo "ℹ️  SHA256: ${ACTUAL}  (no entry in checksums.txt for this file)"
-  fi
-else
-  echo "ℹ️  SHA256: ${ACTUAL}  (no checksums.txt in this release — verify manually if needed)"
-fi
-```
-
-**Windows (PowerShell):**
-```powershell
-$PRODUCT  = "grove"  # repeat for each binary
-$REPO     = $REPO_MAP[$PRODUCT]
-$BASE     = "https://github.com/$REPO/releases/download/$VERSION"
-$FILENAME = "$PRODUCT-$VERSION-windows-$ARCH.exe"
-
-$actual = (Get-FileHash "$env:TEMP\$FILENAME" -Algorithm SHA256).Hash.ToLower()
-try {
-  Invoke-WebRequest "$BASE/checksums.txt" -OutFile "$env:TEMP\checksums-$PRODUCT.txt" -ErrorAction Stop
-  $lines    = Get-Content "$env:TEMP\checksums-$PRODUCT.txt"
-  $expected = ($lines | Where-Object { $_ -match [regex]::Escape($FILENAME) }) -split '\s+' | Select-Object -First 1
-  if ($expected) {
-    if ($expected -ne $actual) {
-      Write-Error "❌ $FILENAME CHECKSUM MISMATCH — do not install"
-      exit 1
-    }
-    Write-Host "✅ $FILENAME checksum OK"
-  } else {
-    Write-Host "ℹ️  SHA256: $actual  (no entry in checksums.txt)"
-  }
-} catch {
-  Write-Host "ℹ️  SHA256: $actual  (no checksums.txt in this release — verify manually if needed)"
-}
-```
-
-If a checksum is present and fails, stop. Do not install the binary. Tell the user and suggest re-downloading.
-
----
-
-### Step 7 — Install Binaries
-
-Install Grove first — the others depend on it. The method depends on the
-install directory chosen in Step 1.
-
----
+Each product ships its own install script (`install.sh` / `install.ps1`) as a
+release asset. The scripts handle download, checksum verification, install,
+PATH registration, and macOS quarantine + codesign in one step. Install
+**Grove first** — the others embed it.
 
 **Path A — `~/bin` (no sudo; agent runs this directly):**
 
 ```bash
-mkdir -p ~/bin
 for PRODUCT in grove prism fuse provasign; do   # only selected products
-  FILENAME="${PRODUCT}-${VERSION}-${OS}-${ARCH}"
-  mv "/tmp/${FILENAME}" ~/bin/${PRODUCT}
-  chmod +x ~/bin/${PRODUCT}
-  echo "✅ ${PRODUCT} → ~/bin/${PRODUCT}"
+  curl -fsSL \
+    "https://github.com/provasign/${PRODUCT}/releases/download/${VERSION}/install.sh" \
+    | INSTALL_DIR=~/bin bash
 done
 ```
-
-Register `~/bin` with the system so it is available to **all processes**
-(terminals, git hooks, GUI apps):
-
-```bash
-# macOS: register via path_helper — works for git hooks, GUI apps, /bin/sh
-if [[ "$(uname)" == "Darwin" ]]; then
-  echo "$HOME/bin" | sudo tee /etc/paths.d/provasign > /dev/null
-  echo "Registered $HOME/bin in /etc/paths.d/provasign (all processes)"
-fi
-
-# All platforms: add to shell RC for interactive sessions (idempotent)
-SHELL_RC="$HOME/.zshrc"
-[ -n "$BASH_VERSION" ] && SHELL_RC="$HOME/.bashrc"
-EXPORT_LINE='export PATH="$HOME/bin:$PATH"'
-grep -qxF "$EXPORT_LINE" "$SHELL_RC" 2>/dev/null || {
-  echo "$EXPORT_LINE" >> "$SHELL_RC"
-  echo "Added ~/bin to PATH in $SHELL_RC"
-}
-
-export PATH="$HOME/bin:$PATH"
-echo "~/bin is now on PATH for this session"
-```
-
-macOS — clear Gatekeeper quarantine and ad-hoc codesign:
-```bash
-for PRODUCT in grove prism fuse provasign; do
-  xattr -d com.apple.quarantine ~/bin/${PRODUCT} 2>/dev/null || true
-  codesign -f -s - ~/bin/${PRODUCT} 2>/dev/null || true
-done
-```
-
-`xattr -d` alone is not enough on macOS — unsigned binaries still receive SIGKILL
-(exit 137) on first exec. The `codesign -f -s -` ad-hoc signature satisfies Gatekeeper
-without requiring Apple Developer credentials.
-
----
 
 **Path B — `/usr/local/bin` or any sudo-required path:**
 
-The agent cannot run `sudo` interactively. Do the following:
-
-1. Tell the user: *"All binaries are downloaded and checksum-verified in `/tmp/`.
-   Please run the command below in your terminal to complete the install, then
-   come back and I will continue with initialization."*
-
-2. Print this exact block for the user to paste into their terminal (substituting
-   the actual `$VERSION`, `$OS`, `$ARCH`, and the selected products):
+The agent cannot run `sudo` interactively. Download each install script to a
+temp file, then give the user a single paste-ready command per product:
 
 ```bash
-# Paste this in your terminal:
-VERSION="v0.x.x"   # filled in by agent
-OS="darwin"        # filled in by agent
-ARCH="arm64"       # filled in by agent
-INSTALL_DIR="/usr/local/bin"
-
-for PRODUCT in grove prism fuse provasign; do
-  sudo mv "/tmp/${PRODUCT}-${VERSION}-${OS}-${ARCH}" "${INSTALL_DIR}/${PRODUCT}"
-  sudo chmod +x "${INSTALL_DIR}/${PRODUCT}"
-  xattr -d com.apple.quarantine "${INSTALL_DIR}/${PRODUCT}" 2>/dev/null || true
-  codesign -f -s - "${INSTALL_DIR}/${PRODUCT}" 2>/dev/null || true
-  echo "✅ ${PRODUCT} installed"
-done
+# Agent downloads the script:
+PRODUCT=grove   # repeat for each selected product
+curl -fsSL \
+  "https://github.com/provasign/${PRODUCT}/releases/download/${VERSION}/install.sh" \
+  -o "/tmp/install-${PRODUCT}.sh"
 ```
 
-3. Wait for the user to confirm they ran it before continuing to Step 8.
+Tell the user:
+> *"Scripts are ready in `/tmp/`. Run the command below in your terminal for
+> each product, then come back and I'll continue with initialization."*
 
----
+```bash
+# Paste in your terminal — repeat per product:
+sudo INSTALL_DIR=/usr/local/bin bash /tmp/install-grove.sh
+sudo INSTALL_DIR=/usr/local/bin bash /tmp/install-prism.sh
+sudo INSTALL_DIR=/usr/local/bin bash /tmp/install-fuse.sh
+sudo INSTALL_DIR=/usr/local/bin bash /tmp/install-provasign.sh
+```
 
-**Windows — move to target directory (agent runs this):**
+Wait for the user to confirm before continuing to Step 6.
+
+**Windows (PowerShell):**
+
 ```powershell
-$PRODUCTS = @("grove","prism","fuse","provasign")   # only selected products
-$TARGET = "$env:USERPROFILE\bin"                # or user-specified path
-New-Item -ItemType Directory -Force -Path $TARGET | Out-Null
-foreach ($PRODUCT in $PRODUCTS) {
-  $FILENAME = "$PRODUCT-$VERSION-windows-$ARCH.exe"
-  Move-Item "$env:TEMP\$FILENAME" "$TARGET\$PRODUCT.exe" -Force
-  Write-Host "✅ $PRODUCT → $TARGET\$PRODUCT.exe"
+$INSTALL_DIR = "$env:USERPROFILE\bin"   # or user-specified path
+foreach ($PRODUCT in @("grove","prism","fuse","provasign")) {   # only selected
+  $tmpScript = "$env:TEMP\install-$PRODUCT.ps1"
+  Invoke-WebRequest `
+    "https://github.com/provasign/$PRODUCT/releases/download/$VERSION/install.ps1" `
+    -OutFile $tmpScript
+  & $tmpScript -InstallDir $INSTALL_DIR
 }
 ```
 
 ---
 
-### Step 8 — Initialize in the Project
+### Step 6 — Initialize in the Project
 
-Ask the user for the path to their project (the repository they want to instrument). Then run from that directory:
+Ask the user for the path to their project (the repository they want to instrument).
+
+**First, detect the git repo structure.** Some workspaces (e.g. Go workspaces with
+`go.work`, monorepos) have no `.git` at the root — only in subdirectories. Run this
+detection block once and reuse `$GIT_REPOS` for all per-repo steps below:
+
+```bash
+PROJECT="/path/to/your/project"
+
+if git -C "$PROJECT" rev-parse --git-dir &>/dev/null 2>&1; then
+  GIT_REPOS=("$PROJECT")
+else
+  echo "ℹ️  $PROJECT has no .git — scanning for child repos…"
+  GIT_REPOS=()
+  while IFS= read -r gitdir; do
+    GIT_REPOS+=("$(dirname "$gitdir")")
+  done < <(find "$PROJECT" -maxdepth 2 -name ".git" -type d 2>/dev/null | sort)
+  if [ ${#GIT_REPOS[@]} -eq 0 ]; then
+    echo "⚠️  No git repos found under $PROJECT — hook install and fuse .gitattributes will be skipped"
+  else
+    echo "Found ${#GIT_REPOS[@]} git repo(s): ${GIT_REPOS[*]}"
+  fi
+fi
+```
 
 **Grove (always):**
 ```bash
-cd /path/to/your/project
+cd "$PROJECT"
 grove index .
 echo "Grove: knowledge graph built."
 ```
@@ -479,37 +350,47 @@ Notes:
   VS Code Extensions: `prism.prism-vscode`.
 
 **Fuse (if selected):**
+
+`fuse install` is a **global** operation (writes to `~/.gitconfig`) — run it once.
+`.gitattributes` entries must go into each individual git repo. Ask the user which
+languages they use and only add those extensions.
+
 ```bash
-fuse install   # registers 'fuse' as a git merge driver in ~/.gitconfig
+fuse install   # global — registers 'fuse' merge driver in ~/.gitconfig once
 
-# Add to the project's .gitattributes — only the languages you use:
-cat >> .gitattributes << 'EOF'
-*.go   merge=fuse
-*.ts   merge=fuse
-*.tsx  merge=fuse
-*.py   merge=fuse
-*.java merge=fuse
-*.rs   merge=fuse
-*.cs   merge=fuse
-EOF
-
-git add .gitattributes
-echo "Fuse: installed. Next git merge will use symbol-aware resolution."
+# Add .gitattributes to every git repo found above
+for REPO_DIR in "${GIT_REPOS[@]}"; do
+  for EXT in go ts tsx py java rs cs; do   # only languages the user confirmed
+    line="*.${EXT} merge=fuse"
+    grep -qF "$line" "${REPO_DIR}/.gitattributes" 2>/dev/null \
+      || echo "$line" >> "${REPO_DIR}/.gitattributes"
+  done
+  git -C "$REPO_DIR" add .gitattributes
+  echo "✅ Fuse: .gitattributes updated in ${REPO_DIR}"
+done
+echo "Fuse: next git merge in each repo will use symbol-aware resolution."
 ```
-
-Ask the user which languages they use and only add those lines.
 
 **Provasign (if selected):**
 
-Then run:
+`provasign init` runs once at the project root (creates `.provasign/` config).
+`provasign hook install` writes to `.git/hooks/pre-push` so it must run in each
+individual git repo.
+
 ```bash
+cd "$PROJECT"
 provasign init --list-stacks  # show available stacks: go-microservice, java-spring,
                           # node-api, python-service
-provasign init --stack=<stack> # pick the stack that matches your project;
-                          # scaffolds .provasign/ config, generates Ed25519 key,
+provasign init --stack=<stack> # scaffolds .provasign/ config, generates Ed25519 key,
                           # writes agent steering instructions to CLAUDE.md /
                           # .cursorrules / AGENTS.md / .clinerules automatically
-provasign hook install        # installs pre-push backstop
+
+# Install pre-push hook in every git repo
+for REPO_DIR in "${GIT_REPOS[@]}"; do
+  ( cd "$REPO_DIR" && provasign hook install ) \
+    && echo "✅ hook installed: $REPO_DIR" \
+    || echo "⚠️  hook install failed: $REPO_DIR (not a git repo?)"
+done
 
 # govulncheck requires Go in PATH — check before running tools install.
 if ! command -v go &>/dev/null; then
@@ -578,7 +459,7 @@ prism version && echo "✅ Prism MCP binary ok"
 
 ---
 
-### Step 9 — Smoke Test
+### Step 7 — Smoke Test
 
 Test each installed product functionally — not just `version`, but real queries
 against the indexed project. Run from the project root with Grove already serving.
@@ -721,7 +602,7 @@ If anything fails, diagnose and fix before reporting done.
 
 ---
 
-### Step 10 — Report to the User
+### Step 8 — Report to the User
 
 Print a clear summary of what was installed, where, and what to do next:
 
