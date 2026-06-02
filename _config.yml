@@ -4,7 +4,7 @@ theme: just-the-docs
 
 logo: "assets/images/logo.svg"
 
-url: https://provasign.github.io
+url: https://provasign.dev
 baseurl: ""
 
 permalink: pretty
