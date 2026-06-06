@@ -25,8 +25,10 @@ cat >&2 <<'EOF'
     curl -fsSL https://raw.githubusercontent.com/provasign/fuse/main/install.sh | bash
     curl -fsSL https://raw.githubusercontent.com/provasign/provasign/main/install.sh | bash
 
-  Or follow the guided install:
-    https://provasign.dev/assets/AGENT_SETUP_PROMPT.md
+  For guided agent-driven setup, use the per-product prompt:
+    Prism:      https://raw.githubusercontent.com/provasign/prism/main/AGENT_SETUP_PROMPT.md
+    Fuse:       https://raw.githubusercontent.com/provasign/fuse/main/AGENT_SETUP_PROMPT.md
+    Provasign:  https://raw.githubusercontent.com/provasign/provasign/main/AGENT_SETUP_PROMPT.md
 
 EOF
 exit 1
