@@ -27,7 +27,9 @@ irm https://raw.githubusercontent.com/provasign/provasign/main/install.ps1 | iex
 Each script installs to `~/bin` by default. Set `INSTALL_DIR=/usr/local/bin` to override.
 Set `VERSION=vX.Y.Z` to pin a specific release.
 
-After install, restart your AI coding tool and verify with `claude mcp list`.
+After install, restart or reload your AI coding tool so it respawns MCP servers
+from the updated config, then verify with `claude mcp list` or the equivalent
+MCP status view in your IDE.
 The agent-driven flow below is best when you want guided choices (which products,
 install location, VS Code extension mode).
 
@@ -145,32 +147,51 @@ Confirm with the user if the detected platform looks wrong.
 
 ---
 
-### Step 3 — Get the Latest Version
+### Step 3 — Get the Latest Versions
 
-Fetch the current release tag from the GitHub API:
+Fetch the current release tag from the GitHub API **for each selected product**.
+Do not reuse one product's version for another product; Grove, Prism, Fuse, and
+Provasign release independently.
 
 **Linux / macOS:**
 ```bash
-VERSION=$(curl -sf https://api.github.com/repos/provasign/provasign/releases/latest \
-  | grep '"tag_name"' \
-  | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/')
-echo "Latest release: ${VERSION}"
+for PRODUCT in grove prism fuse provasign; do   # only selected products
+  VERSION=$(curl -sf "https://api.github.com/repos/provasign/${PRODUCT}/releases/latest" \
+    | grep '"tag_name"' \
+    | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/')
+  [ -n "$VERSION" ] || {
+    echo "Could not determine latest ${PRODUCT} version."
+    echo "Check https://github.com/provasign/${PRODUCT}/releases and ask the user for the version."
+    continue
+  }
+  eval "$(printf '%s_VERSION=%q' "$(echo "$PRODUCT" | tr '[:lower:]' '[:upper:]')" "$VERSION")"
+  echo "${PRODUCT}: latest release ${VERSION}"
+done
 ```
 
 If `curl` is unavailable:
 ```bash
-VERSION=$(wget -qO- https://api.github.com/repos/provasign/provasign/releases/latest \
-  | grep '"tag_name"' \
-  | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/')
+for PRODUCT in grove prism fuse provasign; do   # only selected products
+  VERSION=$(wget -qO- "https://api.github.com/repos/provasign/${PRODUCT}/releases/latest" \
+    | grep '"tag_name"' \
+    | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/')
+  eval "$(printf '%s_VERSION=%q' "$(echo "$PRODUCT" | tr '[:lower:]' '[:upper:]')" "$VERSION")"
+  echo "${PRODUCT}: latest release ${VERSION}"
+done
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$VERSION = (Invoke-RestMethod https://api.github.com/repos/provasign/provasign/releases/latest).tag_name
-Write-Host "Latest release: $VERSION"
+$Versions = @{}
+foreach ($PRODUCT in @("grove","prism","fuse","provasign")) {   # only selected
+  $Versions[$PRODUCT] = (Invoke-RestMethod "https://api.github.com/repos/provasign/$PRODUCT/releases/latest").tag_name
+  Write-Host "$PRODUCT latest release: $($Versions[$PRODUCT])"
+}
 ```
 
-If the API is unreachable, tell the user to check https://github.com/provasign/provasign/releases and provide the version manually.
+If the API is unreachable, tell the user to check the relevant release page
+(`https://github.com/provasign/<product>/releases`) and provide the version
+manually for that product.
 
 ---
 
@@ -205,7 +226,7 @@ foreach ($bin in @("grove","prism","fuse","provasign")) {
 ```
 
 For any product already installed:
-- If the installed version matches `$VERSION`: tell the user it is up to date and skip it.
+- If the installed version matches that product's latest version from Step 3: tell the user it is up to date and skip it.
 - If the installed version is older: tell the user and ask whether to upgrade.
 - If the version cannot be determined: ask whether to reinstall.
 
@@ -222,6 +243,8 @@ PATH registration, and macOS quarantine + codesign in one step. Install
 
 ```bash
 for PRODUCT in grove prism fuse provasign; do   # only selected products
+  VERSION_VAR="$(echo "$PRODUCT" | tr '[:lower:]' '[:upper:]')_VERSION"
+  VERSION="${!VERSION_VAR}"
   curl -fsSL \
     "https://github.com/provasign/${PRODUCT}/releases/download/${VERSION}/install.sh" \
     | INSTALL_DIR=~/bin bash
@@ -236,6 +259,8 @@ temp file, then give the user a single paste-ready command per product:
 ```bash
 # Agent downloads the script:
 PRODUCT=grove   # repeat for each selected product
+VERSION_VAR="$(echo "$PRODUCT" | tr '[:lower:]' '[:upper:]')_VERSION"
+VERSION="${!VERSION_VAR}"
 curl -fsSL \
   "https://github.com/provasign/${PRODUCT}/releases/download/${VERSION}/install.sh" \
   -o "/tmp/install-${PRODUCT}.sh"
@@ -260,6 +285,7 @@ Wait for the user to confirm before continuing to Step 6.
 ```powershell
 $INSTALL_DIR = "$env:USERPROFILE\bin"   # or user-specified path
 foreach ($PRODUCT in @("grove","prism","fuse","provasign")) {   # only selected
+  $VERSION = $Versions[$PRODUCT]
   $tmpScript = "$env:TEMP\install-$PRODUCT.ps1"
   Invoke-WebRequest `
     "https://github.com/provasign/$PRODUCT/releases/download/$VERSION/install.ps1" `
@@ -439,9 +465,9 @@ git add .provasign/
 echo "Provasign: initialized. Your agent will call provasign_check before every commit."
 ```
 
-> **Claude Code users:** `provasign init` also writes `.mcp.json` at the project root
-> (merging with Prism's entry if already present). When you restart Claude Code,
-> approve the pending `.mcp.json` MCP servers when prompted.
+> **Claude Code users:** `provasign init` writes `.mcp.json` at the project root
+> (merging with Prism's entry if already present) and pre-approves the MCP server
+> in `~/.claude/settings.json` — no approval prompt needed. Restart Claude Code to activate.
 
 **Start MCP servers** (do this after all products are initialized):
 
@@ -593,7 +619,8 @@ see it. Expected after the fix: both `prism` and `provasign` show **✓ Connecte
 | `provasign doctor` shows `eslint missing` | Safe to ignore for Go/Python projects; only needed for JS/TS SAST. Install with `npm install -g eslint` if required |
 | `provasign doctor` exits non-zero but output shows only `eslint missing` | Not a hard failure — provasign doctor exits 1 whenever any check needs attention, even optional ones. Read the output to distinguish required vs optional gaps |
 | `pipx install semgrep` fails: "externally-managed-environment" | System Python blocks pip — install pipx first: `brew install pipx`, then retry |
-| Claude Code `claude mcp list` doesn't show prism/provasign | Re-run `prism init` / `provasign init` from the project root, then restart Claude Code and approve `.mcp.json` when prompted |
+| Claude Code `claude mcp list` doesn't show provasign | Re-run `provasign init` from the project root (auto-approves and writes `.mcp.json`), then restart Claude Code |
+| Claude Code `claude mcp list` doesn't show prism | Re-run `prism init` from the project root, restart Claude Code, and approve `.mcp.json` when prompted |
 | `claude mcp list` shows prism/provasign **Failed to connect** (~30s timeout) but `prism version` works | Wire-protocol bug fixed in **v0.3.0** — upgrade to the latest release. MCP stdio requires newline-delimited JSON; older binaries emitted `Content-Length` framing that clients can't parse |
 | Same timeout persists after upgrade | Confirm the on-PATH binary is the new one (`which prism`; `prism version`), then fully restart your AI tool so it re-spawns the server |
 
@@ -643,12 +670,36 @@ Use this flow when the user asks to remove Provasign and start from a clean slat
 
 Ask for the target project path first (the repo where MCP/hook wiring should be removed).
 
-Then run:
+Ask one confirmation before running uninstall:
+
+> Do you want me to stop currently running Prism/Provasign MCP server processes
+> during uninstall?
+
+If the user says yes, set `KILL_MCPS=1` on macOS/Linux or pass `-KillMCPs 1`
+on Windows. If the user says no, leave it unset and tell them to restart/reload
+their AI coding tool or IDE after uninstall so any already-running MCP server
+processes exit naturally.
+
+Then run the release uninstall scripts in reverse install order:
 
 **macOS / Linux:**
 ```bash
-cd /path/to/provasign
-./scripts/uninstall-provasign.sh /path/to/target/project
+PROJECT="/path/to/target/project"
+INSTALL_DIR="${INSTALL_DIR:-$HOME/bin}"
+KILL_MCPS="${KILL_MCPS:-0}"   # set to 1 only if the user confirmed
+
+for PRODUCT in provasign prism fuse grove; do   # only installed products, reverse install order
+  VERSION=$(curl -sf "https://api.github.com/repos/provasign/${PRODUCT}/releases/latest" \
+    | grep '"tag_name"' \
+    | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/')
+  [ -n "$VERSION" ] || {
+    echo "Could not determine latest ${PRODUCT} version; check https://github.com/provasign/${PRODUCT}/releases"
+    continue
+  }
+  curl -fsSL \
+    "https://github.com/provasign/${PRODUCT}/releases/download/${VERSION}/uninstall.sh" \
+    | INSTALL_DIR="$INSTALL_DIR" PROJECT="$PROJECT" KILL_MCPS="$KILL_MCPS" bash
+done
 ```
 
 What this removes:
@@ -670,8 +721,20 @@ command -v provasign || echo "provasign removed"
 Then report a short uninstall summary to the user and confirm they can now rerun this prompt for a clean install.
 
 **Windows:**
-- Full-script uninstall automation is not yet available.
-- Tell the user to follow the uninstall section in docs/installation.md for now.
+```powershell
+$INSTALL_DIR = "$env:USERPROFILE\bin"   # or the user-specified install path
+$PROJECT = "C:\path\to\project"
+$KILL_MCPS = "0"   # set to "1" only if the user confirmed
+
+foreach ($PRODUCT in @("provasign","prism","fuse","grove")) {   # only installed products, reverse install order
+  $VERSION = (Invoke-RestMethod "https://api.github.com/repos/provasign/$PRODUCT/releases/latest").tag_name
+  $tmpScript = "$env:TEMP\uninstall-$PRODUCT.ps1"
+  Invoke-WebRequest `
+    "https://github.com/provasign/$PRODUCT/releases/download/$VERSION/uninstall.ps1" `
+    -OutFile $tmpScript
+  & $tmpScript -InstallDir $INSTALL_DIR -Project $PROJECT -KillMCPs $KILL_MCPS
+}
+```
 
 ---
 
