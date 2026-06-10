@@ -5,6 +5,8 @@ parent: Use Cases
 nav_order: 1
 description: "How Provasign keeps source local, minimizes attack surface, and signs provenance without a managed cloud."
 permalink: /use-cases/security/
+nav_exclude: true
+search_exclude: true
 ---
 
 # Security

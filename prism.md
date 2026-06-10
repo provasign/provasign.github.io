@@ -1,18 +1,31 @@
 ---
 title: Prism
 layout: default
-nav_exclude: true
-search_exclude: true
-description: "Prism documentation has moved to the repository README."
+nav_order: 3
+description: "Graph-ranked context delivery for AI coding agents."
 permalink: /prism/
 ---
 
-<meta http-equiv="refresh" content="0; url=https://github.com/provasign/prism#readme">
-
 # Prism
 
-Prism is the open-source, graph-ranked context layer that embeds [Provasign]({{ '/provasign/' | relative_url }})'s Grove engine. Its documentation now lives in the repository:
+Prism is the secondary open-source product from the Provasign org.
 
-[Prism README on GitHub →](https://github.com/provasign/prism#readme){: .btn .btn-primary }
+It turns a task plus precise anchor terms into the code, callers, callees,
+tests, docs, and coverage gaps an agent needs to make a change safely. It is
+the agent-context layer: use `rg` to find the first anchor, then use Prism to
+retrieve the surrounding graph-aware context.
 
-If you are not redirected automatically, follow the link above.
+## Typical Use
+
+```sh
+prism init . --mode both
+prism index .
+prism query "fix auth rate limit tests" --terms RateLimiter --include graph,tests,coverage_gaps --format text
+```
+
+Prism embeds Grove in-process. There is no separate Grove daemon, token, or
+server URL in the normal path.
+
+## Repository
+
+[Read the Prism README on GitHub ->](https://github.com/provasign/prism#readme){: .btn .btn-primary }

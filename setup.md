@@ -4,6 +4,8 @@ layout: default
 nav_order: 8
 description: "Install and configure Provasign using your AI coding agent — always at the latest version."
 permalink: /setup/
+nav_exclude: true
+search_exclude: true
 ---
 
 # Agent-Driven Setup

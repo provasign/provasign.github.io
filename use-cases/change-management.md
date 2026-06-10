@@ -5,6 +5,8 @@ parent: Use Cases
 nav_order: 3
 description: "How Provasign turns every AI-generated change into a gated, signed, intent-linked admission."
 permalink: /use-cases/change-management/
+nav_exclude: true
+search_exclude: true
 ---
 
 # Change Management

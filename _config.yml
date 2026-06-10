@@ -1,5 +1,5 @@
-title: Relay
-description: Certified delivery for AI coding agents — every AI-generated commit signed, tested, and traceable to the prompt that created it. Built on Grove, Prism, and Fuse (MIT). Local-first.
+title: Shale
+description: Agent PR evidence for AI coding agents. Shale is the primary open-source product from the Provasign org, with Prism for context delivery and Grove for graph-only use.
 theme: just-the-docs
 
 logo: "assets/images/logo.svg"
@@ -22,7 +22,7 @@ search:
 
 aux_links:
   "GitHub":
-    - "https://github.com/provasign/provasign"
+    - "https://github.com/provasign/shale"
 
 heading_anchors: true
 

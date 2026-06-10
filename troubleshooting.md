@@ -4,6 +4,8 @@ layout: default
 nav_order: 12
 description: "Common issues with Provasign — how to diagnose and fix them."
 permalink: /troubleshooting/
+nav_exclude: true
+search_exclude: true
 ---
 
 # Troubleshooting

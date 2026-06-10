@@ -6,573 +6,172 @@ layout: null
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Provasign — Certified delivery for AI coding agents</title>
-  <meta name="description" content="Every AI-generated commit signed, tested, and traceable to the prompt that created it. Pre-commit gates, Ed25519-signed certificates, full audit replay. Local-first. Open source.">
+  <title>Shale — agent PR evidence</title>
+  <meta name="description" content="Shale captures AI coding agent intent, session evidence, and local checks, then renders the evidence as a pull-request card. Open source. No server. No account.">
   <link rel="canonical" href="{{ '/' | absolute_url }}">
-  <link rel="icon" type="image/svg+xml" href="{{ '/assets/images/logo-icon.svg' | relative_url }}">
-  <link rel="apple-touch-icon" href="{{ '/assets/images/og-image.png' | relative_url }}">
-  <meta property="og:site_name"    content="Provasign">
-  <meta property="og:title"        content="Provasign — Certified delivery for AI coding agents">
-  <meta property="og:description"  content="Every AI-generated commit signed, tested, and traceable to the prompt that created it. Pre-commit gates. Ed25519-signed certificates. Full audit replay. Local-first.">
-  <meta property="og:url"          content="{{ '/' | absolute_url }}">
-  <meta property="og:type"         content="website">
-  <meta property="og:image"        content="{{ '/assets/images/og-image.png' | absolute_url }}">
-  <meta property="og:image:type"   content="image/png">
-  <meta property="og:image:width"  content="1200">
-  <meta property="og:image:height" content="630">
-  <meta name="twitter:card"        content="summary_large_image">
-  <meta name="twitter:image"       content="{{ '/assets/images/og-image.png' | absolute_url }}">
+  <meta property="og:site_name" content="Provasign">
+  <meta property="og:title" content="Shale — agent PR evidence">
+  <meta property="og:description" content="Every AI-agent PR should explain itself. Shale renders intent, evidence, checks, and gaps on the pull request.">
+  <meta property="og:url" content="{{ '/' | absolute_url }}">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
   <style>
     :root {
-      --bg:      #0e1117;
-      --bg2:     #161b27;
-      --bg3:     #1c2333;
-      --border:  #1e3a2f;
-      --accent:  #22c55e;
-      --accent2: #16a34a;
-      --text:    #e6edf3;
-      --muted:   #8b9eb8;
-      --dim:     #6a8090;
-      --mono:    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
-      --sans:    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --bg: #0d1117;
+      --panel: #161b22;
+      --panel2: #101820;
+      --text: #e6edf3;
+      --muted: #9aa7b4;
+      --dim: #748190;
+      --line: #273241;
+      --accent: #38d996;
+      --accent2: #7dd3fc;
+      --warn: #fbbf24;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { font-family: var(--sans); background: var(--bg); color: var(--text); overflow-x: hidden; }
-
-    /* ── NAV ───────────────────────────────────────────────────── */
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); }
+    a { color: inherit; }
     .nav {
-      position: sticky; top: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2.5rem; height: 58px;
-      background: rgba(10,35,24,0.93);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(22,101,52,0.4);
+      position: sticky; top: 0; z-index: 10;
+      display: flex; justify-content: space-between; align-items: center;
+      height: 60px; padding: 0 32px; background: rgba(13,17,23,.92);
+      border-bottom: 1px solid var(--line); backdrop-filter: blur(12px);
     }
-    .nav-brand {
-      display: flex; align-items: center; gap: 10px;
-      text-decoration: none; color: var(--text);
-      font-weight: 700; font-size: 1.05rem; letter-spacing: .02em;
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 750; text-decoration: none; }
+    .mark {
+      width: 26px; height: 26px; display: grid; place-items: center;
+      border: 1px solid rgba(56,217,150,.5); border-radius: 6px; color: var(--accent);
+      font-family: var(--mono); font-size: 14px; background: rgba(56,217,150,.08);
     }
-    .nav-links { display: flex; align-items: center; gap: .2rem; list-style: none; }
-    .nav-links a {
-      display: block; padding: .35rem .8rem; border-radius: 5px;
-      text-decoration: none; color: var(--muted);
-      font-size: .87rem; font-weight: 500;
-      transition: color .15s, background .15s;
+    .navlinks { display: flex; align-items: center; gap: 18px; font-size: 14px; color: var(--muted); }
+    .navlinks a { text-decoration: none; }
+    .navlinks a:hover { color: var(--accent); }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+    .hero { padding: 92px 0 72px; border-bottom: 1px solid var(--line); }
+    .eyebrow { color: var(--accent); font-family: var(--mono); font-size: 13px; margin-bottom: 18px; }
+    h1 { max-width: 900px; margin: 0; font-size: clamp(42px, 7vw, 78px); line-height: .98; letter-spacing: -.04em; }
+    .lead { max-width: 710px; margin: 28px 0 0; color: var(--muted); font-size: 20px; line-height: 1.6; }
+    .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 42px; padding: 0 18px; border-radius: 7px; text-decoration: none;
+      font-weight: 700; font-size: 15px; border: 1px solid var(--line);
     }
-    .nav-links a:hover { color: var(--accent); background: rgba(34,197,94,.08); }
-    .nav-provasign { color: var(--accent) !important; font-weight: 700 !important; }
-    .nav-cta { display: flex; gap: .5rem; }
-    .nav-cta a {
-      padding: .38rem 1rem; border-radius: 6px;
-      text-decoration: none; font-size: .84rem; font-weight: 600;
-      transition: all .15s;
+    .btn.primary { background: var(--accent); color: #042014; border-color: var(--accent); }
+    .btn.secondary { color: var(--text); }
+    .install {
+      margin-top: 36px; background: #070b10; border: 1px solid var(--line);
+      border-radius: 8px; overflow: hidden; max-width: 680px;
     }
-    .btn-outline { border: 1px solid var(--border); color: var(--muted); }
-    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-    .btn-filled { background: var(--accent2); color: #f0fdf4; }
-    .btn-filled:hover { background: var(--accent); }
-
-    /* ── HERO ──────────────────────────────────────────────────── */
-    .hero {
-      position: relative; min-height: calc(100vh - 58px);
-      display: flex; align-items: center; overflow: hidden;
-      border-left: 6px solid var(--accent);
-    }
-    .hero::before {
-      content: ''; position: absolute; inset: 0; pointer-events: none;
-      background-image:
-        linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);
-      background-size: 60px 60px;
-    }
-    /* radial vignette so grid fades at edges */
-    .hero::after {
-      content: ''; position: absolute; inset: 0; pointer-events: none;
-      background: radial-gradient(ellipse 80% 80% at 30% 50%, transparent 40%, var(--bg) 100%);
-    }
-    .hero-inner {
-      position: relative; z-index: 2;
-      width: 100%; max-width: 1320px; margin: 0 auto;
-      padding: 5rem 4rem 5rem 3.5rem;
-      display: grid; grid-template-columns: 1fr 480px; gap: 2rem; align-items: center;
-    }
-    .hero-brand {
-      display: flex; align-items: center; gap: 9px;
-      margin-bottom: 2rem; font-size: .95rem; font-weight: 600;
-      color: var(--muted); letter-spacing: .04em;
-    }
-    .hero-title {
-      font-size: clamp(2.6rem, 4.5vw, 4rem);
-      font-weight: 800; line-height: 1.08; letter-spacing: -.03em;
-      color: #fff; margin-bottom: .1em;
-    }
-    .hero-title .green { color: var(--accent); }
-    .hero-divider { width: 72px; height: 4px; background: var(--accent); border-radius: 2px; margin: 1.6rem 0; }
-    .hero-sub {
-      font-size: 1.15rem; line-height: 1.65; color: var(--muted);
-      max-width: 540px; margin-bottom: 2.2rem;
-    }
-    .hero-chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 2.5rem; }
-    .chip {
-      display: inline-block; padding: .45rem 1.15rem; border-radius: 6px;
-      text-decoration: none; font-family: var(--mono);
-      font-size: .88rem; font-weight: 500; transition: all .15s;
-    }
-    .chip-provasign { background: var(--border); border: 1.5px solid var(--accent); color: var(--accent); }
-    .chip-provasign:hover { background: rgba(34,197,94,.18); }
-    .chip-plain { background: rgba(13,51,32,.7); border: 1.5px solid var(--border); color: var(--muted); }
-    .chip-plain:hover { border-color: var(--accent); color: var(--accent); }
-    .hero-cta { display: flex; flex-wrap: wrap; gap: .75rem; margin-bottom: 3rem; }
-    .btn-hero-primary {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: .72rem 1.65rem; background: var(--accent); color: #052e16;
-      font-weight: 700; font-size: .95rem; border-radius: 7px;
-      text-decoration: none; transition: background .15s, transform .1s;
-    }
-    .btn-hero-primary:hover { background: #4ade80; transform: translateY(-1px); }
-    .btn-hero-secondary {
-      display: inline-flex; align-items: center;
-      padding: .72rem 1.45rem; border: 1.5px solid var(--border);
-      color: var(--muted); font-weight: 600; font-size: .95rem;
-      border-radius: 7px; text-decoration: none; transition: all .15s;
-    }
-    .btn-hero-secondary:hover { border-color: var(--accent); color: var(--accent); }
-    .btn-hero-ghost {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: .72rem 1.2rem; color: var(--dim);
-      font-size: .92rem; border-radius: 7px;
-      text-decoration: none; transition: color .15s;
-    }
-    .btn-hero-ghost:hover { color: var(--text); }
-    .hero-meta {
-      display: flex; align-items: center; justify-content: space-between;
-      max-width: 540px; font-family: var(--mono);
-      font-size: .78rem; color: var(--accent); opacity: .6;
-    }
-
-    /* ── HERO GRAPH ─────────────────────────────────────────────── */
-    .hero-graph { display: flex; align-items: center; justify-content: center; }
-    @keyframes nodepulse  { 0%,100%{opacity:.95} 50%{opacity:.55} }
-    @keyframes nodepulse2 { 0%,100%{opacity:.75} 50%{opacity:.35} }
-    @keyframes edgefade   { 0%,100%{opacity:.55} 50%{opacity:.25} }
-    .np  { animation: nodepulse  3.2s ease-in-out infinite; }
-    .np2 { animation: nodepulse2 4.1s ease-in-out infinite .9s; }
-    .ef  { animation: edgefade   5s   ease-in-out infinite 1.3s; }
-
-    /* ── SECTION SHARED ─────────────────────────────────────────── */
-    .section { padding: 5.5rem 0; }
-    .section-alt { background: var(--bg2); }
-    .section-inner { max-width: 1320px; margin: 0 auto; padding: 0 4rem; }
-    .section-label {
-      font-family: var(--mono); font-size: .76rem; font-weight: 600;
-      letter-spacing: .12em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: .9rem;
-    }
-    .section-title {
-      font-size: clamp(1.75rem, 3vw, 2.5rem);
-      font-weight: 800; letter-spacing: -.02em; color: #fff;
-      margin-bottom: 1.4rem; line-height: 1.15;
-    }
-    .section-title .green { color: var(--accent); }
-
-    /* ── PROBLEM GRID ───────────────────────────────────────────── */
-    .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 2.5rem; }
-    .problem-card {
-      padding: 1.8rem; background: rgba(14,17,23,.7);
-      border: 1px solid rgba(30,58,47,.6); border-radius: 10px;
-    }
-    .problem-card p { color: var(--muted); line-height: 1.68; font-size: .98rem; }
-    .problem-card strong { color: #fff; }
-    .problem-fix {
-      margin-top: 1rem; padding-top: 1rem;
-      border-top: 1px solid rgba(22,101,52,.3);
-      color: var(--accent); font-size: .88rem; line-height: 1.5;
-    }
-    .problem-fix a { color: var(--accent); text-decoration: none; font-weight: 600; }
-    .problem-fix a:hover { text-decoration: underline; }
-    .problem-fix code { font-family: var(--mono); color: #86efac; font-size: .84rem; }
-
-    /* ── PRODUCTS GRID ──────────────────────────────────────────── */
-    .products-grid {
-      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
-      gap: 1.25rem; margin-top: 2.5rem;
-    }
-    .product-card {
-      padding: 2rem; border-radius: 12px;
-      border: 1px solid rgba(40,60,50,.5); background: var(--bg2);
-      text-decoration: none; color: inherit; display: block;
-      transition: border-color .2s, transform .15s;
-    }
-    .product-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-    .product-card-provasign {
-      border-color: rgba(34,197,94,.25);
-      background: linear-gradient(140deg, #151f2e 0%, #0e1117 100%);
-    }
-    .ptag {
-      display: inline-block; font-family: var(--mono); font-size: .75rem;
-      padding: .2rem .6rem; border-radius: 4px; margin-bottom: 1rem;
-    }
-    .ptag-provasign { background: rgba(34,197,94,.12); color: var(--accent);  border: 1px solid rgba(34,197,94,.3); }
-    .ptag-other { background: rgba(13,51,32,.8);   color: #86efac; border: 1px solid rgba(22,101,52,.4); }
-    .product-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: .5rem; color: #fff; }
-    .product-card-provasign h3 { font-size: 1.6rem; }
-    .product-card p { font-size: .88rem; color: var(--muted); line-height: 1.6; }
-    .product-card-provasign p { font-size: .98rem; margin-bottom: 1.4rem; }
-    .pbullets { list-style: none; margin: .9rem 0 1.4rem; }
-    .pbullets li {
-      display: flex; gap: .5rem; align-items: flex-start;
-      color: var(--muted); font-size: .87rem; margin-bottom: .45rem;
-    }
-    .pbullets li::before { content: '→'; color: var(--accent); flex-shrink: 0; margin-top: .05em; }
-    .plink {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: .84rem; font-weight: 600; color: var(--accent); text-decoration: none;
-    }
-    .plink:hover { color: #4ade80; }
-
-    /* ── GET STARTED ────────────────────────────────────────────── */
-    .tabs { display: flex; border-bottom: 1px solid rgba(22,101,52,.3); margin-top: 2rem; }
-    .tab-btn {
-      padding: .65rem 1.3rem; font-size: .87rem; font-weight: 600;
-      color: var(--dim); background: none; border: none;
-      border-bottom: 2px solid transparent; cursor: pointer;
-      font-family: var(--sans); transition: color .15s, border-color .15s;
-    }
-    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-    .tab-btn:hover:not(.active) { color: var(--text); }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-    pre.code-block {
-      background: #090d12; border: 1px solid rgba(30,58,47,.5);
-      border-top: none; border-radius: 0 0 8px 8px;
-      padding: 1.6rem 1.8rem; font-family: var(--mono);
-      font-size: .86rem; line-height: 1.7; color: #b0c8b0; overflow-x: auto;
-    }
-    .c  { color: #4ade80; opacity: .65; }
-    .kw { color: #f0fdf4; }
-    .ag { color: #86efac; }
-
-    /* ── FOOTER ─────────────────────────────────────────────────── */
-    footer { padding: 2.5rem 0 2rem; border-top: 1px solid rgba(22,101,52,.2); }
-    .footer-inner {
-      max-width: 1320px; margin: 0 auto; padding: 0 4rem;
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;
-    }
-    .footer-links { display: flex; gap: 1.4rem; flex-wrap: wrap; }
-    .footer-links a { color: var(--dim); text-decoration: none; font-size: .86rem; transition: color .15s; }
-    .footer-links a:hover { color: var(--accent); }
-    .footer-meta { font-family: var(--mono); font-size: .76rem; color: var(--accent); opacity: .5; }
-
-    /* ── RESPONSIVE ─────────────────────────────────────────────── */
-    @media (max-width: 1024px) {
-      .hero-inner { grid-template-columns: 1fr; padding: 3.5rem 2.5rem; }
-      .hero-graph  { display: none; }
-      .products-grid { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 700px) {
-      .nav { padding: 0 1rem; }
-      .nav-links { display: none; }
-      .problem-grid { grid-template-columns: 1fr; }
-      .products-grid { grid-template-columns: 1fr; }
-      .section-inner { padding: 0 1.5rem; }
-      .footer-inner { padding: 0 1.5rem; flex-direction: column; align-items: flex-start; }
+    .install-title { padding: 10px 14px; color: var(--dim); border-bottom: 1px solid var(--line); font-size: 13px; }
+    pre { margin: 0; padding: 18px; overflow-x: auto; color: #d1fae5; font: 14px/1.7 var(--mono); }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; padding: 54px 0; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 24px; }
+    .card.primary { background: linear-gradient(145deg, rgba(56,217,150,.12), var(--panel)); border-color: rgba(56,217,150,.45); }
+    .tag { display: inline-block; margin-bottom: 14px; color: var(--accent); font: 12px var(--mono); }
+    .card h2 { margin: 0 0 10px; font-size: 24px; letter-spacing: -.02em; }
+    .card p { margin: 0; color: var(--muted); line-height: 1.62; }
+    .card a.more { display: inline-block; margin-top: 18px; color: var(--accent); text-decoration: none; font-weight: 700; }
+    .section { padding: 64px 0; border-top: 1px solid var(--line); }
+    .section h2 { margin: 0 0 14px; font-size: 34px; letter-spacing: -.03em; }
+    .section p { max-width: 760px; color: var(--muted); line-height: 1.7; font-size: 17px; }
+    .bullets { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 28px; }
+    .bullet { padding: 18px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel2); color: var(--muted); line-height: 1.55; }
+    .bullet strong { color: var(--text); }
+    .note { color: var(--dim); font-size: 14px; margin-top: 22px; }
+    footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--dim); font-size: 14px; }
+    @media (max-width: 800px) {
+      .nav { padding: 0 18px; }
+      .navlinks { gap: 10px; font-size: 13px; }
+      .grid, .bullets { grid-template-columns: 1fr; }
+      .hero { padding-top: 64px; }
     }
   </style>
 </head>
 <body>
-
-<!-- ── NAV ──────────────────────────────────────────────────────── -->
-<nav class="nav">
-  <a class="nav-brand" href="{{ '/' | relative_url }}">
-    <svg width="26" height="26" viewBox="0 0 48 48" fill="none">
-      <line x1="24" y1="8" x2="10" y2="22" stroke="#22c55e" stroke-width="2.2"/>
-      <line x1="24" y1="8" x2="38" y2="22" stroke="#22c55e" stroke-width="2.2"/>
-      <line x1="10" y1="22" x2="6"  y2="40" stroke="#4ade80" stroke-width="1.8"/>
-      <line x1="24" y1="8" x2="24" y2="40" stroke="#4ade80" stroke-width="1.8"/>
-      <line x1="38" y1="22" x2="24" y2="40" stroke="#22c55e" stroke-width="1.8"/>
-      <circle cx="24" cy="8"  r="5.5" fill="#0d3320" stroke="#22c55e" stroke-width="2"/>
-      <circle cx="10" cy="22" r="4"   fill="#166534" stroke="#4ade80" stroke-width="1.5"/>
-      <circle cx="38" cy="22" r="4"   fill="#166534" stroke="#4ade80" stroke-width="1.5"/>
-      <circle cx="6"  cy="40" r="3"   fill="#22c55e"/>
-      <circle cx="24" cy="40" r="3"   fill="#22c55e"/>
-    </svg>
-    Provasign
-  </a>
-  <ul class="nav-links">
-    <li><a href="{{ '/provasign/' | relative_url }}" class="nav-provasign">Provasign</a></li>
-    <li><a href="{{ '/why/' | relative_url }}">Why</a></li>
-    <li><a href="{{ '/how-it-works/' | relative_url }}">How it works</a></li>
-    <li><a href="{{ '/docs/' | relative_url }}">Docs</a></li>
-    <li><a href="{{ '/faq/' | relative_url }}">FAQ</a></li>
-  </ul>
-  <div class="nav-cta">
-    <a class="btn-outline" href="https://github.com/provasign/provasign">GitHub ↗</a>
-    <a class="btn-filled"  href="{{ '/setup/' | relative_url }}">Agent Setup</a>
-  </div>
-</nav>
-
-<!-- ── HERO ─────────────────────────────────────────────────────── -->
-<section class="hero">
-  <div class="hero-inner">
-
-    <!-- Left: copy -->
-    <div>
-      <div class="hero-brand">
-        <svg width="20" height="20" viewBox="0 0 48 48" fill="none">
-          <line x1="24" y1="8" x2="10" y2="22" stroke="#22c55e" stroke-width="2.2"/>
-          <line x1="24" y1="8" x2="38" y2="22" stroke="#22c55e" stroke-width="2.2"/>
-          <line x1="10" y1="22" x2="6"  y2="40" stroke="#4ade80" stroke-width="1.8"/>
-          <line x1="24" y1="8" x2="24" y2="40" stroke="#4ade80" stroke-width="1.8"/>
-          <line x1="38" y1="22" x2="24" y2="40" stroke="#22c55e" stroke-width="1.8"/>
-          <circle cx="24" cy="8"  r="5" fill="#0d3320" stroke="#22c55e" stroke-width="2"/>
-          <circle cx="10" cy="22" r="4" fill="#166534" stroke="#4ade80" stroke-width="1.5"/>
-          <circle cx="38" cy="22" r="4" fill="#166534" stroke="#4ade80" stroke-width="1.5"/>
-          <circle cx="6"  cy="40" r="3" fill="#22c55e"/>
-          <circle cx="24" cy="40" r="3" fill="#22c55e"/>
-        </svg>
-        Provasign
-      </div>
-
-      <h1 class="hero-title">
-        Certified delivery<br>
-        <span class="green">for AI coding agents.</span>
-      </h1>
-
-      <div class="hero-divider"></div>
-
-      <p class="hero-sub">
-        Every AI-generated commit signed, tested, and traceable to the prompt that created it.
-        Pre-commit gates. Ed25519-signed certificates. Full audit replay.
-        One binary. No services to run. No CI loop.
-      </p>
-
-      <div class="hero-chips">
-        <a class="chip chip-provasign" href="{{ '/provasign/' | relative_url }}">Certified delivery</a>
-        <a class="chip chip-plain" href="{{ '/how-it-works/' | relative_url }}">How it works</a>
-        <a class="chip chip-plain" href="{{ '/use-cases/' | relative_url }}">Use cases</a>
-      </div>
-
-      <div class="hero-cta">
-        <a class="btn-hero-primary"    href="{{ '/setup/' | relative_url }}">▶&nbsp; Agent Setup</a>
-        <a class="btn-hero-secondary"  href="{{ '/installation/' | relative_url }}">Manual Install</a>
-        <a class="btn-hero-ghost"      href="https://github.com/provasign/provasign">GitHub ↗</a>
-      </div>
-
-      <div class="hero-meta">
-        <span>provasign.dev</span>
-        <span>MIT · AGPL-3.0 · Local-first · No telemetry</span>
-      </div>
-    </div>
-
-    <!-- Right: animated knowledge graph -->
-    <div class="hero-graph">
-      <svg width="460" height="430" viewBox="0 0 460 430" fill="none">
-        <!-- Faint rings -->
-        <circle cx="230" cy="215" r="190" stroke="rgba(34,197,94,.04)" stroke-width="1"/>
-        <circle cx="230" cy="215" r="125" stroke="rgba(34,197,94,.06)" stroke-width="1"/>
-
-        <!-- Edges -->
-        <g class="ef">
-          <line x1="230" y1="62"  x2="355" y2="150" stroke="#22c55e" stroke-width="2" opacity=".6"/>
-          <line x1="230" y1="62"  x2="115" y2="162" stroke="#2563eb" stroke-width="2" opacity=".55"/>
-          <line x1="355" y1="150" x2="405" y2="298" stroke="#166534" stroke-width="2" opacity=".55"/>
-          <line x1="115" y1="162" x2="72"  y2="308" stroke="#2563eb" stroke-width="2" opacity=".5"/>
-          <line x1="115" y1="162" x2="230" y2="290" stroke="#166534" stroke-width="2" opacity=".5"/>
-          <line x1="355" y1="150" x2="230" y2="290" stroke="#7c3aed" stroke-width="2" opacity=".45"/>
-          <line x1="230" y1="290" x2="405" y2="298" stroke="#22c55e" stroke-width="2" opacity=".45"/>
-          <line x1="72"  y1="308" x2="165" y2="400" stroke="#166534" stroke-width="2" opacity=".4"/>
-          <line x1="230" y1="290" x2="165" y2="400" stroke="#dc2626" stroke-width="2" opacity=".55"/>
-        </g>
-
-        <!-- Nodes -->
-        <g class="np">
-          <circle cx="230" cy="62"  r="23" fill="#0d3320" stroke="#22c55e" stroke-width="2.5"/>
-          <text x="230" y="97" text-anchor="middle" font-family="ui-monospace,monospace" font-size="11.5" fill="#4ade80">auth.go</text>
-        </g>
-        <g class="np2">
-          <circle cx="355" cy="150" r="17" fill="#166534" stroke="#4ade80" stroke-width="2"/>
-          <text x="355" y="182" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10.5" fill="#86efac">Login()</text>
-        </g>
-        <g class="np">
-          <circle cx="115" cy="162" r="17" fill="#166534" stroke="#4ade80" stroke-width="2"/>
-          <text x="115" y="194" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10.5" fill="#86efac">validate()</text>
-        </g>
-        <g class="np2">
-          <circle cx="405" cy="298" r="15" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>
-          <text x="405" y="326" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10.5" fill="#93c5fd">User</text>
-        </g>
-        <g class="np">
-          <circle cx="230" cy="290" r="20" fill="#065f46" stroke="#34d399" stroke-width="2"/>
-          <text x="230" y="323" text-anchor="middle" font-family="ui-monospace,monospace" font-size="11" fill="#6ee7b7">session.go</text>
-        </g>
-        <g class="np2">
-          <circle cx="72" cy="308" r="15" fill="#166534" stroke="#4ade80" stroke-width="2"/>
-          <text x="72" y="338" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#86efac">NewSession()</text>
-        </g>
-        <g class="np">
-          <circle cx="165" cy="400" r="18" fill="#065f46" stroke="#34d399" stroke-width="2.5"/>
-          <text x="165" y="430" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10.5" fill="#6ee7b7">auth_test.go</text>
-        </g>
-
-        <!-- Mini legend -->
-        <g opacity=".65">
-          <line x1="318" y1="368" x2="338" y2="368" stroke="#22c55e" stroke-width="2"/>
-          <text x="342" y="372" font-family="ui-sans-serif,sans-serif" font-size="10" fill="#4ade80">defines</text>
-          <line x1="318" y1="386" x2="338" y2="386" stroke="#2563eb" stroke-width="2"/>
-          <text x="342" y="390" font-family="ui-sans-serif,sans-serif" font-size="10" fill="#60a5fa">calls</text>
-          <line x1="318" y1="404" x2="338" y2="404" stroke="#dc2626" stroke-width="2"/>
-          <text x="342" y="408" font-family="ui-sans-serif,sans-serif" font-size="10" fill="#f87171">tests</text>
-          <line x1="318" y1="422" x2="338" y2="422" stroke="#7c3aed" stroke-width="2"/>
-          <text x="342" y="426" font-family="ui-sans-serif,sans-serif" font-size="10" fill="#a78bfa">imports</text>
-        </g>
-      </svg>
-    </div>
-
-  </div>
-</section>
-
-<!-- ── PROBLEM ───────────────────────────────────────────────────── -->
-<section class="section section-alt" style="border-top:1px solid rgba(22,101,52,.3);border-bottom:1px solid rgba(22,101,52,.3)">
-  <div class="section-inner">
-    <div class="section-label">The problem</div>
-    <h2 class="section-title">AI agents write code.<br><span class="green">Nobody built what happens next.</span></h2>
-    <div class="problem-grid">
-      <div class="problem-card">
-        <p><strong>Every agent still delivers through a PR → CI loop designed for humans.</strong>
-        When an agent opens a PR, CI finds an issue. You send it back. CI finds another.
-        Each loop costs 5–15 minutes of human attention and the agent has lost context by the second iteration.
-        Multiply by the number of agent PRs your team merges each week.</p>
-        <div class="problem-fix">→ <a href="{{ '/how-it-works/' | relative_url }}">Provasign</a> moves the quality gate into the agent's loop. Sub-10s findings — build, tests, coverage, secrets, SAST — returned as structured results before the agent opens any PR. The agent self-corrects. CI becomes a formality, not a gatekeeper.</div>
-      </div>
-      <div class="problem-card">
-        <p><strong>When compliance asks what the agent did — there's no answer.</strong>
-        The PR says "refactor auth." CI shows green. The agent session is gone,
-        the original prompt is gone. Nobody knows which gates ran, what the agent was asked to do,
-        or what was suppressed. This is a compliance gap today, and a regulatory exposure under the EU AI Act.</p>
-        <div class="problem-fix">→ <a href="{{ '/use-cases/audit/' | relative_url }}">Provasign</a> captures the verbatim user prompt as a signed YAML intent before any code is written. Every admission carries an Ed25519-signed certificate over the exact changeset, toolchain, policy config, and gate results. <code>provasign cert replay</code> re-runs the gates at any time and returns a cryptographic verdict.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── PRODUCT ───────────────────────────────────────────────────── -->
-<section class="section">
-  <div class="section-inner">
-    <div class="section-label">The product</div>
-    <h2 class="section-title">One binary.<br><span class="green">The complete delivery layer for AI coding agents.</span></h2>
-    <div class="products-grid" style="grid-template-columns:1fr;">
-
-      <a class="product-card product-card-provasign" href="{{ '/provasign/' | relative_url }}" style="max-width:640px">
-        <span class="ptag ptag-provasign">provasign · AGPL-3.0</span>
-        <h3>Provasign</h3>
-        <p>Certified delivery for AI coding agents. Intent capture, pre-commit gates, Ed25519-signed admission certificates, and cryptographic audit replay — all in one local-first binary.</p>
-        <ul class="pbullets">
-          <li>Captures the verbatim user prompt as a signed YAML intent before coding starts</li>
-          <li>Runs build, tests, coverage, secrets, SAST, dep audit — in the agent's loop, not after a PR</li>
-          <li>Issues Ed25519-signed certificates: what gates ran, what config was in force, what toolchain version</li>
-          <li>Audit replay: <code style="font-family:var(--mono);color:#86efac;font-size:.82rem">provasign cert replay</code> re-runs gates against any historical commit</li>
-          <li>MCP integration — agent calls <code style="font-family:var(--mono);color:#86efac;font-size:.82rem">provasign_check</code> automatically before every PR</li>
-          <li>Powered by Grove — an embedded code knowledge graph that maps symbols, blast radius, and test coverage for every change</li>
-        </ul>
-        <span class="plink">Full docs →</span>
-      </a>
-
-    </div>
-
-    <div style="margin-top:2.5rem;padding:1.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;max-width:640px">
-      <p style="font-size:.9rem;color:var(--muted);margin-bottom:.75rem">
-        <strong style="color:var(--text)">Also open source, built on Grove:</strong>
-      </p>
-      <p style="font-size:.88rem;color:var(--dim);line-height:1.7">
-        <a href="https://github.com/provasign/prism" style="color:var(--accent)">Prism</a> — graph-ranked context delivery for any AI agent. Cuts token use 35–92% on first reads, ~99% on re-reads. Free, MIT licensed.
-        &nbsp;&nbsp;·&nbsp;&nbsp;
-        <a href="https://github.com/provasign/fuse" style="color:var(--accent)">Fuse</a> — symbol-aware Git merge driver. Resolves ~85% of false conflicts automatically. Free, MIT licensed.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- ── GET STARTED ───────────────────────────────────────────────── -->
-<section class="section section-alt" style="border-top:1px solid rgba(22,101,52,.3)">
-  <div class="section-inner">
-    <div class="section-label">Install</div>
-    <h2 class="section-title">Get started in minutes.</h2>
-
-    <div class="tabs">
-      <button class="tab-btn active" onclick="showTab('agent',this)">Agent setup (recommended)</button>
-      <button class="tab-btn"        onclick="showTab('provasign',this)">Provasign only</button>
-      <button class="tab-btn"        onclick="showTab('all',this)">Full suite</button>
-    </div>
-
-    <div id="tab-agent" class="tab-panel active">
-<pre class="code-block"><span class="c"># In Claude Code — the agent detects your platform, fetches the latest release,</span>
-<span class="c"># verifies checksums, and wires everything into your project:</span>
-<span class="kw">claude</span> <span class="ag">"Follow the setup instructions at https://provasign.dev/assets/AGENT_SETUP_PROMPT.md"</span>
-
-<span class="c"># In any other MCP agent — paste this URL and say "follow the setup instructions":</span>
-<span class="c"># https://provasign.dev/assets/AGENT_SETUP_PROMPT.md</span></pre>
-    </div>
-
-    <div id="tab-provasign" class="tab-panel">
-<pre class="code-block"><span class="c"># Provasign embeds Grove — one binary, no services, no ports, no tokens.</span>
-<span class="kw">curl -fsSL</span> <span class="ag">https://raw.githubusercontent.com/provasign/provasign/main/install.sh</span> <span class="kw">| bash</span>
-
-<span class="kw">cd</span> <span class="ag">/your/project</span>
-<span class="kw">provasign init</span> <span class="ag">--stack=auto</span>   <span class="c"># scaffolds policy, generates Ed25519 key,</span>
-                           <span class="c"># writes agent instructions into CLAUDE.md, .cursorrules, etc.</span>
-<span class="kw">provasign hook install</span>        <span class="c"># git pre-push backstop</span>
-<span class="kw">git add</span> .provasign/ <span class="kw">&amp;&amp; git commit -m</span> <span class="ag">"Add Provasign configuration"</span></pre>
-    </div>
-
-    <div id="tab-all" class="tab-panel">
-<pre class="code-block"><span class="c"># Each product is a standalone binary — install whichever you want.</span>
-<span class="kw">curl -fsSL</span> <span class="ag">https://raw.githubusercontent.com/provasign/grove/main/install.sh</span> <span class="kw">| bash</span>
-<span class="kw">curl -fsSL</span> <span class="ag">https://raw.githubusercontent.com/provasign/prism/main/install.sh</span> <span class="kw">| bash</span>
-<span class="kw">curl -fsSL</span> <span class="ag">https://raw.githubusercontent.com/provasign/fuse/main/install.sh</span> <span class="kw">| bash</span>
-<span class="kw">curl -fsSL</span> <span class="ag">https://raw.githubusercontent.com/provasign/provasign/main/install.sh</span> <span class="kw">| bash</span>
-
-<span class="kw">cd</span> <span class="ag">/your/project</span>
-<span class="kw">provasign init</span> <span class="ag">--stack=auto</span> <span class="kw">&amp;&amp; provasign hook install</span>   <span class="c"># certified delivery</span>
-<span class="kw">prism init &amp;&amp; prism index</span>                       <span class="c"># token-efficient context</span>
-<span class="kw">fuse install</span>                                     <span class="c"># symbol-level merge</span>
-<span class="kw">echo</span> <span class="ag">"*.go merge=fuse"</span> >> .gitattributes</pre>
-    </div>
-  </div>
-</section>
-
-<!-- ── FOOTER ────────────────────────────────────────────────────── -->
-<footer>
-  <div class="footer-inner">
-    <nav class="footer-links">
-      <a href="{{ '/provasign/' | relative_url }}">Provasign</a>
-      <a href="{{ '/how-it-works/' | relative_url }}">How it works</a>
-      <a href="{{ '/architecture/' | relative_url }}">Architecture</a>
-      <a href="{{ '/use-cases/' | relative_url }}">Use cases</a>
-      <a href="{{ '/why/' | relative_url }}">Why Provasign</a>
-      <a href="{{ '/comparisons/' | relative_url }}">Comparisons</a>
-      <a href="{{ '/faq/' | relative_url }}">FAQ</a>
+  <nav class="nav">
+    <a class="brand" href="{{ '/' | relative_url }}"><span class="mark">S</span> Shale</a>
+    <div class="navlinks">
       <a href="{{ '/docs/' | relative_url }}">Docs</a>
-      <a href="https://github.com/provasign/provasign">GitHub ↗</a>
-    </nav>
-    <div style="margin-top:.75rem;font-size:.78rem;color:var(--dim)">
-      Open source tools built on Grove:
-      <a href="https://github.com/provasign/grove" style="color:var(--dim)">Grove</a> ·
-      <a href="https://github.com/provasign/prism" style="color:var(--dim)">Prism</a> ·
-      <a href="https://github.com/provasign/fuse" style="color:var(--dim)">Fuse</a>
+      <a href="{{ '/shale/' | relative_url }}">Shale</a>
+      <a href="{{ '/prism/' | relative_url }}">Prism</a>
+      <a href="{{ '/grove/' | relative_url }}">Grove</a>
+      <a href="https://github.com/provasign/shale">GitHub</a>
     </div>
-    <span class="footer-meta" style="margin-top:.5rem">Provasign &nbsp;·&nbsp; AGPL-3.0 &nbsp;·&nbsp; Local-first &nbsp;·&nbsp; Zero telemetry</span>
-  </div>
-</footer>
+  </nav>
 
-<script>
-function showTab(name, btn) {
-  document.querySelectorAll('.tab-panel').forEach(function(el) { el.classList.remove('active'); });
-  document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
-  document.getElementById('tab-' + name).classList.add('active');
-  btn.classList.add('active');
-}
-</script>
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div class="eyebrow">Open-source agent PR evidence</div>
+        <h1>Every AI-agent PR should explain itself.</h1>
+        <p class="lead">
+          Shale records what an agent was asked to do, what it touched, and what
+          checks it ran, then renders the evidence as a pull-request card.
+          Five minutes to set up. No account. No server.
+        </p>
+        <div class="cta">
+          <a class="btn primary" href="https://github.com/provasign/shale">Get Shale</a>
+          <a class="btn secondary" href="{{ '/docs/' | relative_url }}">Read the docs</a>
+        </div>
+        <div class="install">
+          <div class="install-title">Install Shale</div>
+<pre>brew tap provasign/shale
+brew install shale
+cd your-repo
+shale init</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="grid">
+        <article class="card primary">
+          <span class="tag">primary product · Apache-2.0</span>
+          <h2>Shale</h2>
+          <p>Agent intent capture, session evidence, local check history, and an honest PR card that shows coverage gaps instead of hiding them.</p>
+          <a class="more" href="https://github.com/provasign/shale">Repository -></a>
+        </article>
+        <article class="card">
+          <span class="tag">secondary product · MIT</span>
+          <h2>Prism</h2>
+          <p>Graph-ranked context delivery for AI coding agents. Start with an anchor, get callers, callees, tests, docs, and coverage gaps.</p>
+          <a class="more" href="https://github.com/provasign/prism">Repository -></a>
+        </article>
+        <article class="card">
+          <span class="tag">graph engine · MIT</span>
+          <h2>Grove</h2>
+          <p>The code knowledge graph behind the tools, also available directly for teams that want indexing, symbols, impact, and graph queries.</p>
+          <a class="more" href="https://github.com/provasign/grove">Repository -></a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <h2>What changed?</h2>
+        <p>
+          Provasign started as the name for a broader hosted certification
+          product. That product is paused and intentionally hidden for now. The
+          organization remains <code>provasign</code>, but the public focus is
+          the open-source toolchain: Shale first, Prism second, Grove for direct
+          graph use.
+        </p>
+        <div class="bullets">
+          <div class="bullet"><strong>Shale is the front door.</strong> It solves the immediate reviewer problem: agent PRs need intent and evidence on the PR.</div>
+          <div class="bullet"><strong>Prism helps agents work.</strong> It reduces context gathering and routes agents to the code and tests they need.</div>
+          <div class="bullet"><strong>Grove is the graph.</strong> Use it directly when you want the persistent code graph without Shale or Prism.</div>
+          <div class="bullet"><strong>No hosted dependency.</strong> The default path is local-first open source. No account, server URL, or token paste.</div>
+        </div>
+        <p class="note">Older Provasign pages may remain reachable by direct URL for historical context, but they are no longer the public product path.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">Provasign org · Shale, Prism, and Grove · Open source, local-first tools for AI coding agents.</div>
+  </footer>
 </body>
 </html>

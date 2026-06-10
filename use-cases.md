@@ -5,6 +5,8 @@ nav_order: 6
 has_children: true
 description: "What Provasign is for: security, audit, change management, and end-to-end traceability of AI-generated code."
 permalink: /use-cases/
+nav_exclude: true
+search_exclude: true
 ---
 
 # Use Cases

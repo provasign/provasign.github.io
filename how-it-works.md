@@ -4,6 +4,8 @@ layout: default
 nav_order: 3
 description: "The Provasign loop: capture the intent, gate in the agent's loop, certify with Ed25519, replay the evidence forever."
 permalink: /how-it-works/
+nav_exclude: true
+search_exclude: true
 ---
 
 # How It Works

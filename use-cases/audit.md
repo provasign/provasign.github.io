@@ -5,6 +5,8 @@ parent: Use Cases
 nav_order: 2
 description: "How Provasign makes AI-generated changes auditable after the fact, with replayable cryptographic evidence."
 permalink: /use-cases/audit/
+nav_exclude: true
+search_exclude: true
 ---
 
 # Audit

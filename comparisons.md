@@ -4,6 +4,8 @@ layout: default
 nav_order: 10
 description: "Honest comparisons — Prism vs Copilot/Claude Code/Cursor, Grove vs Sourcegraph/LSP, Fuse vs AI merge tools, Provasign vs CI/CodeRabbit/Sigstore."
 permalink: /comparisons/
+nav_exclude: true
+search_exclude: true
 ---
 
 # Comparisons

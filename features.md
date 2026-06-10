@@ -4,6 +4,8 @@ layout: default
 nav_order: 5
 description: "Provasign's capabilities: in-loop pre-flight, full certification, Ed25519-signed admission, policy gates, risk heatmap, intent trail, and agent wiring."
 permalink: /features/
+nav_exclude: true
+search_exclude: true
 ---
 
 # Features

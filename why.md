@@ -4,6 +4,8 @@ layout: default
 nav_order: 2
 description: "The founder's note — why Provasign exists, why the open-source components beneath it exist, and what we deliberately didn't build."
 permalink: /why/
+nav_exclude: true
+search_exclude: true
 ---
 
 # Why Provasign

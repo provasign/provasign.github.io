@@ -5,6 +5,8 @@ parent: Use Cases
 nav_order: 4
 description: "The unbroken chain Provasign maintains from natural-language prompt to admitted commit."
 permalink: /use-cases/traceability/
+nav_exclude: true
+search_exclude: true
 ---
 
 # Traceability

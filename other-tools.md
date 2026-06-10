@@ -4,6 +4,8 @@ layout: default
 nav_order: 9
 description: "Prism and Fuse — the open-source tools that share Provasign's embedded Grove engine, usable standalone."
 permalink: /other-tools/
+nav_exclude: true
+search_exclude: true
 ---
 
 # Other Developer Tools

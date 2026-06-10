@@ -4,6 +4,8 @@ layout: default
 nav_order: 7
 description: "How to install Provasign on macOS, Linux, and Windows — from GitHub Releases binaries or from source."
 permalink: /installation/
+nav_exclude: true
+search_exclude: true
 ---
 
 # Installation

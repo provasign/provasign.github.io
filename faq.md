@@ -4,6 +4,8 @@ layout: default
 nav_order: 11
 description: "Frequently asked questions — technical, security, business, and audit perspectives."
 permalink: /faq/
+nav_exclude: true
+search_exclude: true
 ---
 
 # Provasign FAQ
