@@ -14,7 +14,10 @@ layout: null
   <meta property="og:description" content="Every AI-agent PR should explain itself. Shale renders intent, evidence, checks, and gaps on the pull request.">
   <meta property="og:url" content="{{ '/' | absolute_url }}">
   <meta property="og:type" content="website">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="{{ '/assets/images/og-image.png' | absolute_url }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="{{ '/assets/images/og-image.png' | absolute_url }}">
+  <link rel="icon" type="image/svg+xml" href="{{ '/assets/images/logo-icon.svg' | relative_url }}">
   <style>
     :root {
       --bg: #0d1117;
@@ -40,11 +43,7 @@ layout: null
       border-bottom: 1px solid var(--line); backdrop-filter: blur(12px);
     }
     .brand { display: flex; align-items: center; gap: 10px; font-weight: 750; text-decoration: none; }
-    .mark {
-      width: 26px; height: 26px; display: grid; place-items: center;
-      border: 1px solid rgba(56,217,150,.5); border-radius: 6px; color: var(--accent);
-      font-family: var(--mono); font-size: 14px; background: rgba(56,217,150,.08);
-    }
+    .brand svg { width: 26px; height: 26px; display: block; }
     .navlinks { display: flex; align-items: center; gap: 18px; font-size: 14px; color: var(--muted); }
     .navlinks a { text-decoration: none; }
     .navlinks a:hover { color: var(--accent); }
@@ -81,6 +80,22 @@ layout: null
     .bullet { padding: 18px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel2); color: var(--muted); line-height: 1.55; }
     .bullet strong { color: var(--text); }
     .note { color: var(--dim); font-size: 14px; margin-top: 22px; }
+    .demo2 { display: grid; grid-template-columns: 1.05fr .95fr; gap: 22px; margin-top: 32px; align-items: start; }
+    .termimg { width: 100%; height: auto; border-radius: 10px; }
+    .ghcard { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; font-size: 13.5px; }
+    .ghhead { padding: 9px 14px; background: var(--panel2); border-bottom: 1px solid var(--line); }
+    .ghbot { color: var(--text); font-weight: 700; }
+    .ghdim { color: var(--dim); }
+    .ghbody { padding: 14px 16px 16px; color: var(--muted); line-height: 1.55; }
+    .ctitle { color: var(--text); font-weight: 750; font-size: 15.5px; }
+    .cmeta { color: var(--dim); font-size: 12.5px; margin: 6px 0 2px; }
+    .csub { color: var(--text); font-weight: 700; margin: 14px 0 6px; }
+    .ghbody blockquote { margin: 8px 0; padding: 6px 12px; border-left: 3px solid var(--accent); color: var(--muted); }
+    .ghbody table { width: 100%; border-collapse: collapse; margin: 4px 0; }
+    .ghbody td { border: 1px solid var(--line); padding: 5px 9px; }
+    .ghbody code { font-family: var(--mono); font-size: 12px; background: #0b1320; padding: 1.5px 5px; border-radius: 4px; color: var(--accent2); }
+    .ghbody a { color: var(--accent2); }
+    @media (max-width: 980px) { .demo2 { grid-template-columns: 1fr; } }
     footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--dim); font-size: 14px; }
     @media (max-width: 800px) {
       .nav { padding: 0 18px; }
@@ -92,7 +107,7 @@ layout: null
 </head>
 <body>
   <nav class="nav">
-    <a class="brand" href="{{ '/' | relative_url }}"><span class="mark">S</span> Shale</a>
+    <a class="brand" href="{{ '/' | relative_url }}"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="6" y="8" width="40" height="9" rx="3" fill="#38d996"/><rect x="18" y="21" width="40" height="9" rx="3" fill="#94a3b8"/><rect x="6" y="34" width="40" height="9" rx="3" fill="#64748b"/><rect x="18" y="47" width="40" height="9" rx="3" fill="#475569"/></svg> Shale</a>
     <div class="navlinks">
       <a href="{{ '/docs/' | relative_url }}">Docs</a>
       <a href="{{ '/shale/' | relative_url }}">Shale</a>
@@ -123,6 +138,42 @@ brew install shale
 cd your-repo
 shale init</pre>
         </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <h2>A session becomes evidence.</h2>
+        <p>
+          The agent declares intent, works, and closes the session. Push, and the
+          evidence travels with the code — rendered as a card on the pull request.
+        </p>
+        <div class="demo2">
+          <img class="termimg" src="{{ '/assets/images/shale-demo.svg' | relative_url }}"
+               alt="A Shale session: shale intent, agent edits, shale done, git push, card rendered" width="720" loading="lazy">
+          <div class="ghcard">
+            <div class="ghhead"><span class="ghbot">⚙ github-actions</span> <span class="ghdim">bot commented</span></div>
+            <div class="ghbody">
+              <div class="ctitle">🧾 Shale · 1 session · claude-code (claude-fable-5)</div>
+              <div class="cmeta">claude-fable-5 · 60k tokens · ~$0.67 · 2 iterations · &lt; 1 min</div>
+              <div class="csub">Intent</div>
+              <blockquote><strong>Add rate limiting to the login endpoint</strong><br>
+                Token bucket per client IP, 10 requests/min, in-memory. Return 429 with Retry-After.</blockquote>
+              <div class="cmeta">Declared 2026-06-10 12:54 · session <code>25f37dfc</code> · <a href="https://github.com/provasign/shale-test-bed/pull/1">transcript</a> <code>sha256:b95fc42c…</code></div>
+              <div class="csub">Changed files (3) — all with session evidence</div>
+              <table>
+                <tr><td><code>internal/ratelimit/ratelimit.go</code></td><td>✅ 25f37dfc</td><td class="ghdim">new file</td></tr>
+                <tr><td><code>internal/ratelimit/ratelimit_test.go</code></td><td>✅ 25f37dfc</td><td class="ghdim">new file</td></tr>
+                <tr><td><code>main.go</code></td><td>✅ 25f37dfc</td><td></td></tr>
+              </table>
+              <div class="csub">Checks recorded locally</div>
+              <table><tr><td><code>go test ./...</code></td><td>✅ passed</td><td class="ghdim">12:54</td></tr></table>
+              <div class="cmeta"><em>Advisory — CI is authoritative.</em></div>
+            </div>
+          </div>
+        </div>
+        <p class="note">The card above is real — see the
+          <a href="https://github.com/provasign/shale-test-bed/pulls?q=is%3Apr" style="color:var(--accent)">live demo pull requests</a>.</p>
       </div>
     </section>
 

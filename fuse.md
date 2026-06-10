@@ -11,7 +11,7 @@ permalink: /fuse/
 
 # Fuse
 
-Fuse is the open-source, symbol-aware Git merge driver that embeds [Provasign]({{ '/provasign/' | relative_url }})'s Grove engine. Its documentation now lives in the repository:
+Fuse is the open-source, symbol-aware Git merge driver built on the [Grove]({{ '/grove/' | relative_url }}) engine. Its documentation lives in the repository:
 
 [Fuse README on GitHub →](https://github.com/provasign/fuse#readme){: .btn .btn-primary }
 

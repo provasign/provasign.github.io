@@ -1,29 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 48" fill="none" role="img" aria-label="Shale">
-  <title>Shale</title>
-
-  <!-- ── Icon ───────────────────────────────────────────────────── -->
-
-  <line x1="24" y1="8"  x2="11" y2="24" stroke="#4ade80" stroke-width="2.2" stroke-linecap="round" stroke-opacity="0.55"/>
-  <line x1="24" y1="8"  x2="37" y2="24" stroke="#4ade80" stroke-width="2.2" stroke-linecap="round" stroke-opacity="0.55"/>
-  <line x1="11" y1="24" x2="5"  y2="41" stroke="#4ade80" stroke-width="2.2" stroke-linecap="round" stroke-opacity="0.55"/>
-  <line x1="11" y1="24" x2="24" y2="41" stroke="#4ade80" stroke-width="2.2" stroke-linecap="round" stroke-opacity="0.55"/>
-  <line x1="37" y1="24" x2="24" y2="41" stroke="#4ade80" stroke-width="2.2" stroke-linecap="round" stroke-opacity="0.55"/>
-
-  <circle cx="24" cy="8"  r="6"   fill="#f0fdf4"/>
-  <circle cx="11" cy="24" r="4.5" fill="#4ade80"/>
-  <circle cx="37" cy="24" r="4.5" fill="#4ade80"/>
-  <circle cx="5"  cy="41" r="3.5" fill="#86efac"/>
-  <circle cx="24" cy="41" r="3.5" fill="#86efac"/>
-
-  <!-- ── Wordmark ────────────────────────────────────────────────── -->
-
-  <text
-    x="60" y="27"
-    font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
-    font-size="22"
-    font-weight="700"
-    letter-spacing="0"
-    fill="#f0fdf4"
-    dominant-baseline="middle"
-  >Shale</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 252 64" role="img" aria-label="Shale">
+  <!-- Lockup for light backgrounds -->
+  <g>
+    <rect x="6"  y="8"  width="40" height="9" rx="3" fill="#10b981"/>
+    <rect x="18" y="21" width="40" height="9" rx="3" fill="#475569"/>
+    <rect x="6"  y="34" width="40" height="9" rx="3" fill="#334155"/>
+    <rect x="18" y="47" width="40" height="9" rx="3" fill="#1e293b"/>
+  </g>
+  <text x="76" y="45" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="750" letter-spacing="-1.5" fill="#0f172a">shale</text>
 </svg>

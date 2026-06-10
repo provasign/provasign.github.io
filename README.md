@@ -24,9 +24,11 @@ a reviewer-ready PR card.
 | Goal | Link |
 |---|---|
 | Add agent PR evidence to a repo | [Shale]({{ '/shale/' | relative_url }}) |
+| Full setup walkthrough | [Getting started](https://github.com/provasign/shale/blob/main/docs/getting-started.md) |
+| Something looks off | [Troubleshooting](https://github.com/provasign/shale/blob/main/docs/troubleshooting.md) |
+| See real cards on real PRs | [Live demo pull requests](https://github.com/provasign/shale-test-bed/pulls?q=is%3Apr) |
 | Give agents graph-ranked context | [Prism]({{ '/prism/' | relative_url }}) |
 | Use the code graph directly | [Grove]({{ '/grove/' | relative_url }}) |
-| Read the Shale source/docs | [Shale repository](https://github.com/provasign/shale#readme) |
 
 ---
 
