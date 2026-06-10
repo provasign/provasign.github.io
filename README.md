@@ -8,8 +8,8 @@ permalink: /docs/
 
 # Documentation
 
-This site is now organized around the open-source toolchain in the
-`provasign` GitHub organization:
+This site documents the open-source toolchain in the `provasign` GitHub
+organization:
 
 | Project | Role | Status |
 |---|---|---|
@@ -17,9 +17,7 @@ This site is now organized around the open-source toolchain in the
 | **Prism** | Graph-ranked context delivery for AI coding agents | Secondary product, MIT |
 | **Grove** | Persistent code graph and indexing engine for direct graph use or embedded tools | Graph engine, MIT |
 
-The hosted/enterprise Provasign product is paused and hidden from the main docs
-path. Older Provasign pages may remain available by direct URL for historical
-context, but the active public product is Shale.
+Provasign is the GitHub organization for these tools. Start with Shale.
 
 ---
 
