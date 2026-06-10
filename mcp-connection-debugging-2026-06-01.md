@@ -1,3 +1,10 @@
+---
+layout: default
+nav_exclude: true
+search_exclude: true
+permalink: /mcp-connection-debugging-2026-06-01/
+---
+
 # MCP Connection Failure — Root Cause Analysis (2026-06-01)
 
 ## Symptoms
