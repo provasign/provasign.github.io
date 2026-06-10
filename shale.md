@@ -98,9 +98,16 @@ hooks are self-guarding and stay silent until `shale` appears on their PATH.
 
 ## The questions your security team will ask
 
-**Does prompt text leave the laptop?** Only after redaction, and only into
-your own repo. Three committed modes: `full`, `redacted` (default — secrets,
-emails, tokens stripped), `hash-only` (no prompt text at all, just hashes).
+**Does prompt text leave the laptop?** No — period, in current builds.
+Shale can capture the raw prompts developers type and redact them (secrets,
+credentials, tokens) before committing a prompts-only transcript, but we
+have **turned that off in the product** — a build-time flag, deliberately
+not configurable — until we are confident the redaction layer handles
+free-form human text and the regulatory questions around capturing raw
+prompts are settled. Prompts stay in gitignored `.shale/local/` on the
+laptop; committed evidence carries only a prompt count and an intent
+integrity hash. Agent-authored text (intent, notes, commands) is redacted
+before persistence (`full` / `redacted` / `hash-only` modes).
 
 **Can the author fake the evidence?** Editing evidence after capture is
 detected and flagged on the card (hash verification at render time).
