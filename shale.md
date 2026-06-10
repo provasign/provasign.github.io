@@ -78,6 +78,11 @@ server, no account, no GitHub App, no token to paste.
 Teammates who haven't installed the CLI see nothing at all: the committed
 hooks are self-guarding and stay silent until `shale` appears on their PATH.
 
+**Repos with branch protection:** run `shale init` on a branch, open a
+normal PR, merge it. The bootstrap PR won't have a Shale card — that's
+expected, because the workflow doesn't exist on `main` yet. Every PR
+after that merge gets a card. [Full guide →](https://github.com/provasign/shale/blob/main/docs/getting-started.md)
+
 ## How it works, honestly
 
 1. **The agent declares intent.** A steering block (in `CLAUDE.md`,
@@ -90,8 +95,8 @@ hooks are self-guarding and stay silent until `shale` appears on their PATH.
    **redacted** session log. No hooks? Shale falls back to git to derive the
    file list — and labels it as such on the card.
 3. **Push finalizes.** A pre-push hook folds the session into
-   `.shale/<session>.yaml` plus a SHA-256-pinned, prompts-only transcript and
-   commits them. Fail-open: a Shale problem can never block your push.
+   `.shale/<session>.yaml` and commits it alongside your code. Fail-open: a
+   Shale problem can never block your push.
 4. **CI renders the card.** The GitHub Action reads the evidence and the diff
    through the API — it never checks out PR code — verifies the transcript
    hashes, and posts the card as a comment plus a neutral check.
@@ -124,7 +129,8 @@ calls from the laptop — enforced by test.
 
 ## Start here
 
-- **[Getting started](https://github.com/provasign/shale/blob/main/docs/getting-started.md)** — the full walkthrough
+- **[Getting started](https://github.com/provasign/shale/blob/main/docs/getting-started.md)** — the full walkthrough, including branch protection setup
+- **[CI integrations](https://github.com/provasign/shale/blob/main/docs/ci-integrations.md)** — Jenkins, CircleCI, GitHub Enterprise Server, and the env contract
 - **[Live demo PRs](https://github.com/provasign/shale-test-bed/pulls?q=is%3Apr)** — happy path, coverage gaps, and the no-evidence nudge, on real PRs
 - **[Troubleshooting](https://github.com/provasign/shale/blob/main/docs/troubleshooting.md)** — when something looks off
 - **[Product & architecture](https://github.com/provasign/shale/blob/main/docs/product.md)** — design decisions, capture tiers, security model
