@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 48" fill="none" role="img" aria-label="Grove Suite">
-  <title>Grove Suite</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 48" fill="none" role="img" aria-label="Provasign">
+  <title>Provasign</title>
 
   <!-- ── Icon ───────────────────────────────────────────────────── -->
 
@@ -22,18 +22,8 @@
     font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
     font-size="22"
     font-weight="700"
-    letter-spacing="-0.3"
+    letter-spacing="0"
     fill="#f0fdf4"
     dominant-baseline="middle"
-  >Grove</text>
-
-  <text
-    x="130" y="27"
-    font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
-    font-size="22"
-    font-weight="300"
-    letter-spacing="1"
-    fill="#86efac"
-    dominant-baseline="middle"
-  >Suite</text>
+  >Provasign</text>
 </svg>

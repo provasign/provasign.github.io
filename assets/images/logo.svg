@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 48" fill="none" role="img" aria-label="Grove Suite">
-  <title>Grove Suite</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 48" fill="none" role="img" aria-label="Provasign">
+  <title>Provasign</title>
 
   <!-- ── Icon (48 × 48) ─────────────────────────────────────────── -->
 
@@ -19,25 +19,14 @@
 
   <!-- ── Wordmark ────────────────────────────────────────────────── -->
 
-  <!-- "Grove" — heavy, dark forest green -->
+  <!-- "Provasign" wordmark -->
   <text
     x="60" y="27"
     font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
     font-size="22"
     font-weight="700"
-    letter-spacing="-0.3"
+    letter-spacing="0"
     fill="#0d3320"
     dominant-baseline="middle"
-  >Grove</text>
-
-  <!-- "Suite" — lighter weight, forest green, small-caps spaced -->
-  <text
-    x="130" y="27"
-    font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
-    font-size="22"
-    font-weight="300"
-    letter-spacing="1"
-    fill="#166534"
-    dominant-baseline="middle"
-  >Suite</text>
+  >Provasign</text>
 </svg>
