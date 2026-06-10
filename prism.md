@@ -8,7 +8,7 @@ permalink: /prism/
 
 # Prism
 
-Prism is the secondary open-source product from the Provasign org.
+Prism is the secondary open-source tool for graph-ranked context delivery.
 
 It turns a task plus precise anchor terms into the code, callers, callees,
 tests, docs, and coverage gaps an agent needs to make a change safely. It is

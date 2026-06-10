@@ -1,5 +1,5 @@
 title: Shale
-description: Agent PR evidence for AI coding agents. Shale is the primary open-source product from the Provasign org, with Prism for context delivery and Grove for graph-only use.
+description: Agent PR evidence for AI coding agents, with Prism for context delivery and Grove for graph-only use.
 theme: just-the-docs
 
 logo: "assets/images/logo.svg"

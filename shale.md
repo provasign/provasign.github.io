@@ -8,7 +8,7 @@ permalink: /shale/
 
 # Shale
 
-Shale is the primary open-source product from the Provasign org.
+Shale is the primary open-source tool for agent PR evidence.
 
 It records what an AI coding agent was asked to do, what it touched, and what
 checks it ran, then renders that evidence as a pull-request card.

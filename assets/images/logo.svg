@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 48" fill="none" role="img" aria-label="Provasign">
-  <title>Provasign</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 48" fill="none" role="img" aria-label="Shale">
+  <title>Shale</title>
 
   <!-- ── Icon (48 × 48) ─────────────────────────────────────────── -->
 
@@ -19,7 +19,7 @@
 
   <!-- ── Wordmark ────────────────────────────────────────────────── -->
 
-  <!-- "Provasign" wordmark -->
+  <!-- "Shale" wordmark -->
   <text
     x="60" y="27"
     font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
@@ -28,5 +28,5 @@
     letter-spacing="0"
     fill="#0d3320"
     dominant-baseline="middle"
-  >Provasign</text>
+  >Shale</text>
 </svg>

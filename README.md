@@ -1,23 +1,21 @@
 ---
-title: Documentation
+title: Shale Documentation
 layout: default
 nav_order: 1
-description: "Documentation map for Shale, Prism, and Grove."
+description: "Shale documentation, with links to Prism and Grove."
 permalink: /docs/
 ---
 
-# Documentation
+# Shale Documentation
 
-This site documents the open-source toolchain in the `provasign` GitHub
-organization:
+Start here if you want agent-authored PRs to carry intent, local evidence, and
+a reviewer-ready PR card.
 
 | Project | Role | Status |
 |---|---|---|
 | **Shale** | Agent PR evidence: intent capture, session evidence, local checks, and pull-request cards | Primary product, Apache-2.0 |
 | **Prism** | Graph-ranked context delivery for AI coding agents | Secondary product, MIT |
 | **Grove** | Persistent code graph and indexing engine for direct graph use or embedded tools | Graph engine, MIT |
-
-Provasign is the GitHub organization for these tools. Start with Shale.
 
 ---
 
