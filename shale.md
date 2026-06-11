@@ -83,6 +83,12 @@ normal PR, merge it. The bootstrap PR won't have a Shale card — that's
 expected, because the workflow doesn't exist on `main` yet. Every PR
 after that merge gets a card. [Full guide →](https://github.com/provasign/shale/blob/main/docs/getting-started.md)
 
+**Already using husky/lefthook or another PR bot?** Fine on both counts:
+`init` never clobbers existing hooks (it honors `core.hooksPath` and tells
+you if you need to chain `shale finalize --auto-commit` into a
+manager-owned hook), and the card never touches comments posted by other
+tools.
+
 ## How it works, honestly
 
 1. **The agent declares intent.** A steering block (in `CLAUDE.md`,
