@@ -30,7 +30,7 @@ diff.
 
 A card like [this one, on a live demo PR](https://github.com/provasign/shale-test-bed/pull/1):
 
-> **🧾 Shale · 1 session · claude-code (claude-fable-5)**
+> **<img src="{{ '/assets/images/logo-icon.png' | relative_url }}" width="16" height="16" alt=""> Shale · 1 session · claude-code (claude-fable-5)**
 > claude-fable-5 · 60k tokens · ~$0.67 · 2 iterations · < 1 min
 >
 > **Intent** — *Add rate limiting to the login endpoint.* Token bucket per
@@ -102,6 +102,29 @@ after that merge gets a card. [Full guide →](https://github.com/provasign/shal
    hashes, and posts the card as a comment plus a neutral check.
 
 ## The questions your security team will ask
+
+**What exactly gets recorded?** Committed evidence (`.shale/<session>.yaml`)
+holds the agent's intent, the **paths** of files it touched and the operation
+(write / edit / delete), the commands it ran and their exit codes, and the
+model, tokens, cost, and timing. Nothing more.
+
+**What does it deliberately *not* capture?**
+
+- **File contents or diffs** — Shale records *that* `auth.go` changed, never
+  *what* changed. The diff is already in the PR.
+- **Gitignored files** — any touch whose path your repo ignores (`.env`,
+  `*.pem`, `secrets/`, anything in `.gitignore`) is dropped at finalize. Secrets
+  live in exactly those paths, so they never reach committed evidence.
+- **Files outside the repo** — a path resolving outside the repo root is dropped.
+- **Raw prompt text** — see below.
+
+**What about secrets in commands?** Agent-authored text — intent, notes, and
+the commands themselves — is run through a secret-redaction pass before it is
+written. It catches vendor token shapes (AWS, GitHub, OpenAI, Anthropic, Slack,
+Stripe, and more) plus the command-line forms agents actually use: env-prefix
+assignments (`API_KEY=… ./run`), secret flags (`--token=…`, `--password …`),
+and bearer headers. The command stays on the card — knowing the agent ran
+`go test` is the point — only the secret *value* is masked.
 
 **Does prompt text leave the laptop?** No — period, in current builds.
 Shale can capture the raw prompts developers type and redact them (secrets,
