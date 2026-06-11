@@ -95,11 +95,13 @@ tools.
    `AGENTS.md`, `.cursorrules`, …) tells your agent to run
    `shale intent "<goal>"` before its first edit and `shale done` when
    finished. Works with any agent that can run a shell command.
-2. **Hooks capture the session.** For agents with hook support (Claude Code
-   today; Cursor, Codex, and Copilot configs ship inert and light up as
-   adapters land), every file touch, command, and prompt streams into a local,
-   **redacted** session log. No hooks? Shale falls back to git to derive the
-   file list — and labels it as such on the card.
+2. **Hooks capture the session.** For agents with hook support, every file
+   touch, command, and prompt streams into a local, **redacted** session log.
+   Claude Code and Codex are tested against real sessions today; Cursor and
+   Copilot adapters are implemented but not yet validated against real
+   payloads — [real payload samples welcome](https://github.com/provasign/shale/issues/4).
+   No hooks? Shale falls back to git to derive the file list — and labels it
+   as such on the card.
 3. **Push finalizes.** A pre-push hook folds the session into
    `.shale/<session>.yaml` and commits it alongside your code. Fail-open: a
    Shale problem can never block your push.
