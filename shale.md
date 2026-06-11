@@ -158,6 +158,13 @@ is evidence, not enforcement.
 **What does it phone home?** Nothing. No telemetry, no accounts, no network
 calls from the laptop — enforced by test.
 
+**What if we try it and walk away?** `shale uninstall` removes everything on
+your machine; `shale uninstall --repo` also removes the committed files
+(commit the removal). It only deletes what Shale wrote — your instruction
+files, your hook entries, and your hook manager's files survive. And because
+the committed hooks are self-guarding, `brew uninstall shale` alone makes
+everything go silent for you. No account to close, nothing left running.
+
 ## Start here
 
 - **[Getting started](https://github.com/provasign/shale/blob/main/docs/getting-started.md)** — the full walkthrough, including branch protection setup
