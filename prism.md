@@ -53,10 +53,15 @@ rg buildCoverageGaps internal/
 
 ---
 
-## Benchmark: real maintenance scenarios
+## Benchmarks
 
-Five real maintenance tasks on the Prism codebase itself, run both ways on
-2026-06-07. Shell-only baseline: `rg` plus targeted file reads. Prism: one
+Prism saves tokens two different ways, and they compound. The first is
+measured per-query; the second compounds across a whole session.
+
+### 1. Context gathering — one query replaces 5–6 reads
+
+Five real maintenance tasks on the Prism codebase itself, run both ways
+(2026-06-07). Shell-only baseline: `rg` plus targeted file reads. Prism: one
 CLI text command per scenario.
 
 | Scenario | Shell bytes | Prism bytes | Reduction |
@@ -71,17 +76,42 @@ CLI text command per scenario.
 The bigger correctness win is that Prism surfaces tests and coverage gaps
 **proactively**. Shell-only workflows often discover those after CI fails.
 
-Two distinct saving mechanisms:
+### 2. Repeat reads — the savings that compound all session long
 
-1. **Context-gathering reduction.** One graph-aware query replaces 5–6 shell
-   searches and file reads. This is what CLI benchmarks measure.
-2. **Session deduplication** (MCP persistent transport). Repeat reads of
-   an unchanged file collapse to a ~10-token SHA pointer, which is where the
-   ~99% repeated-read savings come from. This only applies in persistent MCP
-   sessions — not in single-shot CLI invocations.
+This is the dimension a single-query benchmark can't capture, and it's the
+larger number over a real session. In a persistent MCP session, Prism
+remembers every file it has already delivered. The **first** read returns the
+content (already trimmed by progressive disclosure); **every read after that**
+of an unchanged file collapses to a ~10-token SHA pointer instead of the full
+file.
 
-Full benchmark reports: [CLI real-world](https://github.com/provasign/prism/blob/main/docs/Prism-CLI-Real-World-Benchmark-2026-06-07.md) ·
-[Payflow A/B controlled test](https://github.com/provasign/prism/blob/main/docs/AB-Test-Payflow-2026-06-07.md)
+Measured across four project sizes (2026-05-27), token savings on the *same
+file* by read number:
+
+| Project | Files | 1st read | 2nd read | 3rd read |
+|---|---:|---:|---:|---:|
+| Small | 61 | 0% | **67.5%** | **67.5%** |
+| Medium | 801 | 56.1% | **67.1%** | **67.1%** |
+| Large | 4,501 | 56.1% | **67.1%** | **67.1%** |
+| Monorepo | 9,901 | 0% | **58.0%** | **58.0%** |
+
+Those are session-level aggregates. The underlying mechanism is sharper still:
+a single large file re-read drops from its full token cost to ~10 tokens — a
+**~99% reduction on that read**. Agents re-open the same handful of files
+constantly — the file they're editing, the test that pins it, the interface it
+implements — so across a 20-query session these repeat-read savings dwarf the
+per-query context-gathering win.
+
+Watch it accumulate live:
+
+```sh
+prism savings .      # delivered vs. original tokens, per tool, this session
+```
+
+> **Repeat-read dedup only applies in persistent MCP sessions** (`--mode both`
+> or `mcp`). Single-shot CLI invocations are process-per-command, so each one
+> starts cold — they benefit from context-gathering reduction (mechanism 1),
+> not session dedup.
 
 ---
 
