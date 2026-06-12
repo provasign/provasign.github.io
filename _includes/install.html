@@ -1,0 +1,24 @@
+{% comment %}
+  Install-command widget: method tabs + copy button + live latest-version
+  badge (fetched client-side from the GitHub releases API; see the script in
+  head_custom.html).
+
+  Params:
+    repo     — owner/name, drives the version badge (required)
+    formula  — brew formula (adds the brew tab)
+    curl     — full curl command (adds the curl tab)
+    ps       — full PowerShell command (adds the powershell tab)
+{% endcomment %}
+<div class="ps-install" data-repo="{{ include.repo }}">
+  <div class="ps-install-head">
+    {% if include.formula %}<button type="button" class="ps-install-tab" data-cmd="brew install {{ include.formula }}">brew</button>{% endif %}
+    {% if include.curl %}<button type="button" class="ps-install-tab" data-cmd="{{ include.curl }}">curl</button>{% endif %}
+    {% if include.ps %}<button type="button" class="ps-install-tab" data-cmd="{{ include.ps }}">powershell</button>{% endif %}
+    <a class="ps-install-version" href="https://github.com/{{ include.repo }}/releases/latest"
+       target="_blank" rel="noopener" title="Latest release on GitHub">latest&nbsp;→</a>
+  </div>
+  <div class="ps-install-cmdline">
+    <code class="ps-install-cmd"></code>
+    <button type="button" class="ps-install-copy" aria-label="Copy command to clipboard">copy</button>
+  </div>
+</div>

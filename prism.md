@@ -151,15 +151,11 @@ for automation that needs structured output.
 
 ## Installation
 
+{% include install.html repo="provasign/prism" formula="provasign/shale/prism" curl="curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash" ps="irm https://raw.githubusercontent.com/provasign/prism/main/install.ps1 | iex" %}
+
 ```sh
-# macOS / Linux
-curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
-
-# Windows (PowerShell)
-irm https://raw.githubusercontent.com/provasign/prism/main/install.ps1 | iex
-
 # Pin a version
-VERSION=v0.5.6 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
+VERSION=v0.7.0 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
 ```
 
 Installs to `~/bin` by default. Set `INSTALL_DIR=/usr/local/bin` to override.

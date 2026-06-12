@@ -208,15 +208,11 @@ grove certify <diff-file-or-> [dir]
 
 ## Installation
 
+{% include install.html repo="provasign/grove" curl="curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash" ps="irm https://raw.githubusercontent.com/provasign/grove/main/install.ps1 | iex" %}
+
 ```sh
-# macOS / Linux
-curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
-
-# Windows (PowerShell)
-irm https://raw.githubusercontent.com/provasign/grove/main/install.ps1 | iex
-
 # Pin a specific version
-VERSION=v0.6.2 curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
+VERSION=v0.6.3 curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
 ```
 
 Installs to `~/bin` by default. Set `INSTALL_DIR=/usr/local/bin` to override.

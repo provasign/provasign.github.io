@@ -174,18 +174,11 @@ Fuse never changes how your history is stored.
 
 ## Installation
 
+{% include install.html repo="provasign/fuse" formula="provasign/shale/fuse" curl="curl -fsSL https://raw.githubusercontent.com/provasign/fuse/main/install.sh | bash" ps="irm https://raw.githubusercontent.com/provasign/fuse/main/install.ps1 | iex" %}
+
 ```sh
-# Homebrew (macOS / Linux) — one tap for the family
-brew install provasign/shale/fuse
-
-# Script install (macOS / Linux)
-curl -fsSL https://raw.githubusercontent.com/provasign/fuse/main/install.sh | bash
-
-# Windows (PowerShell)
-irm https://raw.githubusercontent.com/provasign/fuse/main/install.ps1 | iex
-
 # Pin a version
-VERSION=v0.8.0 curl -fsSL https://raw.githubusercontent.com/provasign/fuse/main/install.sh | bash
+VERSION=v0.8.1 curl -fsSL https://raw.githubusercontent.com/provasign/fuse/main/install.sh | bash
 ```
 
 Then: `cd your-repo && fuse init`. There is also a GitHub Action example in

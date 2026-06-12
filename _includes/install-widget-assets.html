@@ -1,0 +1,108 @@
+<style>
+  /* ── Install widget (_includes/install.html) ─────────── */
+  .ps-install {
+    border: 1px solid #21262d; border-radius: 8px;
+    background: #090d12; margin: 12px 0 16px; max-width: 720px;
+    font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+  }
+  .ps-install-head {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 10px; border-bottom: 1px solid #21262d;
+  }
+  .ps-install-tab {
+    background: transparent; color: #8b949e; cursor: pointer;
+    border: 1px solid #30363d; border-radius: 6px;
+    padding: 3px 12px; font-size: 0.8rem; font-family: inherit;
+  }
+  .ps-install-tab:hover  { color: #e6edf3; border-color: #8b949e; }
+  .ps-install-tab.active {
+    color: #4ade80; border-color: #22c55e;
+    background: rgba(34,197,94,.08); font-weight: 600;
+  }
+  .ps-install-version {
+    margin-left: auto; font-size: 0.78rem;
+    color: #8b949e !important; text-decoration: none;
+  }
+  .ps-install-version:hover { color: #4ade80 !important; }
+  .ps-install-cmdline {
+    display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+  }
+  .ps-install-cmd {
+    flex: 1; background: transparent !important; border: none !important;
+    color: #b0c8b0 !important; font-size: 0.85rem;
+    white-space: nowrap; overflow-x: auto;
+  }
+  .ps-install-cmd::before { content: "$ "; color: #4ade80; user-select: none; }
+  .ps-install-copy {
+    background: transparent; color: #8b949e; cursor: pointer;
+    border: 1px solid #30363d; border-radius: 6px;
+    padding: 3px 10px; font-size: 0.78rem; font-family: inherit; flex-shrink: 0;
+  }
+  .ps-install-copy:hover  { color: #e6edf3; border-color: #8b949e; }
+  .ps-install-copy.copied { color: #4ade80; border-color: #22c55e; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Tabs + copy.
+  document.querySelectorAll('.ps-install').forEach(function (w) {
+    var tabs = w.querySelectorAll('.ps-install-tab');
+    var cmd  = w.querySelector('.ps-install-cmd');
+    var copy = w.querySelector('.ps-install-copy');
+    function select(tab) {
+      tabs.forEach(function (t) { t.classList.toggle('active', t === tab); });
+      cmd.textContent = tab.getAttribute('data-cmd');
+    }
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () { select(t); });
+    });
+    if (tabs.length) select(tabs[0]);
+    if (copy) copy.addEventListener('click', function () {
+      var text = cmd.textContent;
+      var done = function () {
+        copy.textContent = 'copied'; copy.classList.add('copied');
+        setTimeout(function () {
+          copy.textContent = 'copy'; copy.classList.remove('copied');
+        }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done);
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+    });
+  });
+
+  // Live latest-version badges — one API call per repo per session.
+  var byRepo = {};
+  document.querySelectorAll('.ps-install[data-repo]').forEach(function (w) {
+    var r = w.getAttribute('data-repo');
+    if (!r) return;
+    (byRepo[r] = byRepo[r] || []).push(w);
+  });
+  Object.keys(byRepo).forEach(function (repo) {
+    var apply = function (tag) {
+      byRepo[repo].forEach(function (w) {
+        var a = w.querySelector('.ps-install-version');
+        if (a) { a.textContent = tag + ' · latest →'; }
+      });
+    };
+    var key = 'ps-latest:' + repo;
+    var cached = null;
+    try { cached = sessionStorage.getItem(key); } catch (e) {}
+    if (cached) { apply(cached); return; }
+    fetch('https://api.github.com/repos/' + repo + '/releases/latest')
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (rel) {
+        if (rel && rel.tag_name) {
+          try { sessionStorage.setItem(key, rel.tag_name); } catch (e) {}
+          apply(rel.tag_name);
+        }
+      })
+      .catch(function () { /* badge stays "latest →" — still a valid link */ });
+  });
+});
+</script>
