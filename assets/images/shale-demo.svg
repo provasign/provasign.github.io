@@ -52,14 +52,14 @@
   </g>
   <g class="l a6">
     <text x="24" y="250"><tspan class="tool">⏺ Bash</tspan><tspan class="out">(shale done --note "Token-bucket limiter; tests cover refill")</tspan></text>
-    <text x="40" y="270"><tspan class="out">⎿</tspan><tspan class="ok" dx="8">✓ completion recorded (session 25f37d) — finalize runs on push</tspan></text>
+    <text x="40" y="270"><tspan class="out">⎿</tspan><tspan class="ok" dx="8">✓ completion recorded (session 25f37d) — evidence committed; publishes with your push</tspan></text>
   </g>
   <g class="l a7">
     <text x="24" y="302"><tspan class="ok">❯</tspan><tspan class="u" dx="8">git push</tspan></text>
   </g>
   <g class="l a8">
-    <text x="24" y="326"><tspan class="out">shale: finalized 1 file(s)</tspan><tspan class="hook" dx="10">· .shale/25f37dfc….yaml</tspan></text>
-    <text x="24" y="346"><tspan class="out">shale: evidence committed</tspan><tspan class="hook" dx="10">· chore(shale): session evidence — prompts stay local</tspan></text>
+    <text x="24" y="326"><tspan class="out">shale: nothing to finalize</tspan><tspan class="hook" dx="10">· evidence already committed at done</tspan></text>
+    <text x="24" y="346"><tspan class="out">→ chore(shale): session evidence rides the push</tspan><tspan class="hook" dx="10">· prompts stay local</tspan></text>
   </g>
   <g class="l a9">
     <rect x="24" y="358" width="672" height="26" rx="6" fill="#10231c" stroke="#1f5b43"/>

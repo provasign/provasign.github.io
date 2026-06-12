@@ -21,7 +21,7 @@ The evidence travels with the code. The reviewer reads the card, then the
 diff.
 
 <img src="{{ '/assets/images/shale-demo.svg' | relative_url }}"
-     alt="A real Claude Code session with Shale: the agent declares intent, edits files, runs tests, reports done; git push commits the evidence"
+     alt="A real Claude Code session with Shale: the agent declares intent, edits files, runs tests, reports done — and done commits the evidence"
      width="720" style="max-width:100%; border-radius:10px; margin: 8px 0 4px;">
 
 *Every output line above is real — captured verbatim from a live session.*
@@ -70,10 +70,22 @@ shale init
 git add . && git commit -m "chore: enable shale" && git push
 ```
 
+<img src="{{ '/assets/images/shale-init.gif' | relative_url }}"
+     alt="shale init in a fresh repo: steering, capture hooks, a consent prompt for the Claude Code allowlist, scaffold, workflow, pre-push hook"
+     width="720" style="max-width:100%; border-radius:10px; margin: 8px 0 4px;">
+
 `shale init` writes everything **into the repo** — agent steering, capture
 hooks, evidence store, and the GitHub Action. Your teammates get wired
 automatically on `git clone`. Nobody signs up for anything; there is no
 server, no account, no GitHub App, no token to paste.
+
+The one question it asks (real terminals only, default no): whether to
+auto-approve the three shale evidence commands for Claude Code. Saying yes
+writes a permissions allowlist — scoped to exactly `shale intent`,
+`shale done`, and `shale note`, never a wildcard — into the committed
+`.claude/settings.json`, so the whole team's agents stop hitting permission
+prompts for evidence. It's visible in the bootstrap PR diff and
+`shale uninstall --repo` removes it.
 
 Teammates who haven't installed the CLI see nothing at all: the committed
 hooks are self-guarding and stay silent until `shale` appears on their PATH.
@@ -83,11 +95,13 @@ normal PR, merge it. The bootstrap PR won't have a Shale card — that's
 expected, because the workflow doesn't exist on `main` yet. Every PR
 after that merge gets a card. [Full guide →](https://github.com/provasign/shale/blob/main/docs/getting-started.md)
 
-**Already using husky/lefthook or another PR bot?** Fine on both counts:
-`init` never clobbers existing hooks (it honors `core.hooksPath` and tells
-you if you need to chain `shale finalize --auto-commit` into a
-manager-owned hook), and the card never touches comments posted by other
-tools.
+**Already using husky/lefthook or another PR bot?** Fine on both counts.
+`init` never clobbers existing hooks (it honors `core.hooksPath` and names
+the exact hook file if you want to chain `shale finalize --auto-commit`
+into it) — and since evidence now publishes at `shale done`, agent sessions
+don't depend on that hook at all; chaining only matters as the safety net
+for sessions without a done. The card never touches comments posted by
+other tools.
 
 ## How it works, honestly
 
@@ -102,9 +116,12 @@ tools.
    payloads — [real payload samples welcome](https://github.com/provasign/shale/issues/4).
    No hooks? Shale falls back to git to derive the file list — and labels it
    as such on the card.
-3. **Push finalizes.** A pre-push hook folds the session into
-   `.shale/<session>.yaml` and commits it alongside your code. Fail-open: a
-   Shale problem can never block your push.
+3. **`shale done` publishes.** The done call folds the session into
+   `.shale/<session>.yaml` and commits it on the spot — the evidence commit
+   exists before you push, so it always travels with the code. A pre-push
+   hook remains as the safety net, finalizing any session that never got a
+   `done` (interrupted agents, sessions an agent abandoned). Fail-open both
+   ways: a Shale problem can never block your push.
 4. **CI renders the card.** The GitHub Action reads the evidence and the diff
    through the API — it never checks out PR code — verifies the transcript
    hashes, and posts the card as a comment plus a neutral check.
@@ -144,6 +161,14 @@ prompts are settled. Prompts stay in gitignored `.shale/local/` on the
 laptop; committed evidence carries only a prompt count and an intent
 integrity hash. Agent-authored text (intent, notes, commands) is redacted
 before persistence (`full` / `redacted` / `hash-only` modes).
+
+**What permissions does it grant agents?** None by default. With your
+explicit consent at `init` (an interactive `[y/N]`, or a flag in scripts),
+it allowlists exactly three commands for Claude Code — `shale intent`,
+`shale done`, `shale note` — in the committed `.claude/settings.json`.
+Never `shale *`: uninstalling, re-initializing, and anything shipped later
+still prompt. The grant is reviewable in the PR that adds it and
+`shale uninstall --repo` removes precisely those entries.
 
 **Can the author fake the evidence?** Editing evidence after capture is
 detected and flagged on the card (hash verification at render time).
