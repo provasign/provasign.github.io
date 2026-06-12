@@ -1,7 +1,7 @@
 ---
 title: Grove
 layout: default
-nav_order: 4
+nav_order: 5
 description: "A persistent code graph for your repository — impact, tests, and dependencies, queryable by humans, tools, and agents."
 permalink: /grove/
 ---
@@ -37,23 +37,22 @@ milliseconds from the on-disk graph.
 
 ## Performance
 
-Benchmarks on macOS against synthetic Go projects (2026-05-27). Numbers reflect
-a cold index (no prior hash cache). Subsequent runs on an unchanged project
-complete in **milliseconds regardless of project size** — only modified files
-are re-parsed.
+Measured on real repositories (macOS, Apple Silicon, 2026-06-12), parallel
+parsing and native analyzers enabled:
 
-| Project | Files | Index time | Peak RSS | Query latency |
-|---|---:|---:|---:|---:|
-| Small | 61 | 0.06 s | 30 MB | 6 ms |
-| Medium | 801 | 0.85 s | 55 MB | 6 ms |
-| Large | 4,501 | 11.6 s | 117 MB | 9 ms |
-| Monorepo | 9,901 | 34.0 s | 196 MB | 61 ms |
+| Repo | Files | Symbols | Edges | Cold index | One-file change | No-change reindex (CLI) |
+|---|---:|---:|---:|---:|---:|---:|
+| [prometheus](https://github.com/prometheus/prometheus) | 1,476 | 14k | 259k | 12.2 s | — | 0.7 s |
+| [django](https://github.com/django/django) | 3,792 | 39.5k | 425k | 18.5 s | — | 1.5 s |
+| [grafana](https://github.com/grafana/grafana) | 18,979 | 98.5k | 1.16M | 56.6 s | 18.7 s | 9.5 s |
 
-Query latency is FTS5 full-text search + BFS depth-3 graph traversal returning
-ranked results.
-
-**Targets:** index 5,000 files in under 5 s · BFS depth-3 on 50K nodes under
-30 ms · FTS5 query under 10 ms.
+A **one-file change** re-parses one file, runs native analyzers only for
+that file's language (other languages' edges are carried forward), and
+diff-syncs the edge table — only changed rows are written. The
+**no-change** CLI number is dominated by per-process graph rehydration; a
+long-lived embedded engine (Prism, Fuse) pays it once at open, after which
+a no-change reindex is milliseconds and queries run in-memory — BFS depth-3
+over 50k nodes ≈ 4.5 ms, ranked search ≈ 15 ms at 50k symbols.
 
 ---
 
@@ -77,7 +76,7 @@ In-memory CodeGraph
   8 edge types · BFS traversal
      │
      ├── CLI commands
-     ├── MCP stdio (8 tools)
+     ├── MCP stdio (9 tools)
      └── Embedded Go API (pkg/grove)
 ```
 
@@ -146,7 +145,7 @@ FTS5 full-text index, queryable semantically alongside code.
 | Surface | For |
 |---|---|
 | **CLI** | Humans, scripts, CI |
-| **MCP stdio** (`grove mcp .`) | Any MCP-capable AI agent — 8 tools |
+| **MCP stdio** (`grove mcp .`) | Any MCP-capable AI agent — 9 tools |
 | **Embedded Go API** (`pkg/grove`) | Your own tools, in-process — how [Prism]({{ '/prism/' | relative_url }}) and Fuse use it |
 
 Everything lives in `.grove/grove.db` — one SQLite file. Back it up, copy it,
@@ -156,7 +155,9 @@ or delete it to force a full reindex. No server, no port, no token.
 
 ## MCP tools
 
-Eight tools over JSON-RPC 2.0 stdio, accessible to any MCP-capable agent:
+Nine tools over JSON-RPC 2.0 stdio, accessible to any MCP-capable agent.
+Responses are token-disciplined: slim symbol shapes (no source bodies on the
+wire), capped lists with true counts, compact JSON.
 
 | Tool | Purpose |
 |---|---|
@@ -166,8 +167,9 @@ Eight tools over JSON-RPC 2.0 stdio, accessible to any MCP-capable agent:
 | `grove_impact` | Blast radius — what breaks if this symbol changes? |
 | `grove_deps` | Dependency tree for a file |
 | `grove_tests` | Tests that cover a symbol (direct + transitive) |
-| `grove_icr` | Intent complexity rating |
-| `grove_conflicts` | Potential conflict hotspots |
+| `grove_icr` | Isolated Change Region for an intent |
+| `grove_conflicts` | Overlap check between two change regions |
+| `grove_certify` | Conservative certification report for a unified diff |
 
 Start the MCP server:
 
@@ -214,12 +216,52 @@ curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | b
 irm https://raw.githubusercontent.com/provasign/grove/main/install.ps1 | iex
 
 # Pin a specific version
-VERSION=v0.5.0 curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
+VERSION=v0.6.2 curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
 ```
 
 Installs to `~/bin` by default. Set `INSTALL_DIR=/usr/local/bin` to override.
 
 Build from source: `make build && make install`.
+
+---
+
+## Graph diff — the drift primitive
+
+`pkg/grove` exposes a structural diff between two snapshots of the graph:
+added, removed, and changed symbols, detected renames, and
+`BreakingChanges` (exported symbols removed or with a changed signature).
+Symbols are matched by stable identity — file path + qualified name + kind —
+so line shifts don't register; only real changes appear.
+
+This is the primitive behind the toolchain's stale-context loop:
+[Fuse]({{ '/fuse/' | relative_url }}) diffs the graph across every merge and
+records the drift in `.git/fuse/drift.json`;
+[Prism]({{ '/prism/' | relative_url }}) delivers it to agents mid-session so
+nobody edits from a memory of code that no longer exists.
+
+---
+
+## Troubleshooting
+
+**Indexing is slow on a very large repo.** The TypeScript program check
+dominates polyglot repos on a cold index. Native analyzers default to a 5 s
+timeout each — set `GROVE_NATIVE_TIMEOUT=60s` to let `go list`/`tsc` finish
+on huge repos. Timeouts degrade gracefully (the affected language loses
+native enrichment, AST edges remain) and are reported in the index
+diagnostics.
+
+**Results look stale or wrong.** Delete `.grove/grove.db` and reindex — the
+whole index is that one SQLite file. Schema migrations run automatically on
+open, so version upgrades never need a manual wipe.
+
+**CLI queries feel slower than expected.** Each CLI invocation rehydrates
+the graph from SQLite (see the no-change column in the performance table).
+Long-lived consumers — Prism MCP, Fuse, your own `pkg/grove` embed — pay
+that once at open, then query in memory.
+
+**A directory you care about isn't indexed.** Indexing honors `.gitignore`
+and `.groveignore` and skips dependency/build/cache directories and
+secret-bearing filenames by design. Check those before suspecting a bug.
 
 ---
 
@@ -247,7 +289,9 @@ directories, and avoids secret-bearing filenames and credential extensions.
 ## Where it fits
 
 Grove is the **graph engine**. [Prism]({{ '/prism/' | relative_url }}) builds
-the context-ranking layer on top of it.
+the context-ranking layer on top of it, and
+[Fuse]({{ '/fuse/' | relative_url }}) uses it to merge at the symbol level
+and record drift evidence.
 [Shale]({{ '/shale/' | relative_url }}) plans to use it for intent-to-diff
 conformance. You can use Grove directly when you want graph queries — impact,
 tests, deps, symbols — without the higher-level tools.

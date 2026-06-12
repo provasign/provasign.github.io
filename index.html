@@ -66,7 +66,7 @@ layout: null
     }
     .install-title { padding: 10px 14px; color: var(--dim); border-bottom: 1px solid var(--line); font-size: 13px; }
     pre { margin: 0; padding: 18px; overflow-x: auto; color: #d1fae5; font: 14px/1.7 var(--mono); }
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; padding: 54px 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; padding: 54px 0; }
     .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 24px; }
     .card.primary { background: linear-gradient(145deg, rgba(56,217,150,.12), var(--panel)); border-color: rgba(56,217,150,.45); }
     .tag { display: inline-block; margin-bottom: 14px; color: var(--accent); font: 12px var(--mono); }
@@ -112,6 +112,7 @@ layout: null
       <a href="{{ '/docs/' | relative_url }}">Docs</a>
       <a href="{{ '/shale/' | relative_url }}">Shale</a>
       <a href="{{ '/prism/' | relative_url }}">Prism</a>
+      <a href="{{ '/fuse/' | relative_url }}">Fuse</a>
       <a href="{{ '/grove/' | relative_url }}">Grove</a>
       <a href="https://github.com/provasign/shale">GitHub</a>
     </div>
@@ -192,6 +193,12 @@ shale init</pre>
           <a class="more" href="https://github.com/provasign/prism">Repository -></a>
         </article>
         <article class="card">
+          <span class="tag">merge driver · Apache-2.0</span>
+          <h2>Fuse</h2>
+          <p>A semantic git merge driver. Symbol-aware three-way merge, AI conflict handoff, and drift evidence so parallel agents don't trip over each other.</p>
+          <a class="more" href="https://github.com/provasign/fuse">Repository -></a>
+        </article>
+        <article class="card">
           <span class="tag">graph engine · MIT</span>
           <h2>Grove</h2>
           <p>The code knowledge graph behind the tools, also available directly for teams that want indexing, symbols, impact, and graph queries.</p>
@@ -205,21 +212,42 @@ shale init</pre>
         <h2>Open source, local-first by default.</h2>
         <p>
           Start with Shale when you want pull-request evidence, add Prism when
-          agents need better context, and use Grove directly when another
+          agents need better context, add Fuse when parallel work keeps
+          colliding at merge time, and use Grove directly when another
           project needs the graph itself.
         </p>
         <div class="bullets">
           <div class="bullet"><strong>Shale is the primary product.</strong> It solves the immediate reviewer problem: agent PRs need intent and evidence on the PR.</div>
           <div class="bullet"><strong>Prism helps agents work.</strong> It reduces context gathering and routes agents to the code and tests they need.</div>
-          <div class="bullet"><strong>Grove is the graph.</strong> Use it directly when you want the persistent code graph without Shale or Prism.</div>
+          <div class="bullet"><strong>Fuse merges parallel work.</strong> A symbol-aware git merge driver that resolves what's compatible and hands off what isn't — with full context.</div>
+          <div class="bullet"><strong>Grove is the graph.</strong> Use it directly when you want the persistent code graph without the higher-level tools.</div>
           <div class="bullet"><strong>No hosted dependency.</strong> The default path is local-first open source. No account, server URL, or token paste.</div>
+          <div class="bullet"><strong>One tap for everything.</strong> <code style="font-family:var(--mono);font-size:13px;">brew tap provasign/shale</code> installs any of them; each repo sets up with a single <code style="font-family:var(--mono);font-size:13px;">init</code> command.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <h2>Why these names?</h2>
+        <p>
+          The family is named for how each tool treats the raw material of
+          agent work — light, growth, joining, and sediment. <strong>Provasign</strong>
+          is the umbrella: <em>prova</em> (proof) + <em>sign</em> — agent work
+          that can prove itself.
+        </p>
+        <div class="bullets">
+          <div class="bullet"><strong>Shale</strong> is sedimentary rock: thin, readable layers compacted from what settled. Shale compacts a messy agent session into clean strata of evidence on the pull request.</div>
+          <div class="bullet"><strong>Prism</strong> splits white light into a spectrum. Point a task at your codebase and Prism refracts it into exactly the bands an agent needs — code, callers, tests, coverage gaps — ranked and budgeted.</div>
+          <div class="bullet"><strong>Fuse</strong> joins two things into one that holds. Fuse merges parallel lines of work at the symbol level — and like the electrical kind, it trips safely (a context-rich handoff) instead of letting a bad merge burn through.</div>
+          <div class="bullet"><strong>Grove</strong> is a stand of trees with one root system. Every file is parsed into a syntax tree; together they grow into a single connected, persistent graph the whole toolchain stands on.</div>
         </div>
       </div>
     </section>
   </main>
 
   <footer>
-    <div class="wrap">Shale, Prism, and Grove · Open source, local-first tools for AI coding agents.</div>
+    <div class="wrap">Shale, Prism, Fuse, and Grove · Open source, local-first tools for AI coding agents.</div>
   </footer>
 </body>
 </html>
