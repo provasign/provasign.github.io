@@ -14,8 +14,8 @@ a reviewer-ready PR card.
 | Project | Role | Status |
 |---|---|---|
 | **Shale** | Agent PR evidence: intent capture, session evidence, local checks, and pull-request cards | Primary product, Apache-2.0 |
-| **Prism** | Graph-ranked context delivery for AI coding agents | Secondary product, MIT |
-| **Grove** | Persistent code graph and indexing engine for direct graph use or embedded tools | Graph engine, MIT |
+| **Prism** | Graph-ranked context delivery for AI coding agents | Secondary product, Apache-2.0 |
+| **Grove** | Persistent code graph and indexing engine for direct graph use or embedded tools | Graph engine, Apache-2.0 |
 
 ---
 
