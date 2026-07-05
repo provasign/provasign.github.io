@@ -287,7 +287,8 @@ with `--include docs`.
 
 ## MCP tools
 
-When running in MCP mode, eighteen tools are available to agents:
+When running in MCP mode, fourteen tools are advertised to agents via
+`tools/list` — deliberately a narrow surface, so steering stays unambiguous:
 
 | Tool | Purpose |
 |---|---|
@@ -305,6 +306,13 @@ When running in MCP mode, eighteen tools are available to agents:
 | `prism_search` | Keyword search across indexed symbol names |
 | `prism_index` | Trigger reindex (after large changes) |
 | `prism_drift` | Report files/symbols that changed since they were delivered this session |
+
+Four session utilities exist alongside them (invocable by name or via the
+CLI, not advertised in `tools/list` — they are operator tools, not steering
+targets):
+
+| Utility | Purpose |
+|---|---|
 | `prism_savings` | Show session token savings so far |
 | `prism_feedback` | Rate a context result (improves ranking weights) |
 | `prism_compact` | Compact the session savings ledger |
