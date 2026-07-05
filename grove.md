@@ -212,7 +212,7 @@ grove certify <diff-file-or-> [dir]
 
 ```sh
 # Pin a specific version
-VERSION=v0.14.1 curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
+VERSION=v0.15.0 curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
 ```
 
 Installs to `~/bin` by default. Set `INSTALL_DIR=/usr/local/bin` to override.
@@ -272,6 +272,9 @@ grove symbols <query> [dir]         # symbol search
 grove query <intent> [dir]          # semantic query (embeddings + BFS)
 grove impact <symbol> [dir]         # blast radius
 grove change-impact <Type.method[(ParamType,...)> [dir]  # type-resolved change-set: declaration + override family + callers
+grove missing-implementations <Type.method> [dir]  # types claiming the contract that do not implement the member
+grove untested-surface <Type.method> [dir]  # change-set partitioned by covering-test evidence
+grove dead-code [dir] [--roots a,b]  # unreachable production functions/methods (precision-first)
 grove tests <symbol> [dir]          # tests covering a symbol
 grove certify <diff> [dir]          # structural certification
 
