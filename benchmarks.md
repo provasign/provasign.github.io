@@ -132,18 +132,22 @@ The same protocol, three more languages:
 Measured on a Grafana monorepo worktree — 18,901 indexed files (~14.7k
 Go/TypeScript sources, 1.4 GB), Apple M5 Pro, 24 GB:
 
-| Operation | Measured |
+| Operation | Measured (grove v0.17.0) |
 |---|---|
-| Cold index (full build) | 33.3 s, 2.09 GB peak RSS |
-| Index size on disk | 1.2 GB (98,067 symbols, ~859k edges) |
-| No-op rescan (nothing changed) | 5.7 s |
-| Delta after a one-file change | 14.8 s (was ~34 s before v0.16.1) |
+| Cold index — complete graph, deterministic | 58.8 s (98,067 symbols, 1,468,951 edges) |
+| No-op rescan (nothing changed) | ~6 s |
+| Delta after a one-file change | ~19 s, incl. re-analyzing the changed package + its reverse importers |
 | `change-impact` query, end-to-end CLI | ~4 s |
 
-The remaining delta cost is dominated by the whole-module native analyzer
-pass and the full edge-store rewrite — both queued engine work items; the
-honest numbers today, published rather than hidden. Queries never trigger a
-full rebuild; sessions stay warm.
+Two honesty notes. First, earlier versions reported a 33 s cold index — that
+number was real but the graph was silently incomplete: a 5-second native-
+analyzer timeout was dropping ~610k native edges on a repo this size. v0.17.0
+sizes the analyzer budget to the repo, scopes delta re-analysis to changed
+packages plus their reverse importers, and carries unaffected packages'
+facts forward. Second, builds are now **bit-perfect deterministic**: repeated
+cold builds produce byte-identical graphs, and an edit-then-revert cycle
+converges exactly to the cold baseline — verified by hashing all 1.47M edge
+rows. Queries never trigger a rebuild; sessions stay warm.
 
 ---
 
