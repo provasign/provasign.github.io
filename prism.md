@@ -29,6 +29,9 @@ the two tests that pin its contract, and a note that `RefillRate` has no direct
 test coverage. That's the context an agent needs to change the code *safely* —
 not just the lines that matched a grep.
 
+The claims on this page are measured, not asserted — controlled study,
+independent oracles, open data: see **[Benchmarks](/benchmarks/)**.
+
 ---
 
 ## The division of labor
