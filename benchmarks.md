@@ -134,15 +134,16 @@ Go/TypeScript sources, 1.4 GB), Apple M5 Pro, 24 GB:
 
 | Operation | Measured |
 |---|---|
-| Cold index (full build) | 53.6 s, 2.08 GB peak RSS |
-| Index size on disk | 1.2 GB (98,067 symbols, 858,985 edges) |
-| No-op rescan (nothing changed) | 7.8 s |
-| Delta after a one-file change | ~34 s |
+| Cold index (full build) | ~44 s, 2.08 GB peak RSS |
+| Index size on disk | 1.2 GB (98,067 symbols, ~859k edges) |
+| No-op rescan (nothing changed) | ~5 s |
+| Delta after a one-file change | ~15 s (was ~34 s before v0.16.1's parallel edge build) |
 | `change-impact` query, end-to-end CLI | ~4 s |
 
-The one-file delta is dominated by cross-file edge relinking and is a known
-engine work item — the honest number today, published rather than hidden.
-Queries never trigger a full rebuild; sessions stay warm.
+The remaining delta cost is dominated by the whole-module native analyzer
+pass and the full edge-store rewrite — both queued engine work items; the
+honest numbers today, published rather than hidden. Queries never trigger a
+full rebuild; sessions stay warm.
 
 ---
 
