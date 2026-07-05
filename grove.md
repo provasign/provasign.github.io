@@ -275,6 +275,7 @@ grove change-impact <Type.method[(ParamType,...)> [dir]  # type-resolved change-
 grove missing-implementations <Type.method> [dir]  # types claiming the contract that do not implement the member
 grove untested-surface <Type.method> [dir]  # change-set partitioned by covering-test evidence
 grove dead-code [dir] [--roots a,b]  # unreachable production functions/methods (precision-first)
+grove rename-plan <Type.method> <NewName> [dir]  # change-set as concrete line edits with substitutions
 grove tests <symbol> [dir]          # tests covering a symbol
 grove certify <diff> [dir]          # structural certification
 

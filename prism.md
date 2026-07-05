@@ -249,7 +249,7 @@ closure, which is useful for migration sweeps.
 Relay the result as-is. Re-running grep after to "verify" measurably drops real
 sites and adds spurious ones — the engine already solved the traversal.
 
-Change impact is one of four **task-shaped operations** — traversals agents
+Change impact is one of five **task-shaped operations** — traversals agents
 otherwise orchestrate over many turns, computed in the engine as one
 deterministic call each:
 
@@ -259,6 +259,7 @@ deterministic call each:
 | `prism missing-implementations 'Type.method'` | Which types claiming this contract don't implement it — who breaks once the member is required? Under a default body, who inherits the default and breaks if it becomes abstract? |
 | `prism untested-surface 'Type.method'` | Which parts of the change-set have no test within 3 resolved caller hops — what should be tested first? |
 | `prism dead-code [--roots a,b]` | Which production functions/methods does nothing reach? Precision-first: unreachable, non-exported, and name-unreferenced — safe to delete without breaking compilation. Caveats (reflection, DI, codegen) are part of the answer. |
+| `prism rename-plan 'Type.method' NewName` | The rename as concrete line edits — file, line, before, after — for every declaration, override, and resolved call site. Review and apply; ambiguous lines are bucketed separately, never silently included. |
 
 ---
 
@@ -286,7 +287,7 @@ with `--include docs`.
 
 ## MCP tools
 
-When running in MCP mode, seventeen tools are available to agents:
+When running in MCP mode, eighteen tools are available to agents:
 
 | Tool | Purpose |
 |---|---|
@@ -294,6 +295,7 @@ When running in MCP mode, seventeen tools are available to agents:
 | `prism_missing_implementations` | Types claiming a contract that do not implement the member — missing / abstract / unverifiable buckets |
 | `prism_untested_surface` | The change-set partitioned by covering-test evidence — write tests for the untested list first |
 | `prism_dead_code` | Unreachable production functions/methods — precision-first deletion candidates with caveats |
+| `prism_rename_plan` | The change-impact set converted to concrete line edits with suggested substitutions — review-and-apply |
 | `prism_query` | Graph-ranked context for a task + anchor terms |
 | `prism_read` | Full file content (deduplicates unchanged reads in session) |
 | `prism_lookup` | Single known symbol — function, method, type |
