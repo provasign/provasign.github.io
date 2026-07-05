@@ -178,7 +178,7 @@ Fuse never changes how your history is stored.
 
 ```sh
 # Pin a version
-VERSION=v0.13.2 curl -fsSL https://raw.githubusercontent.com/provasign/fuse/main/install.sh | bash
+VERSION=v0.13.3 curl -fsSL https://raw.githubusercontent.com/provasign/fuse/main/install.sh | bash
 ```
 
 Then: `cd your-repo && fuse init`. There is also a GitHub Action example in
