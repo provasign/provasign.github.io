@@ -134,10 +134,10 @@ Go/TypeScript sources, 1.4 GB), Apple M5 Pro, 24 GB:
 
 | Operation | Measured |
 |---|---|
-| Cold index (full build) | ~44 s, 2.08 GB peak RSS |
+| Cold index (full build) | 33.3 s, 2.09 GB peak RSS |
 | Index size on disk | 1.2 GB (98,067 symbols, ~859k edges) |
-| No-op rescan (nothing changed) | ~5 s |
-| Delta after a one-file change | ~15 s (was ~34 s before v0.16.1's parallel edge build) |
+| No-op rescan (nothing changed) | 5.7 s |
+| Delta after a one-file change | 14.8 s (was ~34 s before v0.16.1) |
 | `change-impact` query, end-to-end CLI | ~4 s |
 
 The remaining delta cost is dominated by the whole-module native analyzer
