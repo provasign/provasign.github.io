@@ -127,6 +127,25 @@ The same protocol, three more languages:
 
 ---
 
+## Scale
+
+Measured on a Grafana monorepo worktree — 18,901 indexed files (~14.7k
+Go/TypeScript sources, 1.4 GB), Apple M5 Pro, 24 GB:
+
+| Operation | Measured |
+|---|---|
+| Cold index (full build) | 53.6 s, 2.08 GB peak RSS |
+| Index size on disk | 1.2 GB (98,067 symbols, 858,985 edges) |
+| No-op rescan (nothing changed) | 7.8 s |
+| Delta after a one-file change | ~34 s |
+| `change-impact` query, end-to-end CLI | ~4 s |
+
+The one-file delta is dominated by cross-file edge relinking and is a known
+engine work item — the honest number today, published rather than hidden.
+Queries never trigger a full rebuild; sessions stay warm.
+
+---
+
 ## What we do not claim
 
 - **Small, greppable tasks are a tie.** On 8–38-site tasks with distinctive

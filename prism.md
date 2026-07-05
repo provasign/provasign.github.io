@@ -206,8 +206,10 @@ prism read internal/payment/service.go --format text
 prism lookup github.com/example/payflow/internal/payment.(*Service).RefundPayment --format text
 ```
 
-Indexing 5,000 files takes seconds; the graph updates incrementally — only
-modified files are re-parsed on subsequent runs.
+Indexing 5,000 files takes seconds; a 19k-file monorepo (Grafana) cold-indexes
+in ~54 s and rescans in ~8 s when nothing changed. The graph updates
+incrementally — only modified files are re-parsed. Measured scale numbers are
+on the [Benchmarks](/benchmarks/) page.
 
 ---
 
