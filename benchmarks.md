@@ -132,12 +132,29 @@ The same protocol, three more languages:
 Measured on a Grafana monorepo worktree — 18,901 indexed files (~14.7k
 Go/TypeScript sources, 1.4 GB), Apple M5 Pro, 24 GB:
 
-| Operation | Measured (grove v0.17.1) |
+Typical repos first (grove v0.17.2, Apple M5 Pro):
+
+| Repo | Files | Cold index | One-file delta | No-op rescan | Peak RSS |
+|---|---|---|---|---|---|
+| gin (Go) | ~100 | 2.1 s | 1.9 s | <1 s | 90 MB |
+| jackson-databind (Java) | 1.2k | 7.3 s | 2.8 s | 0.6 s | ~0.5 GB |
+| TypeORM (TS) | 3.2k | 4.9 s | 3.0 s | <1 s | 0.6 GB |
+| Grafana monorepo (Go+TS) | 18.9k | ~60 s | 13.1 s | 4.3 s | 2.1 GB |
+
+And the monorepo detail:
+
+| Operation | Measured (grove v0.17.2, Grafana 18.9k files) |
 |---|---|
 | Cold index — complete graph, deterministic | ~60 s (98,067 symbols, 1,468,951 edges) |
 | No-op rescan (nothing changed) | 4.3 s |
 | Delta after a one-file change | 13.1 s, incl. re-analyzing the changed package + its reverse importers |
 | `change-impact` query, end-to-end CLI | ~4 s |
+
+**Hardware:** any 4-core machine with 8 GB RAM handles repos up to a few
+thousand files comfortably; 20k-file monorepos want 16 GB (2 GB peak for the
+indexer alone, alongside your editor and agent). Parallel phases cap at 8
+workers, so extra cores beyond that go unused. In persistent MCP sessions
+the graph stays warm in memory — delta costs apply to one-shot CLI runs.
 
 Two honesty notes. First, earlier versions reported a 33 s cold index — that
 number was real but the graph was silently incomplete: a 5-second native-
