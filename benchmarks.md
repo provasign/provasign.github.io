@@ -132,11 +132,11 @@ The same protocol, three more languages:
 Measured on a Grafana monorepo worktree — 18,901 indexed files (~14.7k
 Go/TypeScript sources, 1.4 GB), Apple M5 Pro, 24 GB:
 
-| Operation | Measured (grove v0.17.0) |
+| Operation | Measured (grove v0.17.1) |
 |---|---|
-| Cold index — complete graph, deterministic | 58.8 s (98,067 symbols, 1,468,951 edges) |
-| No-op rescan (nothing changed) | ~6 s |
-| Delta after a one-file change | ~19 s, incl. re-analyzing the changed package + its reverse importers |
+| Cold index — complete graph, deterministic | ~60 s (98,067 symbols, 1,468,951 edges) |
+| No-op rescan (nothing changed) | 4.3 s |
+| Delta after a one-file change | 13.1 s, incl. re-analyzing the changed package + its reverse importers |
 | `change-impact` query, end-to-end CLI | ~4 s |
 
 Two honesty notes. First, earlier versions reported a 33 s cold index — that
