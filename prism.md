@@ -30,9 +30,11 @@ test coverage. That's the context an agent needs to change the code *safely* —
 not just the lines that matched a grep.
 
 The claims on this page are measured, not asserted — controlled study,
-independent oracles, open data, including a named-tool comparison
-(engine completeness 0.99 vs CodeGraph's 0.52 on the same oracle-scored
-tasks): see **[Benchmarks](/benchmarks/)**.
+independent oracles, open data. Correctness and completeness are always the
+headline; efficiency is reported next to them, never alone. For
+transparency we also benchmark Prism against other open-source context
+tools on the same oracles, publishing every raw run: see
+**[Benchmarks](/benchmarks/)**.
 
 ---
 

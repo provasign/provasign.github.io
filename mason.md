@@ -6,7 +6,13 @@ description: "A coding agent for any model — local, Anthropic, or OpenAI — w
 permalink: /mason/
 ---
 
-# Mason — the harness-first coding agent
+# Mason — the harness-first coding agent (experimental)
+
+Mason exists to test a hypothesis the
+[benchmarks]({{ '/benchmarks/' | relative_url }}) made concrete: **if
+completeness lives in the engine, a free local model can do real agentic
+coding.** It is an experimental CLI and says so — everything it claims below
+is oracle-scored and published.
 
 **The problem:** coding agents are built for frontier models. Point one at a
 local 30B and it forgets steering, re-types tool output lossily, re-derives
@@ -73,6 +79,23 @@ design targets: task-shaped graph operations make completeness
 **tier-invariant** — recall 1.00 from a free qwen3-coder:30b up to a
 frontier model, across four languages
 ([benchmarks]({{ '/benchmarks/' | relative_url }})).
+
+---
+
+## The numbers so far — free local model, oracle-scored
+
+| Scenario | Model ($0) | Result |
+|---|---|---|
+| Change-impact, jackson — 8 sites incl. callers *not named after the target* | qwen3-coder:30b | **recall 1.00**, 23.8 s |
+| Change-impact, Guava — 310 sites | qwen3-coder:30b | **0.997** (the engine ceiling), 1 agent turn |
+| Change-impact, Grafana (Go) — 93 sites | qwen3-coder:30b | **1.000**, 1 turn |
+| Change-impact, Django (Python) — 32 sites | qwen3-coder:30b | **1.000** recall, 1 turn |
+| End-to-end rename: type-resolved plan → 24 edits applied → `go build` verified | local 14B | build green |
+
+The control: the **same local model** driving general-purpose CLIs without
+task-shaped graph operations scored **0–1 out of 9** on the same task family
+([AB-LOCAL-CLIS](https://github.com/provasign/research/blob/main/harness/AB-LOCAL-CLIS.md)).
+The model didn't change — the harness and the tool altitude did.
 
 ---
 

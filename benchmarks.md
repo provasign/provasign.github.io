@@ -8,6 +8,12 @@ permalink: /benchmarks/
 
 # Benchmarks — measured, not vibes
 
+**The principle every number here serves: correctness and completeness come
+first.** Token savings and speed only matter at equal completeness — a
+cheaper, faster *incomplete* change-set is a faster broken build. So recall
+against ground truth is always the headline, and efficiency is only ever
+reported next to it, never alone.
+
 Every number on this page comes from a controlled, paired study: same task,
 same repository, same model — only the tool guidance changes. Answers are
 scored against **independent oracles** (Go: SSA/VTA; Java: a Spoon
@@ -127,16 +133,48 @@ The same protocol, three more languages:
 
 ---
 
-## Named-tool comparison: Prism vs CodeGraph
+## Free agentic coding, on the strength of the graph: Mason (experimental)
 
-[CodeGraph](https://github.com/colbymchenry/codegraph) is an open-source
-tree-sitter code graph (30+ languages, one-call `explore` context) whose
-headline claims are context-delivery *efficiency*. We measured both engines
-on the axis that governs safe refactors — change-impact **completeness** —
-against the same independent oracles, same scorer, same corpora, no LLM.
-CodeGraph is queried through `explore`, its strongest surface (its weaker
-CLI subcommands would have scored 0.12 — reporting those would be a hit
-piece).
+The tier-invariance result has a practical consequence worth testing
+end-to-end: if completeness lives in the engine, a **free local model**
+should be able to do real agentic coding. [Mason]({{ '/mason/' | relative_url }})
+is our experimental CLI built to test exactly that — Prism baked into the
+harness, any model on top. The scenarios, oracle-scored like everything
+else on this page:
+
+| Scenario | Local model, $0 | Result |
+|---|---|---|
+| Change-impact, jackson (8 sites incl. indirect callers) | qwen3-coder:30b via Mason | **recall 1.00**, 23.8 s |
+| Change-impact, Guava (310 sites) | qwen3-coder:30b | **0.997** — the engine ceiling, **1 agent turn** |
+| Change-impact, Grafana Go (93 sites) | qwen3-coder:30b | **1.000**, 1 turn |
+| Change-impact, Django Python (32 sites) | qwen3-coder:30b | **1.000** recall, 1 turn |
+| End-to-end rename: plan → 24 edits applied → `go build` verified | local 14B via Mason | build green |
+
+The control that makes this meaningful: the **same local model driving
+general-purpose CLIs without task-shaped graph operations scored 0–1 out of
+9** on the same task family
+([AB-LOCAL-CLIS](https://github.com/provasign/research/blob/main/harness/AB-LOCAL-CLIS.md)).
+The model didn't change — the tool altitude did. Mason is experimental and
+says so; the numbers above are what it has proven so far.
+
+---
+
+## We keep benchmarking Prism against other tools — transparently
+
+Correctness claims decay unless they are continuously tested, so we run an
+ongoing program of benchmarking Prism against other open-source code-context
+tools, under the same discipline as everything above: same independent
+oracles, same scorer, same corpora, each tool queried through its
+**strongest** surface, its own goals stated fairly, and every raw run
+published.
+
+The first entry is [CodeGraph](https://github.com/colbymchenry/codegraph),
+an open-source tree-sitter code graph (30+ languages, one-call `explore`
+context) built for context-delivery *efficiency* — a different, legitimate
+goal from Prism's completeness-first design. That difference in goals is
+exactly what makes it informative to measure: it isolates what **type
+resolution** buys over **name resolution** when the question is "every site
+this change breaks."
 
 **Engine ceiling, 10 tasks, 4 languages, blast radius 8→310 sites:**
 
@@ -148,30 +186,35 @@ piece).
 | ts (n=1) | 0.95 | 0.73 |
 | py (n=1) | 1.00 | 0.25 |
 
-The gap appears only where type resolution is load-bearing — overloads,
-wide subtype closures, callers not named after the target. Where dispatch is
-direct-name, CodeGraph ties. That distribution is the mechanism, observed on
-a tool we didn't build.
+The reading is about the *mechanism*, not a ranking: where dispatch is
+direct-name, name resolution ties type resolution. The gap opens only where
+type resolution is load-bearing — overloads, wide subtype closures, callers
+not named after the target. Any name-resolution graph, ours included if we
+built one, would show the same distribution.
 
-**The agent A/B** (same agent, same task, arms differ only in the tool) —
-recall to reach a complete change-set, and the cost of getting there:
+**The same contrast, with an agent in the loop** (same agent, same task,
+arms differ only in the tool) — recall to reach a complete change-set, and
+the cost of getting there:
 
-| Tier | Prism | CodeGraph | grep baseline |
+| Tier | Prism | tree-sitter graph | grep baseline |
 |---|---|---|---|
 | Local 30B ($0) | **1.00** (23.8 s) | — (see Haiku) | — |
 | Haiku | **1.00** · 3 turns · $0.04 | 0.00 · 31 turns · $0.33 | 0.75 |
 | Opus | **1.00** · 3 turns · $0.14 | 1.00 · 23 turns · $2.38 | 0.62 |
 
-At equal correctness (Opus row) Prism is ~17× cheaper and ~30× faster.
-CodeGraph needs a frontier model to become complete — on the cheap tier it
-spent more tokens than plain grep and still scored 0.00. Prism is the only
-arm that stays complete as the model gets cheaper, down to $0.
+The pattern is the study's central result reproduced externally: over a
+type-resolved graph at task altitude, completeness is a **tool** property —
+it holds down to a free model. Over a name-resolved graph it is a **model**
+property — reachable, but only by a frontier model spending 8× the turns and
+24× the tokens re-deriving what the graph didn't resolve.
 
-Honest scope: CodeGraph does **not** claim compiler-grade completeness — its
-efficiency claims target a different, legitimate job, and it is ahead of
-Prism on language breadth and framework-routing hints. Full fairness
-protocol, per-task tables, efficiency measurements, and repro:
+Honest scope: CodeGraph does not claim compiler-grade completeness, and it
+is ahead of Prism on language breadth and framework-routing hints. Full
+fairness protocol, per-task tables, efficiency-next-to-recall measurements,
+and repro:
 [AB-CODEGRAPH.md](https://github.com/provasign/research/blob/main/harness/AB-CODEGRAPH.md).
+As we benchmark further tools, results land in the same place, under the
+same rules.
 
 ---
 
@@ -243,11 +286,11 @@ rows. Queries never trigger a rebuild; sessions stay warm.
   0.80 precision on one overload-ambiguous task. Every residual is visible,
   attributable, and fixable in one place — that is the point of doing the
   traversal in a tool.
-- **The study measured tool classes; one named tool has since been added.**
-  T is what agentic grep agents do; G is what LSP/primitive code-intel
-  servers expose; G\* is Prism. The named-tool section above (CodeGraph) was
-  measured under the same protocol, through the tool's strongest surface,
-  with its legitimate strengths stated.
+- **The study measured tool classes, not a market.** T is what agentic grep
+  agents do; G is what LSP/primitive code-intel servers expose; G\* is
+  Prism. The ongoing cross-tool program above measures specific tools under
+  the same protocol — each through its strongest surface, with its own goals
+  stated — to test the *mechanism*, not to rank products.
 - **Relay discipline matters.** One capable model (Sonnet) re-processed the
   engine's solved output through its own grep/awk pipeline and corrupted it
   (0.961 recall, 0.909 precision); removing the text-search escape hatch
