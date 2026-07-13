@@ -1,7 +1,7 @@
 ---
 title: Benchmarks
 layout: default
-nav_order: 6
+nav_order: 7
 description: "Measured recall, cost, and turns for agentic grep vs graph primitives vs task-shaped operations — same tasks, same independent oracles."
 permalink: /benchmarks/
 ---
@@ -11,8 +11,8 @@ permalink: /benchmarks/
 Every number on this page comes from a controlled, paired study: same task,
 same repository, same model — only the tool guidance changes. Answers are
 scored against **independent oracles** (Go: SSA/VTA; Java: a Spoon
-type-resolution oracle; TypeScript: a ts-morph compiler oracle), never against
-Prism's own engine. The full harness, tasks, run logs, and scoring code are
+type-resolution oracle; TypeScript: a ts-morph compiler oracle; Python: a
+Jedi oracle), never against Prism's own engine. The full harness, tasks, run logs, and scoring code are
 open source: [provasign/research](https://github.com/provasign/research).
 
 The study compares the three ways coding agents consume a repository today:
@@ -127,6 +127,69 @@ The same protocol, three more languages:
 
 ---
 
+## Named-tool comparison: Prism vs CodeGraph
+
+[CodeGraph](https://github.com/colbymchenry/codegraph) is an open-source
+tree-sitter code graph (30+ languages, one-call `explore` context) whose
+headline claims are context-delivery *efficiency*. We measured both engines
+on the axis that governs safe refactors — change-impact **completeness** —
+against the same independent oracles, same scorer, same corpora, no LLM.
+CodeGraph is queried through `explore`, its strongest surface (its weaker
+CLI subcommands would have scored 0.12 — reporting those would be a hit
+piece).
+
+**Engine ceiling, 10 tasks, 4 languages, blast radius 8→310 sites:**
+
+| | Prism | CodeGraph (`explore`) |
+|---|---:|---:|
+| **mean recall** | **0.99** | 0.52 |
+| java (n=7) | 0.997 | 0.46 |
+| go (n=1) | 1.00 | 1.00 — a genuine tie (direct-name dispatch; the control) |
+| ts (n=1) | 0.95 | 0.73 |
+| py (n=1) | 1.00 | 0.25 |
+
+The gap appears only where type resolution is load-bearing — overloads,
+wide subtype closures, callers not named after the target. Where dispatch is
+direct-name, CodeGraph ties. That distribution is the mechanism, observed on
+a tool we didn't build.
+
+**The agent A/B** (same agent, same task, arms differ only in the tool) —
+recall to reach a complete change-set, and the cost of getting there:
+
+| Tier | Prism | CodeGraph | grep baseline |
+|---|---|---|---|
+| Local 30B ($0) | **1.00** (23.8 s) | — (see Haiku) | — |
+| Haiku | **1.00** · 3 turns · $0.04 | 0.00 · 31 turns · $0.33 | 0.75 |
+| Opus | **1.00** · 3 turns · $0.14 | 1.00 · 23 turns · $2.38 | 0.62 |
+
+At equal correctness (Opus row) Prism is ~17× cheaper and ~30× faster.
+CodeGraph needs a frontier model to become complete — on the cheap tier it
+spent more tokens than plain grep and still scored 0.00. Prism is the only
+arm that stays complete as the model gets cheaper, down to $0.
+
+Honest scope: CodeGraph does **not** claim compiler-grade completeness — its
+efficiency claims target a different, legitimate job, and it is ahead of
+Prism on language breadth and framework-routing hints. Full fairness
+protocol, per-task tables, efficiency measurements, and repro:
+[AB-CODEGRAPH.md](https://github.com/provasign/research/blob/main/harness/AB-CODEGRAPH.md).
+
+---
+
+## What we measured and refuse to cite
+
+Two experiments produced headline-looking numbers we publish but will not
+use as evidence — in either direction:
+
+- **SWE-bench Verified A/B**: the baseline "resolved" 75% — because 9/20
+  tasks reproduce the merged human fix with 100% exact added-line overlap.
+  That measures training-data contamination, not tooling
+  ([details](https://github.com/provasign/research/blob/main/harness/SWEBENCH-AB-RESULTS.md)).
+- **PR-replay mining**: automatic task mining from real merged PRs pollutes
+  ground truth; strict gates collapse the yield to zero in our sample
+  ([details](https://github.com/provasign/research/blob/main/harness/PR-REPLAY-FINDINGS.md)).
+
+---
+
 ## Scale
 
 Measured on a Grafana monorepo worktree — 18,901 indexed files (~14.7k
@@ -180,9 +243,11 @@ rows. Queries never trigger a rebuild; sessions stay warm.
   0.80 precision on one overload-ambiguous task. Every residual is visible,
   attributable, and fixable in one place — that is the point of doing the
   traversal in a tool.
-- **We measured tool classes, not competitor products.** T is what agentic
-  grep agents do; G is what LSP/primitive code-intel servers expose; G\* is
-  Prism. We have not benchmarked other vendors' tools by name.
+- **The study measured tool classes; one named tool has since been added.**
+  T is what agentic grep agents do; G is what LSP/primitive code-intel
+  servers expose; G\* is Prism. The named-tool section above (CodeGraph) was
+  measured under the same protocol, through the tool's strongest surface,
+  with its legitimate strengths stated.
 - **Relay discipline matters.** One capable model (Sonnet) re-processed the
   engine's solved output through its own grep/awk pipeline and corrupted it
   (0.961 recall, 0.909 precision); removing the text-search escape hatch

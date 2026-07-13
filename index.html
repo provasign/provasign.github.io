@@ -114,6 +114,7 @@ layout: null
       <a href="{{ '/docs/' | relative_url }}">Docs</a>
       <a href="{{ '/shale/' | relative_url }}">Shale</a>
       <a href="{{ '/prism/' | relative_url }}">Prism</a>
+      <a href="{{ '/mason/' | relative_url }}">Mason</a>
       <a href="{{ '/fuse/' | relative_url }}">Fuse</a>
       <a href="{{ '/grove/' | relative_url }}">Grove</a>
       <a href="https://github.com/provasign/shale">GitHub</a>
@@ -194,6 +195,12 @@ shale init</pre>
           <a class="more" href="https://github.com/provasign/prism">Repository -></a>
         </article>
         <article class="card">
+          <span class="tag">coding agent · Apache-2.0</span>
+          <h2>Mason</h2>
+          <p>A coding agent for any model — local, Anthropic, or OpenAI — with the code graph and evidence trail built into the harness. Free local models, measured at the engine ceiling.</p>
+          <a class="more" href="https://github.com/provasign/mason">Repository -></a>
+        </article>
+        <article class="card">
           <span class="tag">merge driver · Apache-2.0</span>
           <h2>Fuse</h2>
           <p>A semantic git merge driver. Symbol-aware three-way merge, AI conflict handoff, and drift evidence so parallel agents don't trip over each other.</p>
@@ -213,13 +220,15 @@ shale init</pre>
         <h2>Open source, local-first by default.</h2>
         <p>
           Start with Shale when you want pull-request evidence, add Prism when
-          agents need better context, add Fuse when parallel work keeps
-          colliding at merge time, and use Grove directly when another
-          project needs the graph itself.
+          agents need better context, run Mason when you want an agent with
+          both built in, add Fuse when parallel work keeps colliding at merge
+          time, and use Grove directly when another project needs the graph
+          itself.
         </p>
         <div class="bullets">
           <div class="bullet"><strong>Shale is the primary product.</strong> It solves the immediate reviewer problem: agent PRs need intent and evidence on the PR.</div>
           <div class="bullet"><strong>Prism helps agents work.</strong> It reduces context gathering and routes agents to the code and tests they need.</div>
+          <div class="bullet"><strong>Mason is the agent.</strong> Any model — including free local ones — driven by a harness that enforces accuracy structurally, with the graph and evidence trail baked in.</div>
           <div class="bullet"><strong>Fuse merges parallel work.</strong> A symbol-aware git merge driver that resolves what's compatible and hands off what isn't — with full context.</div>
           <div class="bullet"><strong>Grove is the graph.</strong> Use it directly when you want the persistent code graph without the higher-level tools.</div>
           <div class="bullet"><strong>No hosted dependency.</strong> The default path is local-first open source. No account, server URL, or token paste.</div>
@@ -240,6 +249,7 @@ shale init</pre>
         <div class="bullets">
           <div class="bullet"><strong>Shale</strong> is sedimentary rock: thin, readable layers compacted from what settled. Shale compacts a messy agent session into clean strata of evidence on the pull request.</div>
           <div class="bullet"><strong>Prism</strong> splits white light into a spectrum. Point a task at your codebase and Prism refracts it into exactly the bands an agent needs — code, callers, tests, coverage gaps — ranked and budgeted.</div>
+          <div class="bullet"><strong>Mason</strong> is the builder's trade: courses laid level, checked against the line, on a foundation that holds. The agent does the work; the harness is the level and the plumb — accuracy comes from the structure, not the worker's mood.</div>
           <div class="bullet"><strong>Fuse</strong> joins two things into one that holds. Fuse merges parallel lines of work at the symbol level — and like the electrical kind, it trips safely (a context-rich handoff) instead of letting a bad merge burn through.</div>
           <div class="bullet"><strong>Grove</strong> is a stand of trees with one root system. Every file is parsed into a syntax tree; together they grow into a single connected, persistent graph the whole toolchain stands on.</div>
         </div>
@@ -248,7 +258,7 @@ shale init</pre>
   </main>
 
   <footer>
-    <div class="wrap">Shale, Prism, Fuse, and Grove · Open source, local-first tools for AI coding agents.</div>
+    <div class="wrap">Shale, Prism, Mason, Fuse, and Grove · Open source, local-first tools for AI coding agents.</div>
   </footer>
 </body>
 </html>

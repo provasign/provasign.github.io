@@ -30,7 +30,9 @@ test coverage. That's the context an agent needs to change the code *safely* —
 not just the lines that matched a grep.
 
 The claims on this page are measured, not asserted — controlled study,
-independent oracles, open data: see **[Benchmarks](/benchmarks/)**.
+independent oracles, open data, including a named-tool comparison
+(engine completeness 0.99 vs CodeGraph's 0.52 on the same oracle-scored
+tasks): see **[Benchmarks](/benchmarks/)**.
 
 ---
 
@@ -249,7 +251,7 @@ closure, which is useful for migration sweeps.
 Relay the result as-is. Re-running grep after to "verify" measurably drops real
 sites and adds spurious ones — the engine already solved the traversal.
 
-Change impact is one of five **task-shaped operations** — traversals agents
+Change impact is one of six **task-shaped operations** — traversals agents
 otherwise orchestrate over many turns, computed in the engine as one
 deterministic call each:
 
@@ -260,6 +262,13 @@ deterministic call each:
 | `prism untested-surface 'Type.method'` | Which parts of the change-set have no test within 3 resolved caller hops — what should be tested first? |
 | `prism dead-code [--roots a,b]` | Which production functions/methods does nothing reach? Precision-first: unreachable, non-exported, and name-unreferenced — safe to delete without breaking compilation. Caveats (reflection, DI, codegen) are part of the answer. |
 | `prism rename-plan 'Type.method' NewName` | The rename as concrete line edits — file, line, before, after — for every declaration, override, and resolved call site. Review and apply; ambiguous lines are bucketed separately, never silently included. |
+| `prism affected <files…>` | Which tests cover these changed files? `git diff --name-only \| xargs prism affected` → run only those tests. Pre-commit and CI test selection via the graph's test edges. |
+
+And a background watcher keeps everything warm:
+
+```sh
+prism watch .    # delta-reindex on every save — queries never wait for indexing
+```
 
 ---
 
@@ -287,7 +296,7 @@ with `--include docs`.
 
 ## MCP tools
 
-When running in MCP mode, fourteen tools are advertised to agents via
+When running in MCP mode, fifteen tools are advertised to agents via
 `tools/list` — deliberately a narrow surface, so steering stays unambiguous:
 
 | Tool | Purpose |
@@ -297,6 +306,7 @@ When running in MCP mode, fourteen tools are advertised to agents via
 | `prism_untested_surface` | The change-set partitioned by covering-test evidence — write tests for the untested list first |
 | `prism_dead_code` | Unreachable production functions/methods — precision-first deletion candidates with caveats |
 | `prism_rename_plan` | The change-impact set converted to concrete line edits with suggested substitutions — review-and-apply |
+| `prism_affected` | Every test covering a set of changed files — pre-commit / CI test selection |
 | `prism_query` | Graph-ranked context for a task + anchor terms |
 | `prism_read` | Full file content (deduplicates unchanged reads in session) |
 | `prism_lookup` | Single known symbol — function, method, type |
@@ -338,9 +348,12 @@ prism lookup <symbol> [dir] --format text
 prism search <keyword> [dir] --format text
 prism references <name> [dir] --format text
 prism change-impact <Type.method[(ParamType,...)> [dir] --format text|lean|json
+prism rename-plan <Type.method> <NewName> [dir] --format text|lean|json
 prism missing-implementations <Type.method> [dir] --format text|lean|json
 prism untested-surface <Type.method> [dir] --format text|lean|json
 prism dead-code [dir] [--roots a,b] --format text|lean|json
+prism affected <file> [file ...] [dir] --format text|json
+prism watch [dir]
 prism drift [dir]
 prism savings [dir]
 prism mcp [dir]
@@ -371,6 +384,9 @@ Prism is the **context layer**. [Shale]({{ '/shale/' | relative_url }}) is the
 **evidence layer** — what the agent did, on the PR.
 [Grove]({{ '/grove/' | relative_url }}) is the **graph engine** both build on,
 available directly when you want graph queries without Prism's context-ranking
-layer. Use any of them alone; no shared account or server required.
+layer. [Mason]({{ '/mason/' | relative_url }}) is the **agent layer** — a
+model-agnostic coding agent with Prism baked into the harness, no MCP setup or
+steering files needed. Use any of them alone; no shared account or server
+required.
 
 [Get Prism on GitHub →](https://github.com/provasign/prism){: .btn .btn-primary }

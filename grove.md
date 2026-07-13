@@ -1,7 +1,7 @@
 ---
 title: Grove
 layout: default
-nav_order: 5
+nav_order: 6
 description: "A persistent code graph for your repository — impact, tests, and dependencies, queryable by humans, tools, and agents."
 permalink: /grove/
 ---
