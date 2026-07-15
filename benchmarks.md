@@ -144,7 +144,7 @@ else on this page:
 
 | Scenario | Local model, $0 | Result |
 |---|---|---|
-| Change-impact, jackson (8 sites incl. indirect callers) | qwen3-coder:30b via Mason | **recall 1.00**, 23.8 s |
+| Change-impact, jackson (8 sites incl. indirect callers) | qwen3-coder:30b via Mason | **recall 1.00** (agent-scored, all 8 sites) |
 | Change-impact, Guava (310 sites) | qwen3-coder:30b | **0.997** — the engine ceiling, **1 agent turn** |
 | Change-impact, Grafana Go (93 sites) | qwen3-coder:30b | **1.000**, 1 turn |
 | Change-impact, Django Python (32 sites) | qwen3-coder:30b | **1.000** recall, 1 turn |
@@ -198,7 +198,7 @@ the cost of getting there:
 
 | Tier | Prism | tree-sitter graph | grep baseline |
 |---|---|---|---|
-| Local 30B ($0) | **1.00** (23.8 s) | — (see Haiku) | — |
+| Local 30B ($0) | **1.00** | — (see Haiku) | — |
 | Haiku | **1.00** · 3 turns · $0.04 | 0.00 · 31 turns · $0.33 | 0.75 |
 | Opus | **1.00** · 3 turns · $0.14 | 1.00 · 23 turns · $2.38 | 0.62 |
 
