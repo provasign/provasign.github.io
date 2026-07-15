@@ -38,6 +38,25 @@ Collections, Guava, Grafana (Go), TypeORM (TypeScript), and Django (Python).
 
 ## Recall, cost, and turns by model tier
 
+### At a glance — one task, three tools
+
+One task, three ways to search — same agent, same frontier model, only the
+tool changes. A signature change in **jackson-databind**: find all **8 call
+sites** it breaks, including callers not named after the method (invisible to
+text search). Oracle-scored.
+
+| Tool | Correct | Turns | Tokens | Cost |
+|---|---:|---:|---:|---:|
+| Plain grep — the agent's default | 62% | 19 | 376K | $0.90 |
+| **Prism** | **100%** | **3** | **60K** | **$0.14** |
+
+Fewer turns, fewer tokens, lower cost — and the only one that got the whole
+answer. Run the same task through **Mason** (Prism built in) on a **free local
+30B model**: **100% correct at $0** (0.997 mean recall across the 7-task
+change-impact benchmark). Raw runs: [provasign/research](https://github.com/provasign/research).
+
+### Across every model tier
+
 Six Java tasks, n=5 trials per cell, scored against the Spoon oracle:
 
 | Tier | Arm | Mean recall | $/task | Agent turns |
