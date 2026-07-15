@@ -24,7 +24,10 @@ to do, not what it's told.
 cheap **properties of the harness** — structurally enforced, model-blind. The
 result, measured: a **free local model completes change-impact and rename
 tasks at the same engine ceiling as a frontier model**
-([benchmarks]({{ '/benchmarks/' | relative_url }})).
+([benchmarks]({{ '/benchmarks/' | relative_url }})). The same principle now
+reaches localized bug fixes: Prism's edit-ready source delivery hands the
+model verbatim, line-numbered code plus its callers and covering tests, and
+the harness — not the model — decides when to use it.
 
 ```sh
 mason "Rename the Status method of the ResponseWriter interface to StatusCode.

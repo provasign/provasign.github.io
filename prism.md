@@ -58,6 +58,15 @@ rg buildCoverageGaps internal/
       --format text
 ```
 
+**Delivered edit-ready.** For a bug fix or an implement task, that one command
+returns the relevant code as **verbatim, line-numbered source windows** — the
+same shape the agent's own read tool produces — plus each anchor's callers and
+covering tests. The agent edits straight away instead of re-reading, and an
+unchanged file it already received this session comes back as a ~10-token
+pointer. Delivery is chosen from the task (bug-fix/implement → source;
+exploration/review → the compact symbol list), or set explicitly with
+`--delivery`.
+
 ---
 
 ## Benchmarks
