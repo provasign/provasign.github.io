@@ -90,6 +90,42 @@ cost — 28× cheaper than frontier + primitives at a −0.003 recall difference
 
 ---
 
+## Four model tiers, both arms, nine tasks — where does the graph help, and how?
+
+A wider agent A/B (2026-07): the same agent on the same task, only the search
+tool swapped — **grep + file reads** vs **Prism**. Four model tiers from a free
+local 30B up to Opus, nine change-impact tasks across Java/Go/TypeScript/Python
+(8→310 sites), three trials each, oracle-scored on the model's own submitted
+answer. Full data and per-task detail:
+[research/harness/BENCH-MATRIX.md](https://github.com/provasign/research/blob/main/harness/BENCH-MATRIX.md).
+
+| Model | without Prism (recall · turns · tokens) | with Prism | Token savings | Speed |
+|---|---|---|---:|---:|
+| **local 30B** ($0) | 0.16 · 13 · 47K | **1.00 · 3 · 2K** | 96% | 2.3× |
+| **Haiku** | 0.84 · 31 · 1.3M | **1.00 · 5 · 127K** | 90% | 2.5× |
+| **Sonnet** | 1.00 · 46 · 1.2M | **1.00 · 4 · 139K** | 89% | 7.2× |
+| **Opus** | 1.00 · 20 · 475K | **1.00 · 4 · 85K** | 82% | 4.4× |
+
+Two things happen as the model gets stronger, and only one of them is the story
+people expect:
+
+- **The recall gap closes.** A stronger model greps better, so the baseline
+  climbs (0.16 local → 1.00 Opus). On correctness alone, the graph matters most
+  at the bottom — it turns a *failing* free local model into a complete one.
+- **The efficiency gap never closes.** At every tier, Prism gets the same or
+  better answer for **82–96% fewer tokens and 2–7× faster**. Even when Opus
+  greps its way to a complete answer, it spends 20 turns and ~5× the tokens to
+  do what Prism does in 4.
+
+So Prism's value **shifts from correctness to cost** up the model ladder — a
+truer claim than "the graph always wins." Honest scope, in the full report:
+scoring is neutral (the model re-types the answer, so the huge-list *relay*
+limits a weak local model on the 108/310-site tasks — exactly what Mason's
+payload isolation removes); on Go tasks whose callers are lexically findable,
+grep is already strong and Prism ties rather than beats it.
+
+---
+
 ## Does it matter? Missed sites are compile errors
 
 For a signature change, every site the agent misses is a method still using
