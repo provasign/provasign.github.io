@@ -1,4 +1,5 @@
 .DS_Store
 .provasign/
+.grove/
 .jekyll-cache/
 _site/

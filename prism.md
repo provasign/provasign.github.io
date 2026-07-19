@@ -1,23 +1,22 @@
 ---
 title: Prism
 layout: default
-nav_order: 3
-description: "Graph-ranked context delivery for AI coding agents — callers, tests, and blast radius without a dozen file reads."
+nav_order: 2
+description: "Semantic change intelligence for developers, coding agents, and CI — complete impact, tests, and concrete edit plans in deterministic operations."
 permalink: /prism/
 ---
 
-# Prism — graph-ranked context for AI coding agents
+# Prism — semantic change intelligence for every developer and coding agent
 
-**The problem:** watch an agent work and you'll see the same ritual on every
-task: grep for a symbol, open the file, open the caller, open the test, open
-another file that turned out to be irrelevant… Each read costs tokens and time,
-and the agent still misses the test that defines the behavior it's about to
-change.
+**The problem:** a code change is relational, but most developer tools begin
+with text. Humans and agents both repeat the same ritual: find a symbol, inspect
+its declaration, chase implementations and callers, locate the tests, and hope
+nothing important stayed invisible.
 
-**What Prism does:** it answers the *follow-up* questions in one call. Give it
-a task and a few anchor terms; it returns the code, callers, callees, tests,
-docs, and coverage gaps — ranked by relevance to the task and packed into a
-token budget.
+**What Prism does:** it turns those follow-up questions into deterministic,
+task-shaped operations. Give it a method and get the complete change set. Give
+it changed files and get affected tests. Give it a task and anchors and get
+ranked, edit-ready code context within a token budget.
 
 ```sh
 prism query "fix auth rate limit tests" \
@@ -406,13 +405,11 @@ Environment overrides: `PRISM_MODEL`, `PRISM_PROFILE`, `PRISM_GROVE_BINARY`,
 
 ## Where it fits
 
-Prism is the **context layer**. [Shale]({{ '/shale/' | relative_url }}) is the
-**evidence layer** — what the agent did, on the PR.
-[Grove]({{ '/grove/' | relative_url }}) is the **graph engine** both build on,
-available directly when you want graph queries without Prism's context-ranking
-layer. [Mason]({{ '/mason/' | relative_url }}) is the **agent layer** — a
-model-agnostic coding agent with Prism baked into the harness, no MCP setup or
-steering files needed. Use any of them alone; no shared account or server
-required.
+Prism and [Shale]({{ '/shale/' | relative_url }}) are the two core projects:
+Prism provides change intelligence before an edit; Shale carries evidence into
+review after it. [Mason]({{ '/mason/' | relative_url }}) is the incubating
+reference agent that proves both layers together. [Grove]({{ '/grove/' | relative_url }})
+is the embedded semantic graph engine beneath Prism, available separately for
+tool builders but not required as another product to install.
 
 [Get Prism on GitHub →](https://github.com/provasign/prism){: .btn .btn-primary }

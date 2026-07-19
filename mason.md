@@ -2,11 +2,11 @@
 title: Mason
 layout: default
 nav_order: 4
-description: "A coding agent for any model — local, Anthropic, or OpenAI — with the code graph and evidence trail built into the harness, not the prompt."
+description: "The incubating reference coding agent for Prism and Shale, with accuracy-critical behavior built into the harness rather than left to prompting."
 permalink: /mason/
 ---
 
-# Mason — the harness-first coding agent (experimental)
+# Mason — the Provasign reference agent (incubating)
 
 Mason exists to test a hypothesis the
 [benchmarks]({{ '/benchmarks/' | relative_url }}) made concrete: **if
@@ -123,10 +123,11 @@ mason --json --yes "task…"   # CI: one JSON object on stdout
 
 ## Where it fits
 
-Mason is the **agent layer** of the family: it drives any model and consumes
-[Prism]({{ '/prism/' | relative_url }})/[Grove]({{ '/grove/' | relative_url }})
-natively (the graph is baked in — no MCP setup, no steering files) and logs an
-evidence trail through [Shale]({{ '/shale/' | relative_url }}) when it's on
-PATH. Every layer works standalone.
+Mason is the incubating reference agent for the two core projects. It drives
+multiple model providers, consumes [Prism]({{ '/prism/' | relative_url }})
+natively, and records an evidence trail through
+[Shale]({{ '/shale/' | relative_url }}) when available. Mason is deliberately
+second-line until its end-to-end agent workflows earn the same independent
+evidence and adoption readiness as Prism and Shale.
 
 [Get Mason on GitHub →](https://github.com/provasign/mason){: .btn .btn-primary }

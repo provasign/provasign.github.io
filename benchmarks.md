@@ -1,7 +1,7 @@
 ---
 title: Benchmarks
 layout: default
-nav_order: 7
+nav_order: 5
 description: "Measured recall, cost, and turns for agentic grep vs graph primitives vs task-shaped operations — same tasks, same independent oracles."
 permalink: /benchmarks/
 ---

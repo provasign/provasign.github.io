@@ -2,6 +2,8 @@
 title: Fuse
 layout: default
 nav_order: 5
+nav_exclude: true
+search_exclude: true
 description: "A semantic git merge driver — symbol-aware three-way merge, AI conflict handoff, and drift evidence for agent teams."
 permalink: /fuse/
 ---

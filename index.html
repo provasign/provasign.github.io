@@ -6,17 +6,15 @@ layout: null
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shale — agent PR evidence</title>
-  <meta name="description" content="Shale captures AI coding agent intent, session evidence, and local checks, then renders the evidence as a pull-request card. Open source. No server. No account.">
+  <title>Provasign — open-source infrastructure for AI coding</title>
+  <meta name="description" content="Prism gives developers and coding agents deterministic change intelligence. Shale carries intent and evidence into review. Mason is the reference agent built on both.">
   <link rel="canonical" href="{{ '/' | absolute_url }}">
-  <meta property="og:site_name" content="Shale">
-  <meta property="og:title" content="Shale — agent PR evidence">
-  <meta property="og:description" content="Every AI-agent PR should explain itself. Shale renders intent, evidence, checks, and gaps on the pull request.">
+  <meta property="og:site_name" content="Provasign">
+  <meta property="og:title" content="Provasign — open-source infrastructure for AI coding">
+  <meta property="og:description" content="Context before the edit. Evidence after it. Prism and Shale make AI-written code easier to change and review.">
   <meta property="og:url" content="{{ '/' | absolute_url }}">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="{{ '/assets/images/og-image.png' | absolute_url }}">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="{{ '/assets/images/og-image.png' | absolute_url }}">
+  <meta name="twitter:card" content="summary">
   <link rel="icon" type="image/svg+xml" href="{{ '/assets/images/logo-icon.svg' | relative_url }}">
   <style>
     :root {
@@ -50,7 +48,7 @@ layout: null
     .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
     .hero { padding: 92px 0 72px; border-bottom: 1px solid var(--line); }
     .eyebrow { color: var(--accent); font-family: var(--mono); font-size: 13px; margin-bottom: 18px; }
-    h1 { max-width: 900px; margin: 0; font-size: clamp(42px, 7vw, 78px); line-height: .98; letter-spacing: -.04em; }
+    h1 { max-width: 900px; margin: 0; font-size: 72px; line-height: 1.02; letter-spacing: 0; }
     .lead { max-width: 710px; margin: 28px 0 0; color: var(--muted); font-size: 20px; line-height: 1.6; }
     .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
     .btn {
@@ -66,20 +64,24 @@ layout: null
     }
     .install-title { padding: 10px 14px; color: var(--dim); border-bottom: 1px solid var(--line); font-size: 13px; }
     pre { margin: 0; padding: 18px; overflow-x: auto; color: #d1fae5; font: 14px/1.7 var(--mono); }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; padding: 54px 0; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; padding: 54px 0 28px; }
     .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 24px; }
-    .card.primary { background: linear-gradient(145deg, rgba(56,217,150,.12), var(--panel)); border-color: rgba(56,217,150,.45); }
+    .card.prism { border-top: 3px solid var(--accent2); }
+    .card.shale { border-top: 3px solid var(--accent); }
     .tag { display: inline-block; margin-bottom: 14px; color: var(--accent); font: 12px var(--mono); }
-    .card h2 { margin: 0 0 10px; font-size: 24px; letter-spacing: -.02em; }
+    .card h2 { margin: 0 0 10px; font-size: 24px; letter-spacing: 0; }
     .card p { margin: 0; color: var(--muted); line-height: 1.62; }
     .card a.more { display: inline-block; margin-top: 18px; color: var(--accent); text-decoration: none; font-weight: 700; }
     .section { padding: 64px 0; border-top: 1px solid var(--line); }
-    .section h2 { margin: 0 0 14px; font-size: 34px; letter-spacing: -.03em; }
+    .section h2 { margin: 0 0 14px; font-size: 34px; letter-spacing: 0; }
     .section p { max-width: 760px; color: var(--muted); line-height: 1.7; font-size: 17px; }
     .bullets { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 28px; }
     .bullet { padding: 18px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel2); color: var(--muted); line-height: 1.55; }
     .bullet strong { color: var(--text); }
     .note { color: var(--dim); font-size: 14px; margin-top: 22px; }
+    .foundation { margin: 0 0 54px; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); color: var(--muted); line-height: 1.6; }
+    .foundation strong { color: var(--text); }
+    .foundation a { color: var(--accent2); text-decoration: none; }
     .demo2 { display: grid; grid-template-columns: 1.05fr .95fr; gap: 22px; margin-top: 32px; align-items: start; }
     .termimg { width: 100%; height: auto; border-radius: 10px; }
     .ghcard { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; font-size: 13.5px; }
@@ -99,54 +101,54 @@ layout: null
     footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--dim); font-size: 14px; }
     @media (max-width: 800px) {
       .nav { padding: 0 18px; }
-      .navlinks { gap: 10px; font-size: 13px; }
+      .navlinks { gap: 8px; font-size: 12px; }
+      .navlinks a:nth-child(n+4) { display: none; }
       .grid, .bullets { grid-template-columns: 1fr; }
       .hero { padding-top: 64px; }
+      h1 { font-size: 44px; }
     }
   </style>
 {% include install-widget-assets.html %}
 </head>
 <body>
   <nav class="nav">
-    <a class="brand" href="{{ '/' | relative_url }}"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="6" y="8" width="40" height="9" rx="3" fill="#38d996"/><rect x="18" y="21" width="40" height="9" rx="3" fill="#94a3b8"/><rect x="6" y="34" width="40" height="9" rx="3" fill="#64748b"/><rect x="18" y="47" width="40" height="9" rx="3" fill="#475569"/></svg> Shale</a>
-    <div class="navlinks">
-      <a href="{{ '/vision/' | relative_url }}">Vision</a>
-      <a href="{{ '/docs/' | relative_url }}">Docs</a>
-      <a href="{{ '/shale/' | relative_url }}">Shale</a>
+    <a class="brand" href="{{ '/' | relative_url }}"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="6" y="8" width="40" height="9" rx="3" fill="#38d996"/><rect x="18" y="21" width="40" height="9" rx="3" fill="#7dd3fc"/><rect x="6" y="34" width="40" height="9" rx="3" fill="#94a3b8"/><rect x="18" y="47" width="40" height="9" rx="3" fill="#475569"/></svg> Provasign</a>
+    <div class="navlinks" aria-label="Primary navigation">
       <a href="{{ '/prism/' | relative_url }}">Prism</a>
+      <a href="{{ '/shale/' | relative_url }}">Shale</a>
       <a href="{{ '/mason/' | relative_url }}">Mason</a>
-      <a href="{{ '/fuse/' | relative_url }}">Fuse</a>
-      <a href="{{ '/grove/' | relative_url }}">Grove</a>
-      <a href="https://github.com/provasign/shale">GitHub</a>
+      <a href="{{ '/benchmarks/' | relative_url }}">Benchmarks</a>
+      <a href="{{ '/docs/' | relative_url }}">Docs</a>
+      <a href="https://github.com/provasign">GitHub</a>
     </div>
   </nav>
 
   <main>
     <section class="hero">
       <div class="wrap">
-        <div class="eyebrow">Open-source agent PR evidence</div>
-        <h1>Every AI-agent PR should explain itself.</h1>
+        <div class="eyebrow">Open source · local first · Apache-2.0</div>
+        <h1>Infrastructure for trustworthy AI coding.</h1>
         <p class="lead">
-          Shale records what an agent was asked to do, what it touched, and what
-          checks it ran, then renders the evidence as a pull-request card.
-          Five minutes to set up. No account. No server.
+          Prism gives every developer and coding agent deterministic change
+          intelligence before an edit. Shale carries intent, checks, and gaps
+          into review. Mason is the reference agent built on both.
         </p>
         <div class="cta">
-          <a class="btn primary" href="https://github.com/provasign/shale">Get Shale</a>
-          <a class="btn secondary" href="{{ '/docs/' | relative_url }}">Read the docs</a>
+          <a class="btn primary" href="https://github.com/provasign/prism">Get Prism</a>
+          <a class="btn secondary" href="https://github.com/provasign/shale">Get Shale</a>
         </div>
         <div class="install">
-          <div class="install-title">Install Shale</div>
-          {% include install.html repo="provasign/shale" formula="provasign/shale/shale" curl="curl -fsSL https://raw.githubusercontent.com/provasign/shale/main/install.sh | sh" %}
+          <div class="install-title">Install Prism</div>
+          {% include install.html repo="provasign/prism" formula="provasign/shale/prism" curl="curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash" ps="irm https://raw.githubusercontent.com/provasign/prism/main/install.ps1 | iex" %}
 <pre>cd your-repo
-shale init</pre>
+prism init . --mode both</pre>
         </div>
       </div>
     </section>
 
     <section class="section">
       <div class="wrap">
-        <h2>A session becomes evidence.</h2>
+        <h2>Shale makes the result reviewable.</h2>
         <p>
           The agent declares intent, works, and closes the session. Push, and the
           evidence travels with the code — rendered as a card on the pull request.
@@ -182,57 +184,42 @@ shale init</pre>
 
     <section class="wrap">
       <div class="grid">
-        <article class="card primary">
-          <span class="tag">primary product · Apache-2.0</span>
-          <h2>Shale</h2>
-          <p>Agent intent capture, session evidence, local check history, and an honest PR card that shows coverage gaps instead of hiding them.</p>
-          <a class="more" href="https://github.com/provasign/shale">Repository -></a>
-        </article>
-        <article class="card">
-          <span class="tag">secondary product · Apache-2.0</span>
+        <article class="card prism">
+          <span class="tag">core project · Apache-2.0</span>
           <h2>Prism</h2>
-          <p>Graph-ranked context delivery for AI coding agents. Start with an anchor, get callers, callees, tests, docs, and coverage gaps.</p>
-          <a class="more" href="https://github.com/provasign/prism">Repository -></a>
+          <p>Semantic change intelligence for developers, coding agents, and CI. Get declarations, implementations, callers, tests, and concrete edit plans in one deterministic operation.</p>
+          <a class="more" href="https://github.com/provasign/prism">Repository</a>
+        </article>
+        <article class="card shale">
+          <span class="tag">core project · Apache-2.0</span>
+          <h2>Shale</h2>
+          <p>Agent intent capture, session evidence, local check history, and an honest pull-request card that shows gaps instead of hiding them.</p>
+          <a class="more" href="https://github.com/provasign/shale">Repository</a>
         </article>
         <article class="card">
-          <span class="tag">experimental coding agent · Apache-2.0</span>
+          <span class="tag">reference agent · incubating</span>
           <h2>Mason</h2>
-          <p>A coding agent for any model — local, Anthropic, or OpenAI — with the code graph and evidence trail built into the harness. Free local models, measured at the engine ceiling.</p>
-          <a class="more" href="https://github.com/provasign/mason">Repository -></a>
-        </article>
-        <article class="card">
-          <span class="tag">merge driver · Apache-2.0</span>
-          <h2>Fuse</h2>
-          <p>A semantic git merge driver. Symbol-aware three-way merge, AI conflict handoff, and drift evidence so parallel agents don't trip over each other.</p>
-          <a class="more" href="https://github.com/provasign/fuse">Repository -></a>
-        </article>
-        <article class="card">
-          <span class="tag">graph engine · Apache-2.0</span>
-          <h2>Grove</h2>
-          <p>The code knowledge graph behind the tools, also available directly for teams that want indexing, symbols, impact, and graph queries.</p>
-          <a class="more" href="https://github.com/provasign/grove">Repository -></a>
+          <p>A model-agnostic coding agent that makes Prism operations and Shale evidence properties of the harness. It is where the stack is proven end to end before Mason is promoted on its own merits.</p>
+          <a class="more" href="https://github.com/provasign/mason">Repository</a>
         </article>
       </div>
+      <div class="foundation"><strong>Powered by Grove.</strong> Prism embeds Grove's persistent semantic code graph. Grove remains available as <a href="{{ '/grove/' | relative_url }}">open-source infrastructure</a> for teams building their own developer tools, but it is not a separate step in the Prism experience.</div>
     </section>
 
     <section class="section">
       <div class="wrap">
-        <h2>Open source, local-first by default.</h2>
+        <h2>One product loop, three clear roles.</h2>
         <p>
-          Start with Shale when you want pull-request evidence, add Prism when
-          agents need better context, run Mason when you want an agent with
-          both built in, add Fuse when parallel work keeps colliding at merge
-          time, and use Grove directly when another project needs the graph
-          itself.
+          Prism and Shale are the two core projects. They work with the tools
+          developers already use and do not require a hosted control plane.
+          Mason is the reference implementation that proves the two layers can
+          work as one system.
         </p>
         <div class="bullets">
-          <div class="bullet"><strong>Shale is the primary product.</strong> It solves the immediate reviewer problem: agent PRs need intent and evidence on the PR.</div>
-          <div class="bullet"><strong>Prism helps agents work.</strong> It reduces context gathering and routes agents to the code and tests they need.</div>
-          <div class="bullet"><strong>Mason is the agent.</strong> Any model — including free local ones — driven by a harness that enforces accuracy structurally, with the graph and evidence trail baked in.</div>
-          <div class="bullet"><strong>Fuse merges parallel work.</strong> A symbol-aware git merge driver that resolves what's compatible and hands off what isn't — with full context.</div>
-          <div class="bullet"><strong>Grove is the graph.</strong> Use it directly when you want the persistent code graph without the higher-level tools.</div>
+          <div class="bullet"><strong>Prism: before the edit.</strong> Deterministic change impact, missing implementations, untested surfaces, rename plans, affected tests, and ranked task context.</div>
+          <div class="bullet"><strong>Shale: after the edit.</strong> Intent, touched files, observed checks, evidence integrity, and explicit gaps travel with the pull request.</div>
+          <div class="bullet"><strong>Mason: the proving ground.</strong> A reference agent where accuracy-critical behavior is enforced by the harness and measured against published oracles.</div>
           <div class="bullet"><strong>No hosted dependency.</strong> The default path is local-first open source. No account, server URL, or token paste.</div>
-          <div class="bullet"><strong>One tap for everything.</strong> <code style="font-family:var(--mono);font-size:13px;">brew tap provasign/shale</code> installs any of them; each repo sets up with a single <code style="font-family:var(--mono);font-size:13px;">init</code> command.</div>
         </div>
       </div>
     </section>
@@ -241,8 +228,8 @@ shale init</pre>
       <div class="wrap">
         <h2>Why these names?</h2>
         <p>
-          The family is named for how each tool treats the raw material of
-          agent work — light, growth, joining, and sediment. <strong>Provasign</strong>
+          The product line is named for how each tool treats the raw material
+          of software work. <strong>Provasign</strong>
           is the umbrella: <em>prova</em> (proof) + <em>sign</em> — agent work
           that can prove itself.
         </p>
@@ -250,15 +237,13 @@ shale init</pre>
           <div class="bullet"><strong>Shale</strong> is sedimentary rock: thin, readable layers compacted from what settled. Shale compacts a messy agent session into clean strata of evidence on the pull request.</div>
           <div class="bullet"><strong>Prism</strong> splits white light into a spectrum. Point a task at your codebase and Prism refracts it into exactly the bands an agent needs — code, callers, tests, coverage gaps — ranked and budgeted.</div>
           <div class="bullet"><strong>Mason</strong> is the builder's trade: courses laid level, checked against the line, on a foundation that holds. The agent does the work; the harness is the level and the plumb — accuracy comes from the structure, not the worker's mood.</div>
-          <div class="bullet"><strong>Fuse</strong> joins two things into one that holds. Fuse merges parallel lines of work at the symbol level — and like the electrical kind, it trips safely (a context-rich handoff) instead of letting a bad merge burn through.</div>
-          <div class="bullet"><strong>Grove</strong> is a stand of trees with one root system. Every file is parsed into a syntax tree; together they grow into a single connected, persistent graph the whole toolchain stands on.</div>
         </div>
       </div>
     </section>
   </main>
 
   <footer>
-    <div class="wrap">Shale, Prism, Mason, Fuse, and Grove · Open source, local-first tools for AI coding agents.</div>
+    <div class="wrap">Prism and Shale · core open-source projects. Mason · the incubating reference agent.</div>
   </footer>
 </body>
 </html>

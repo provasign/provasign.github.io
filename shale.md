@@ -1,8 +1,8 @@
 ---
 title: Shale
 layout: default
-nav_order: 2
-description: "Agent PR evidence: intent capture, session evidence, local checks, and pull-request cards."
+nav_order: 3
+description: "Review evidence for AI-written code: intent, touched files, local checks, integrity signals, and explicit gaps on the pull request."
 permalink: /shale/
 ---
 
@@ -200,3 +200,10 @@ everything go silent for you. No account to close, nothing left running.
 - **[Product & architecture](https://github.com/provasign/shale/blob/main/docs/product.md)** — design decisions, capture tiers, security model
 
 [Get Shale on GitHub →](https://github.com/provasign/shale){: .btn .btn-primary }
+
+## Where it fits
+
+Shale and [Prism]({{ '/prism/' | relative_url }}) are the two core projects:
+Prism provides change intelligence before an edit; Shale makes the resulting
+work reviewable after it. [Mason]({{ '/mason/' | relative_url }}) is the
+incubating reference agent that integrates both.

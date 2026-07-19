@@ -1,21 +1,22 @@
 ---
-title: Shale Documentation
+title: Provasign Documentation
 layout: default
 nav_order: 1
-description: "Shale documentation, with links to Prism and Grove."
+description: "Documentation for Prism, Shale, and Mason."
 permalink: /docs/
 ---
 
-# Shale Documentation
+# Provasign Documentation
 
-Start here if you want agent-authored PRs to carry intent, local evidence, and
-a reviewer-ready PR card.
+Prism and Shale are the core open-source projects. Mason is the incubating
+reference agent that integrates both. Grove is shared engine infrastructure,
+not a fourth product users must adopt.
 
 | Project | Role | Status |
 |---|---|---|
-| **Shale** | Agent PR evidence: intent capture, session evidence, local checks, and pull-request cards | Primary product, Apache-2.0 |
-| **Prism** | Graph-ranked context delivery for AI coding agents | Secondary product, Apache-2.0 |
-| **Grove** | Persistent code graph and indexing engine for direct graph use or embedded tools | Graph engine, Apache-2.0 |
+| **Prism** | Semantic change intelligence for developers, coding agents, and CI | Core project, Apache-2.0 |
+| **Shale** | Agent intent, session evidence, local checks, and pull-request cards | Core project, Apache-2.0 |
+| **Mason** | Reference coding agent with Prism and Shale built into the harness | Incubating, Apache-2.0 |
 
 ---
 
@@ -23,12 +24,13 @@ a reviewer-ready PR card.
 
 | Goal | Link |
 |---|---|
+| Understand the complete impact of a code change | [Prism]({{ '/prism/' | relative_url }}) |
 | Add agent PR evidence to a repo | [Shale]({{ '/shale/' | relative_url }}) |
+| Run the integrated reference agent | [Mason]({{ '/mason/' | relative_url }}) |
 | Full setup walkthrough | [Getting started](https://github.com/provasign/shale/blob/main/docs/getting-started.md) |
 | Something looks off | [Troubleshooting](https://github.com/provasign/shale/blob/main/docs/troubleshooting.md) |
 | See real cards on real PRs | [Live demo pull requests](https://github.com/provasign/shale-test-bed/pulls?q=is%3Apr) |
-| Give agents graph-ranked context | [Prism]({{ '/prism/' | relative_url }}) |
-| Use the code graph directly | [Grove]({{ '/grove/' | relative_url }}) |
+| Review published performance evidence | [Benchmarks]({{ '/benchmarks/' | relative_url }}) |
 
 ---
 
@@ -69,6 +71,7 @@ evidence without turning local agent workflows into a hosted compliance product.
 
 ## Repositories
 
-- [provasign/shale](https://github.com/provasign/shale) — primary product
-- [provasign/prism](https://github.com/provasign/prism) — secondary product
-- [provasign/grove](https://github.com/provasign/grove) — graph engine
+- [provasign/prism](https://github.com/provasign/prism) — core project
+- [provasign/shale](https://github.com/provasign/shale) — core project
+- [provasign/mason](https://github.com/provasign/mason) — incubating reference agent
+- [provasign/grove](https://github.com/provasign/grove) — shared semantic graph engine
