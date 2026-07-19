@@ -1,0 +1,21 @@
+<header class="site-nav">
+  <div class="site-nav-inner">
+    <a class="brand" href="{{ '/' | relative_url }}" aria-label="Provasign home">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="6" y="8" width="40" height="9" rx="3" fill="#38d996"/>
+        <rect x="18" y="21" width="40" height="9" rx="3" fill="#7dd3fc"/>
+        <rect x="6" y="34" width="40" height="9" rx="3" fill="#94a3b8"/>
+        <rect x="18" y="47" width="40" height="9" rx="3" fill="#475569"/>
+      </svg>
+      <span>Provasign</span>
+    </a>
+    <nav class="navlinks" aria-label="Primary navigation">
+      <a href="{{ '/prism/' | relative_url }}"{% if page.url == '/prism/' %} aria-current="page"{% endif %}>Prism</a>
+      <a href="{{ '/shale/' | relative_url }}"{% if page.url == '/shale/' %} aria-current="page"{% endif %}>Shale</a>
+      <a href="{{ '/mason/' | relative_url }}"{% if page.url == '/mason/' %} aria-current="page"{% endif %}>Mason</a>
+      <a href="{{ '/benchmarks/' | relative_url }}"{% if page.url == '/benchmarks/' %} aria-current="page"{% endif %}>Benchmarks</a>
+      <a href="{{ '/docs/' | relative_url }}"{% if page.url == '/docs/' %} aria-current="page"{% endif %}>Docs</a>
+      <a href="https://github.com/provasign">GitHub</a>
+    </nav>
+  </div>
+</header>
