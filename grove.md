@@ -16,7 +16,7 @@ before changing code:
 - *What does changing this function break — across the entire codebase?*
 - *Which tests cover this method, directly or transitively?*
 - *What is the full dependency chain from this file?*
-- *What symbols are semantically related to this task description?*
+- *What types implement this interface, and which ones are missing a member?*
 
 **What Grove does:** it parses your repository (Tree-sitter, 11 languages,
 native semantic analyzers) into a persistent SQLite graph — symbols, calls,
@@ -270,8 +270,7 @@ grove init [dir]                    # create .grove/ config
 grove index [dir]                   # index (skips unchanged files)
 grove status [dir] [--refresh]
 
-grove symbols <query> [dir]         # symbol search
-grove query <intent> [dir]          # semantic query (embeddings + BFS)
+grove symbols <query> [dir]         # symbol search (substring)
 grove impact <symbol> [dir]         # blast radius
 grove change-impact <Type.method[(ParamType,...)> [dir]  # type-resolved change-set: declaration + override family + callers
 grove missing-implementations <Type.method> [dir]  # types claiming the contract that do not implement the member
