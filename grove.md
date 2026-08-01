@@ -27,12 +27,13 @@ whose content hash hasn't changed are never re-parsed.
 grove index .
 grove symbols AuthService
 grove impact internal/auth/service.go::AuthService.Login
-grove tests  internal/auth/service.go::AuthService.Login
+grove change-impact 'AuthService.Login'
 ```
 
-`impact` walks the call graph to show blast radius. `tests` returns the tests
-that pin a symbol's behavior — including transitive coverage. Both answer in
-milliseconds from the on-disk graph.
+`impact` walks the call graph to show blast radius. `change-impact` answers the
+sharper question a signature change asks: the declaration, every override or
+implementation, and every resolved caller — the complete set, not a ranked
+guess. Both answer in milliseconds from the on-disk graph.
 
 ---
 
@@ -274,10 +275,8 @@ grove query <intent> [dir]          # semantic query (embeddings + BFS)
 grove impact <symbol> [dir]         # blast radius
 grove change-impact <Type.method[(ParamType,...)> [dir]  # type-resolved change-set: declaration + override family + callers
 grove missing-implementations <Type.method> [dir]  # types claiming the contract that do not implement the member
-grove untested-surface <Type.method> [dir]  # change-set partitioned by covering-test evidence
 grove dead-code [dir] [--roots a,b]  # unreachable production functions/methods (precision-first)
 grove rename-plan <Type.method> <NewName> [dir]  # change-set as concrete line edits with substitutions
-grove tests <symbol> [dir]          # tests covering a symbol
 grove certify <diff> [dir]          # structural certification
 
 grove mcp [dir]                     # start MCP stdio server

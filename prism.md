@@ -284,10 +284,10 @@ deterministic call each:
 |---|---|
 | `prism change-impact 'Type.method'` | What must change if this signature changes? |
 | `prism missing-implementations 'Type.method'` | Which types claiming this contract don't implement it — who breaks once the member is required? Under a default body, who inherits the default and breaks if it becomes abstract? |
-| `prism untested-surface 'Type.method'` | Which parts of the change-set have no test within 3 resolved caller hops — what should be tested first? |
+| `prism task "<what you are doing>"` | Everything one task needs in one call: context plus the obligations the task implies. Re-run with `--changed a.go,b.go` after editing for the completeness verdict (exit 1 if incomplete). |
+| `prism node <symbol-or-file>` | Orientation for one node: a symbol's source plus a names-only menu of its graph neighbours, or a file's contents plus what defines and depends on it. |
 | `prism dead-code [--roots a,b]` | Which production functions/methods does nothing reach? Precision-first: unreachable, non-exported, and name-unreferenced — safe to delete without breaking compilation. Caveats (reflection, DI, codegen) are part of the answer. |
 | `prism rename-plan 'Type.method' NewName` | The rename as concrete line edits — file, line, before, after — for every declaration, override, and resolved call site. Review and apply; ambiguous lines are bucketed separately, never silently included. |
-| `prism affected <files…>` | Which tests cover these changed files? `git diff --name-only \| xargs prism affected` → run only those tests. Pre-commit and CI test selection via the graph's test edges. |
 
 And a background watcher keeps everything warm:
 
@@ -328,10 +328,9 @@ When running in MCP mode, fifteen tools are advertised to agents via
 |---|---|
 | `prism_change_impact` | Deterministic change-set for a method signature change — declaration, override/implementation family, and all resolved callers in one engine call |
 | `prism_missing_implementations` | Types claiming a contract that do not implement the member — missing / abstract / unverifiable buckets |
-| `prism_untested_surface` | The change-set partitioned by covering-test evidence — write tests for the untested list first |
+| `prism_node` | One symbol's source plus its neighbour menu, or one file's contents plus its definitions and dependents |
 | `prism_dead_code` | Unreachable production functions/methods — precision-first deletion candidates with caveats |
 | `prism_rename_plan` | The change-impact set converted to concrete line edits with suggested substitutions — review-and-apply |
-| `prism_affected` | Every test covering a set of changed files — pre-commit / CI test selection |
 | `prism_query` | Graph-ranked context for a task + anchor terms |
 | `prism_read` | Full file content (deduplicates unchanged reads in session) |
 | `prism_lookup` | Single known symbol — function, method, type |
@@ -375,9 +374,9 @@ prism references <name> [dir] --format text
 prism change-impact <Type.method[(ParamType,...)> [dir] --format text|lean|json
 prism rename-plan <Type.method> <NewName> [dir] --format text|lean|json
 prism missing-implementations <Type.method> [dir] --format text|lean|json
-prism untested-surface <Type.method> [dir] --format text|lean|json
+prism task "<task>" [dir] [--changed a.go,b.go] [--terms x,y] --format text|lean|json
+prism node <symbol-or-file> [dir] --format text|lean|json
 prism dead-code [dir] [--roots a,b] --format text|lean|json
-prism affected <file> [file ...] [dir] --format text|json
 prism watch [dir]
 prism drift [dir]
 prism savings [dir]
