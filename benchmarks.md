@@ -47,17 +47,24 @@ text search). Oracle-scored.
 
 | Tool | Sites found | Turns | Tokens | Cost |
 |---|---:|---:|---:|---:|
-| Plain grep — the agent's default | 5 of 8 | 19 | 376K | $0.90 |
-| **Prism** | **8 of 8** | **3** | **60K** | **$0.14** |
+| Plain grep — the agent's default | 8 of 8 | 32 | 1,117K | $1.60 |
+| **Prism** | **8 of 8** | **3** | **59K** | **$0.16** |
 
-Fewer turns, fewer tokens, lower cost — and the only one that found every
-site. Run the same task through **Mason** (Prism built in) on a **free local
+*(Re-measured 2026-08-08 on Opus + prism v0.37.0. A 2026-08 frontier model
+does grep its way to a complete change-set on this task — an earlier run of
+this table, on the models of 2026-07, had it finding 5 of 8. What Prism
+changes now is the cost: **10× fewer turns, 19× fewer tokens, 10× cheaper**.
+On cheaper models the gap is still capability — see the tier table below.)* Run the same task through **Mason** (Prism built in) on a **free local
 30B model**: **all 8, at $0** (0.997 mean recall across the 7-task
 change-impact benchmark). Raw runs: [provasign/research](https://github.com/provasign/research).
 
 ### Across every model tier
 
-Six Java tasks, n=5 trials per cell, scored against the Spoon oracle:
+Six Java tasks, n=5 trials per cell, scored against the Spoon oracle.
+**Measured 2026-07 — the Opus row no longer holds.** Re-run on 2026-08-08,
+Opus WITHOUT Prism reaches recall 1.000 on this task family; the 0.952 below
+reflects the model of the time, not a standing property of text search. The
+cheap-tier rows have not been re-measured.
 
 | Tier | Arm | Mean recall | $/task | Agent turns |
 |---|---|---|---|---|
