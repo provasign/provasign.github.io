@@ -99,7 +99,7 @@ CLI text command per scenario.
 
 | Scenario | Shell bytes | Prism bytes | Reduction |
 |---|---:|---:|---:|
-| Init `agent_mode` / CLI steering impact | 19,970 | 12,818 | **35.8%** |
+| Init steering block impact | 19,970 | 12,818 | **35.8%** |
 | `coverage_gaps` precision | 21,226 | 17,145 | **19.2%** |
 | CLI text/lean/json output formatting | 15,820 | 14,198 | **10.3%** |
 | Session cache / savings ledger | 33,134 | 19,922 | **39.9%** |
@@ -141,7 +141,7 @@ Watch it accumulate live:
 prism savings .      # delivered vs. original tokens, per tool, this session
 ```
 
-> **Repeat-read dedup only applies in persistent MCP sessions** (`--mode both`
+> **Repeat-read dedup only applies in persistent MCP sessions** (the MCP path
 > or `mcp`). Single-shot CLI invocations are process-per-command, so each one
 > starts cold — they benefit from context-gathering reduction (mechanism 1),
 > not session dedup.
@@ -198,13 +198,13 @@ Installs to `~/bin` by default. Set `INSTALL_DIR=/usr/local/bin` to override.
 ## Setup
 
 ```sh
-prism init . --mode both
+prism init .
 prism index .
 ```
 
 `prism init` writes:
 
-- `prism.yaml` with `agent_mode: "both"`
+- `prism.yaml` with the ranking profile
 - `.mcp.json` wiring the MCP server for MCP-capable clients
 - Steering blocks in `CLAUDE.md`, `AGENTS.md`, `.cursorrules`,
   `.windsurfrules`, `.github/copilot-instructions.md`, and other agent
@@ -392,7 +392,7 @@ doubles), and they are operator tools rather than steering targets:
 ## CLI reference
 
 ```sh
-prism init [--global] [--mode cli|mcp|both] [dir]
+prism init [--global] [dir]
 prism index [dir]
 prism status [dir]
 
@@ -434,7 +434,6 @@ prism version
 ```yaml
 version: 1
 profile: "default"
-agent_mode: "both"
 ```
 
 Environment overrides: `PRISM_MODEL`, `PRISM_PROFILE`, `PRISM_GROVE_BINARY`,
