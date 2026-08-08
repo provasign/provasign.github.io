@@ -322,35 +322,67 @@ with `--include docs`.
 ## MCP tools
 
 When running in MCP mode, fifteen tools are advertised to agents via
-`tools/list` — deliberately a narrow surface, so steering stays unambiguous:
+`tools/list` — deliberately a narrow surface, because every extra tool is a
+routing error waiting to happen:
 
 | Tool | Purpose |
 |---|---|
+| `prism` | The unified task tool: describe the task, get edit-ready context plus the change obligations it implies; call again with `changed_files` to verify |
 | `prism_change_impact` | Deterministic change-set for a method signature change — declaration, override/implementation family, and all resolved callers in one engine call |
 | `prism_missing_implementations` | Types claiming a contract that do not implement the member — missing / abstract / unverifiable buckets |
-| `prism_node` | One symbol's source plus its neighbour menu, or one file's contents plus its definitions and dependents |
-| `prism_dead_code` | Unreachable production functions/methods — precision-first deletion candidates with caveats |
 | `prism_rename_plan` | The change-impact set converted to concrete line edits with suggested substitutions — review-and-apply |
-| `prism_query` | Graph-ranked context for a task + anchor terms |
-| `prism_read` | Full file content (deduplicates unchanged reads in session) |
+| `prism_dead_code` | Unreachable production functions/methods — precision-first deletion candidates with caveats |
+| `prism_map` | Components and every component-level dependency, with weights, cycles, and the evidence tier of each claim |
+| `prism_query` | Graph-ranked context for a task + anchor terms, plus a real full-text pass over the same terms |
+| `prism_search` | Symbol names **and** raw source text in one call (`scope="text"` for a pure ripgrep, `regex=true` for patterns) |
+| `prism_read` | Full file content (unchanged re-reads collapse to a SHA pointer) |
 | `prism_lookup` | Single known symbol — function, method, type |
-| `prism_edges` | Walk one hop from a symbol: callers, callees, tests, implementations |
+| `prism_node` | One symbol's source plus its neighbour menu, or one file's contents plus its definitions and dependents |
 | `prism_references` | Every code use of a symbol, grouped by file |
-| `prism_resolve` | Disambiguate a name to exact file:line definitions |
-| `prism_search` | Keyword search across indexed symbol names |
-| `prism_index` | Trigger reindex (after large changes) |
-| `prism_drift` | Report files/symbols that changed since they were delivered this session |
+| `prism_verify` | Diff-completeness gate: what the change set should have been, and what the diff missed |
+| `prism_arch_check` | Declared architecture rules validated against real edges |
+| `prism_index` | Trigger reindex (delta indexing is automatic) |
 
-Four session utilities exist alongside them (invocable by name or via the
-CLI, not advertised in `tools/list` — they are operator tools, not steering
-targets):
+### Text search is built in
+
+`prism_search` and `prism_query` run a real ripgrep pass internally (falling
+back to `grep`, then to a built-in scanner — `prism doctor` reports which).
+Matches that no indexed symbol encloses — comments, config keys, string
+literals, docs — come back as `textHits`/`textMatches`. An agent needs no
+separate grep tool, and prices each request itself: `scope="text"` is a pure
+grep, `scope="both"` (the default) merges symbol and text results.
+
+Where a search is noisy, Prism says so rather than staying silent. Measured
+across 127 symbols in six repositories, a whole-word grep for a symbol name
+returns ~30% lines that are not resolved references to it (18% in
+jackson-databind, 50% in gin, 98% in one typeorm case: 372 hits, 1 real). The
+graph does not find lines grep misses — it tells you which hits matter.
+
+### Repeat graph deliveries collapse
+
+A repeat call to a whole-repo graph operation always **recomputes** — the
+traversal is milliseconds, and freshness is proven rather than assumed. When
+the fresh result is byte-identical to one already delivered this session,
+Prism returns a one-line `[prism:cached]` pointer with group counts instead
+of the payload. A result that changed by even one site is always delivered in
+full: complete-set tools deliver complete sets, never deltas.
+
+### CLI-only surfaces
+
+These remain available by name and through the CLI, but are not advertised to
+agents — their jobs are covered by the tools above (cycles are a field of
+`prism map`'s result; `prism_search` disambiguates names and tags test
+doubles), and they are operator tools rather than steering targets:
 
 | Utility | Purpose |
 |---|---|
-| `prism_savings` | Show session token savings so far |
-| `prism_feedback` | Rate a context result (improves ranking weights) |
+| `prism_resolve` | Disambiguate a name to exact file:line definitions |
+| `prism_edges` | Walk one hop from a symbol: callers, callees, implementations |
+| `prism_cycles` | Dependency cycles only |
+| `prism_drift` | Files/symbols that changed since they were delivered this session |
+| `prism_savings` | Session token savings so far |
+| `prism_feedback` | Rate a context result |
 | `prism_compact` | Compact the session savings ledger |
-| `prism_evidence` | Convert sub-agent prose summaries into typed, dereferenceable citations |
 
 ---
 
@@ -369,7 +401,7 @@ prism query <task> [dir] \
 
 prism read <file> [dir] --format text
 prism lookup <symbol> [dir] --format text
-prism search <keyword> [dir] --format text
+prism search <keyword> [dir] --format text [--scope text|symbols|both] [--regex]
 prism references <name> [dir] --format text
 prism change-impact <Type.method[(ParamType,...)> [dir] --format text|lean|json
 prism rename-plan <Type.method> <NewName> [dir] --format text|lean|json
@@ -377,6 +409,11 @@ prism missing-implementations <Type.method> [dir] --format text|lean|json
 prism task "<task>" [dir] [--changed a.go,b.go] [--terms x,y] --format text|lean|json
 prism node <symbol-or-file> [dir] --format text|lean|json
 prism dead-code [dir] [--roots a,b] --format text|lean|json
+prism map [dir] [--depth N] [--component X] [--expand 'A->B'] --format text|json
+prism cycles [dir] [--depth N] --format text|json
+prism arch [dir]
+prism verify [dir] [--base REF] --format text|json
+prism doctor [dir]
 prism watch [dir]
 prism drift [dir]
 prism savings [dir]
