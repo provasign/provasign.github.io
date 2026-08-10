@@ -145,17 +145,17 @@ layout: null
             <div class="terminal-head">prism · change impact</div>
             <pre><span class="green">$</span> prism change-impact 'ResponseWriter.Status'
 
-<span class="cyan">declaration</span>  server/response.go:18
-<span class="cyan">family</span>       3 implementations
-<span class="cyan">callers</span>      8 resolved call sites
-<span class="cyan">tests</span>        5 covering tests
+<span class="cyan">declaration</span>     server/response.go:18
+<span class="cyan">family</span>          3 implementations
+<span class="cyan">callers</span>         8 resolved call sites
+<span class="cyan">declaringTypes</span>  1 interface block
 
 completeness: <span class="green">closed</span></pre>
           </div>
           <div class="operations">
             <div class="operation"><code>change-impact</code><p>Everything affected by a method signature change, including resolved callers text search misses.</p></div>
             <div class="operation"><code>rename-plan</code><p>The same complete set converted into concrete, drift-checked line edits.</p></div>
-            <div class="operation"><code>affected</code><p>The tests that cover the files you actually changed.</p></div>
+            <div class="operation"><code>verify</code><p>Every site an agent-authored diff missed — line-precise, exit 1 if incomplete.</p></div>
           </div>
         </div>
         <div class="cta">

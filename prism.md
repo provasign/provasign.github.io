@@ -15,18 +15,18 @@ nothing important stayed invisible.
 
 **What Prism does:** it turns those follow-up questions into deterministic,
 task-shaped operations. Give it a method and get the complete change set. Give
-it changed files and get affected tests. Give it a task and anchors and get
-ranked, edit-ready code context within a token budget.
+it a diff and get every site the change missed. Give it a task and anchors and
+get ranked, edit-ready code context within a token budget.
 
 ```sh
 prism query "fix auth rate limit tests" \
-  --terms RateLimiter --include graph,tests,coverage_gaps --format text
+  --terms RateLimiter --include graph --format text
 ```
 
-One command returns: the `RateLimiter` source, the three places that call it,
-the two tests that pin its contract, and a note that `RefillRate` has no direct
-test coverage. That's the context an agent needs to change the code *safely* —
-not just the lines that matched a grep.
+One command returns: the `RateLimiter` source as line-numbered windows, the
+three places that call it, and the tests that pin its contract — edit-ready.
+That's the context an agent needs to change the code *safely* — not just the
+lines that matched a grep.
 
 The claims on this page are measured, not asserted — controlled study,
 independent oracles, open data. Correctness and completeness are always the
@@ -39,21 +39,22 @@ tools on the same oracles, publishing every raw run: see
 
 ## The division of labor
 
-Prism is **not** a better `grep`. The two tools have different jobs:
+Locating and relating are different jobs — Prism covers both, priced
+separately:
 
-| Tool | Job |
+| Need | Route |
 |---|---|
-| `rg` / `grep` | Find the first anchor. Fast, cheap, perfect for that. |
-| Prism | Everything after the anchor: *what calls this? what does it call? which tests define the contract? what's in the blast radius? what nearby code has no tests?* |
+| Find the first anchor | `prism search <term> --scope text` — a real ripgrep pass inside Prism, exactly grep's results at grep's cost |
+| Everything after the anchor | *what calls this? what does it call? which tests define the contract? what's in the blast radius?* — `prism query` and the task-shaped graph ops |
 
-The recommended workflow is: locate the anchor with `rg`, then run one Prism
+The recommended workflow is: locate the anchor (search), then run one Prism
 command to get the complete relational context.
 
 ```text
-rg buildCoverageGaps internal/
-  → prism query "write tests for buildCoverageGaps" \
-      --terms buildCoverageGaps \
-      --include graph,tests,coverage_gaps \
+prism search ToolSchemas --scope text
+  → prism query "write tests for ToolSchemas" \
+      --terms ToolSchemas \
+      --include graph \
       --format text
 ```
 
@@ -61,7 +62,7 @@ rg buildCoverageGaps internal/
 returns the relevant code as **verbatim, line-numbered source windows** — the
 same shape the agent's own read tool produces — plus each anchor's callers and
 covering tests. The agent edits straight away instead of re-reading, and an
-unchanged file it already received this session comes back as a ~10-token
+unchanged file it already received this session comes back as a ~30-token
 pointer. Delivery is chosen from the task (bug-fix/implement → source;
 exploration/review → the compact symbol list), or set explicitly with
 `--delivery`.
@@ -106,8 +107,9 @@ CLI text command per scenario.
 | Release/version/install wiring | 21,246 | 12,157 | **42.8%** |
 | **Average** | | | **29.6%** |
 
-The bigger correctness win is that Prism surfaces tests and coverage gaps
-**proactively**. Shell-only workflows often discover those after CI fails.
+*(Historical run. The `coverage_gaps` scenario refers to a since-removed
+feature: heuristic test-coverage edges measured 4–12% recall against real
+runtime coverage and were removed rather than shipped.)*
 
 ### 2. Repeat reads — the savings that compound all session long
 
@@ -115,7 +117,7 @@ This is the dimension a single-query benchmark can't capture, and it's the
 larger number over a real session. In a persistent MCP session, Prism
 remembers every file it has already delivered. The **first** read returns the
 content (already trimmed by progressive disclosure); **every read after that**
-of an unchanged file collapses to a ~10-token SHA pointer instead of the full
+of an unchanged file collapses to a ~30-token SHA pointer instead of the full
 file.
 
 Measured across four project sizes (2026-05-27), token savings on the *same
@@ -129,8 +131,8 @@ file* by read number:
 | Monorepo | 9,901 | 0% | **58.0%** | **58.0%** |
 
 Those are session-level aggregates. The underlying mechanism is sharper still:
-a single large file re-read drops from its full token cost to ~10 tokens — a
-**~99% reduction on that read**. Agents re-open the same handful of files
+a single large file re-read drops from its full token cost to ~30 tokens — a
+**~95–99% reduction on that read**, depending on file size. Agents re-open the same handful of files
 constantly — the file they're editing, the test that pins it, the interface it
 implements — so across a 20-query session these repeat-read savings dwarf the
 per-query context-gathering win.
@@ -138,7 +140,8 @@ per-query context-gathering win.
 Watch it accumulate live:
 
 ```sh
-prism savings .      # delivered vs. original tokens, per tool, this session
+prism savings .      # delivered vs. original tokens, per tool — per-repo
+                     # totals persist across processes (retained ~30 days)
 ```
 
 > **Repeat-read dedup only applies in persistent MCP sessions** (the MCP path
@@ -158,7 +161,7 @@ setup.
 Task + anchor terms
       │
       ▼
-Grove index (symbols, calls, imports, tests, 8 edge types)
+Grove index (symbols, calls, imports, tests, 9 edge types incl. overrides)
       │
       ▼
 Prism ranking
@@ -173,7 +176,6 @@ Budgeted text context
   • callers / callees
   • tests that pin the contract
   • docs
-  • coverage gaps (exported symbols with no direct test)
 ```
 
 `--format text` gives agents plain, source-like context with short headers —
@@ -210,24 +212,18 @@ prism index .
   `.windsurfrules`, `.github/copilot-instructions.md`, and other agent
   instruction files present in the repo
 
-**Three modes:**
-
-| Mode | When to use |
-|---|---|
-| `both` (recommended) | MCP tools as primary surface for the main agent; CLI fallback for subagents that don't inherit the MCP session |
-| `mcp` | MCP-only; for environments with first-class MCP support and persistent sessions |
-| `cli` | CLI-only; for environments without MCP support |
+There are no modes to choose: one `prism init` registers the MCP servers and
+writes a single steering block covering MCP tools (primary surface) and the
+CLI (fallback for subagents that don't inherit the MCP session). `--mode` is
+accepted and ignored since v0.38.0. Indexing is automatic — `prism index .`
+is an optional warm-up.
 
 After `prism init`, agents follow instructions like:
 
 ```sh
 # Relational context for a task
 prism query "trace the payment refund flow" \
-  --terms RefundPayment --include graph,tests --format text
-
-# Coverage gaps — proactive, before CI fails
-prism query "find gaps" \
-  --terms UpdatePayment --include coverage_gaps --format text
+  --terms RefundPayment --include graph --format text
 
 # Whole file
 prism read internal/payment/service.go --format text
@@ -260,14 +256,15 @@ prism_change_impact(query="BaseDatabaseOperations.quote_name")
 
 The engine traverses the type graph, not text: it finds callers that reach the
 method through an interface, a base class, or an indirect receiver chain — sites
-that grep would miss. Results come back in four groups:
+that grep would miss. Results come back in five groups:
 
 | Group | Contents |
 |---|---|
 | `declarations` | The method itself, across all files |
 | `family` | Every override and implementation in the subtype closure |
-| `supers` | Supertype declarations (informational — contracts this project doesn't own) |
+| `supers` | Same-member declarations on other contracts — sibling interfaces satisfied by the same implementations break under the change too |
 | `callers` | All resolved call sites into the set |
+| `declaringTypes` | Interface/type declaration blocks that textually change because their member specs are not separate symbols (Go/TS) — always change sites |
 
 Check the `completeness` field: `closed` means the set is authoritative.
 `project-local + overridesExternal` means the method belongs to an external
@@ -287,7 +284,7 @@ deterministic call each:
 |---|---|
 | `prism change-impact 'Type.method'` | What must change if this signature changes? |
 | `prism missing-implementations 'Type.method'` | Which types claiming this contract don't implement it — who breaks once the member is required? Under a default body, who inherits the default and breaks if it becomes abstract? |
-| `prism task "<what you are doing>"` | Everything one task needs in one call: context plus the obligations the task implies. Re-run with `--changed a.go,b.go` after editing for the completeness verdict (exit 1 if incomplete). |
+| `prism verify [--base REF]` | Is this diff complete? Detects contract changes, computes the required set from the *base* contract, and reports every dependent site the diff did not touch — line-precise, exit 1 if incomplete. |
 | `prism node <symbol-or-file>` | Orientation for one node: a symbol's source plus a names-only menu of its graph neighbours, or a file's contents plus what defines and depends on it. |
 | `prism dead-code [--roots a,b]` | Which production functions/methods does nothing reach? Precision-first: unreachable, non-exported, and name-unreferenced — safe to delete without breaking compilation. Caveats (reflection, DI, codegen) are part of the answer. |
 | `prism rename-plan 'Type.method' NewName` | The rename as concrete line edits — file, line, before, after — for every declaration, override, and resolved call site. Review and apply; ambiguous lines are bucketed separately, never silently included. |
@@ -324,13 +321,14 @@ with `--include docs`.
 
 ## MCP tools
 
-When running in MCP mode, fifteen tools are advertised to agents via
+Over MCP, fourteen tools are advertised to agents via
 `tools/list` — deliberately a narrow surface, because every extra tool is a
-routing error waiting to happen:
+routing error waiting to happen. (An earlier unified `prism(task)` tool was
+removed in v0.41.0: natural language must never be the sole retrieval key —
+agents do better picking a route and passing confirmed anchors.)
 
 | Tool | Purpose |
 |---|---|
-| `prism` | The unified task tool: describe the task, get edit-ready context plus the change obligations it implies; call again with `changed_files` to verify |
 | `prism_change_impact` | Deterministic change-set for a method signature change — declaration, override/implementation family, and all resolved callers in one engine call |
 | `prism_missing_implementations` | Types claiming a contract that do not implement the member — missing / abstract / unverifiable buckets |
 | `prism_rename_plan` | The change-impact set converted to concrete line edits with suggested substitutions — review-and-apply |
@@ -383,9 +381,9 @@ doubles), and they are operator tools rather than steering targets:
 | `prism_edges` | Walk one hop from a symbol: callers, callees, implementations |
 | `prism_cycles` | Dependency cycles only |
 | `prism_drift` | Files/symbols that changed since they were delivered this session |
-| `prism_savings` | Session token savings so far |
+| `prism_savings` | Token-savings dashboard (CLI totals persist per repository, retained ~30 days) |
 | `prism_feedback` | Rate a context result |
-| `prism_compact` | Compact the session savings ledger |
+| `prism_compact` | Compress a conversation-history JSON array read from stdin |
 
 ---
 
@@ -398,8 +396,7 @@ prism status [dir]
 
 prism query <task> [dir] \
   --terms a,b,c \
-  --include graph,tests,docs,coverage_gaps \
-  --depth 2 \
+  --include graph,docs \
   --format text|lean|json
 
 prism read <file> [dir] --format text
@@ -409,7 +406,6 @@ prism references <name> [dir] --format text
 prism change-impact <Type.method[(ParamType,...)> [dir] --format text|lean|json
 prism rename-plan <Type.method> <NewName> [dir] --format text|lean|json
 prism missing-implementations <Type.method> [dir] --format text|lean|json
-prism task "<task>" [dir] [--changed a.go,b.go] [--terms x,y] --format text|lean|json
 prism node <symbol-or-file> [dir] --format text|lean|json
 prism dead-code [dir] [--roots a,b] --format text|lean|json
 prism map [dir] [--depth N] [--component X] [--expand 'A->B'] --format text|json
@@ -436,8 +432,25 @@ version: 1
 profile: "default"
 ```
 
-Environment overrides: `PRISM_MODEL`, `PRISM_PROFILE`, `PRISM_GROVE_BINARY`,
-`PRISM_EMBEDDINGS_BACKEND`.
+Optional: `model: "<model-id>"` sizes context budgets (there is NO
+auto-detection; unset means a safe 200k default), and repeatable
+`arch_deny: "<from> -> <to>"` rules make `prism arch` a CI gate.
+Environment overrides: `PRISM_MODEL`, `PRISM_PROFILE`.
+
+---
+
+## Other surfaces
+
+Same engine, three more doors beyond MCP and the CLI:
+
+- **HTTP** — `prism serve` exposes every tool as `POST /<tool_name>` on
+  `127.0.0.1` (plus `GET /health`, `GET /status`) for curl and custom
+  automation. Reference:
+  [docs/HTTP_API.md](https://github.com/provasign/prism/blob/main/docs/HTTP_API.md).
+- **Go library** — `pkg/kit` embeds the engine in-process:
+  `kit.Open(dir)` then `Invoke("<tool_name>", args)`; this is what mason
+  builds on. Reference:
+  [docs/GO_KIT.md](https://github.com/provasign/prism/blob/main/docs/GO_KIT.md).
 
 ---
 
