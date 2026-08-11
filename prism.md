@@ -218,6 +218,14 @@ CLI (fallback for subagents that don't inherit the MCP session). `--mode` is
 accepted and ignored since v0.38.0. Indexing is automatic — `prism index .`
 is an optional warm-up.
 
+**Routing is structural.** Steering alone does not route agents — measured
+12:1, an agent will cite its instructions and run `grep` anyway. Interactive
+`prism init` therefore offers (and `--deny-builtin-search` forces) denying
+Claude Code's built-in Grep/`grep`/`rg` in `~/.claude/settings.json`, making
+Prism the search path. Nothing becomes unfindable —
+`prism search --scope text` is a ripgrep passthrough — and the change is
+reversible by deleting those lines.
+
 After `prism init`, agents follow instructions like:
 
 ```sh
