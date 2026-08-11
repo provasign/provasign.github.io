@@ -221,7 +221,8 @@ is an optional warm-up.
 **Routing is structural.** Steering alone does not route agents — measured
 12:1, an agent will cite its instructions and run `grep` anyway. Interactive
 `prism init` therefore offers (and `--deny-builtin-search` forces) denying
-Claude Code's built-in Grep/`grep`/`rg` in `~/.claude/settings.json`, making
+Claude Code's built-in Grep/`grep`/`rg` in the project's
+`.claude/settings.json` (machine-global only with `--global`), making
 Prism the search path. Nothing becomes unfindable —
 `prism search --scope text` is a ripgrep passthrough — and the change is
 reversible by deleting those lines.
