@@ -344,10 +344,12 @@ rows. Queries never trigger a rebuild; sessions stay warm.
   type-level disambiguation or inheritance traversal — or when you care about
   the 20–60× turn count difference at equal recall.
 - **The engine has a measured ceiling, not perfection.** Deterministic
-  engine-only scoring: mean recall 0.993, precision 0.948 on the Java corpus;
-  0.80 precision on one overload-ambiguous task. Every residual is visible,
-  attributable, and fixable in one place — that is the point of doing the
-  traversal in a tool.
+  engine-only scoring is now a CI gate on every release: change-impact recall
+  0.997–1.0, precision ~0.9–1.0 across 15 corpora in 4 languages, against
+  committed ground truth. (The original 2026-07 study measured 0.993 / 0.948
+  on the Java corpus alone, with 0.80 precision on one overload-ambiguous
+  task.) Every residual is visible, attributable, and fixable in one place —
+  that is the point of doing the traversal in a tool.
 - **The study measured tool classes, not a market.** T is what agentic grep
   agents do; G is what LSP/primitive code-intel servers expose; G\* is
   Prism. The ongoing cross-tool program above measures specific tools under
@@ -355,9 +357,44 @@ rows. Queries never trigger a rebuild; sessions stay warm.
   stated — to test the *mechanism*, not to rank products.
 - **Relay discipline matters.** One capable model (Sonnet) re-processed the
   engine's solved output through its own grep/awk pipeline and corrupted it
-  (0.961 recall, 0.909 precision); removing the text-search escape hatch
-  restored the exact engine ceiling. Prism's steering and tool descriptions
-  encode this.
+  (0.961 recall, 0.909 precision); in the controlled harness, taking the
+  text-search escape hatch away restored the exact engine ceiling. Shipped
+  Prism does not take anything away — the production mechanism is guidance
+  inside the tool's own responses ("relay this set as-is") plus steering, and
+  the wide-bed transcripts show the failure mode it targets is real: the
+  arm that re-verified every prism answer through grep did the same work
+  twice at roughly double the turns.
+
+---
+
+## Where the numbers stand today (2026-09)
+
+The tables above are the original controlled study, kept as dated history.
+The program has since moved from one-off studies to standing gates and
+wider, more adversarial beds — all in
+[provasign/research](https://github.com/provasign/research):
+
+- **Engine invariants, CI-gated.** Every Prism release re-scores
+  change-impact against committed ground truth on 15 corpora across 4
+  languages: recall 0.997–1.0, precision ~0.9–1.0, plus
+  missing-implementations completeness and byte-identical index determinism.
+  A regression blocks the tag.
+- **Context assembly has its own oracle.** A 37-task deterministic bed scores
+  `prism_query` on whether the files an agent actually needed made it into
+  the delivered context: 0.853 with realistic task-derived terms
+  (0.588 under a stricter oracle-terms protocol). This bed caught real
+  ranking regressions that single hand-repros missed.
+- **Wide agent bed (real Claude-agent cells, paired arms).** On upgrade-style
+  tasks deliberately shaped away from Prism's home turf, the Prism arm leads
+  recall 0.612 vs 0.606 with cost parity in 6 of 8 pairs — including one
+  task where a single exhaustive graph inventory call broke a recall ceiling
+  (0.30 → 0.35) no baseline cell had crossed. Per-cell noise is ~50%, so
+  transcript-level mechanism evidence is reported alongside toplines.
+
+The honest summary is unchanged in shape: on small greppable tasks the tools
+tie; the graph's wins are completeness under type-level ambiguity, one-call
+blast radius, and turn count — and those are now regression-gated rather than
+point-in-time claims.
 
 ---
 
