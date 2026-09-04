@@ -161,7 +161,7 @@ setup.
 Task + anchor terms
       │
       ▼
-Grove index (symbols, calls, imports, tests, 9 edge types incl. overrides)
+Grove index (symbols, calls, imports, 8 core edge types incl. overrides)
       │
       ▼
 Prism ranking
@@ -190,7 +190,7 @@ for automation that needs structured output.
 
 ```sh
 # Pin a version
-VERSION=v0.17.0 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
+VERSION=v0.69.1 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
 ```
 
 Installs to `~/bin` by default. Set `INSTALL_DIR=/usr/local/bin` to override.
@@ -218,14 +218,16 @@ CLI (fallback for subagents that don't inherit the MCP session). `--mode` is
 accepted and ignored since v0.38.0. Indexing is automatic — `prism index .`
 is an optional warm-up.
 
-**Routing is structural.** Steering alone does not route agents — measured
-12:1, an agent will cite its instructions and run `grep` anyway. Interactive
-`prism init` therefore offers (and `--deny-builtin-search` forces) denying
-Claude Code's built-in Grep/`grep`/`rg` in the project's
-`.claude/settings.json` (machine-global only with `--global`), making
-Prism the search path. Nothing becomes unfindable —
-`prism search --scope text` is a ripgrep passthrough — and the change is
-reversible by deleting those lines.
+**Routing is earned in-band, not forced.** Earlier versions offered denying
+Claude Code's built-in Grep/`grep`/`rg`; that model is dead — a bare denial
+gets worked around (measured live: an agent read it as "the user is blocking
+grep" and routed through a subagent) — and `prism init` now actively cleans
+up those legacy deny entries where it finds them. What routes agents today,
+each transcript-measured: an unconditional load-the-tools line in steering,
+guidance inside tool responses at the moment it matters (truncation warnings
+pointing at the complete rollup, empty-result retry hints with
+closest-symbol suggestions, errors that name the fix), and tools that
+degrade instead of erroring. Grep is never blocked — it is out-competed.
 
 After `prism init`, agents follow instructions like:
 
@@ -308,7 +310,7 @@ prism watch .    # delta-reindex on every save — queries never wait for indexi
 
 ## Language support
 
-11 languages, all with Tree-sitter AST + native semantic enrichment:
+Eleven languages (the nine below plus COBOL and JCL for mainframe estates), all with Tree-sitter AST + native type analysis:
 
 | Language | Extensions |
 |---|---|
@@ -330,28 +332,24 @@ with `--include docs`.
 
 ## MCP tools
 
-Over MCP, fourteen tools are advertised to agents via
-`tools/list` — deliberately a narrow surface, because every extra tool is a
-routing error waiting to happen. (An earlier unified `prism(task)` tool was
-removed in v0.41.0: natural language must never be the sole retrieval key —
-agents do better picking a route and passing confirmed anchors.)
+Over MCP, **six** tools are advertised to agents via `tools/list` —
+deliberately narrow, because every extra tool is a routing error waiting to
+happen (a 190-cell A/B measured eight tools at zero calls; they moved to
+the CLI). All six load deferred — no resident schema cost; steering tells
+the agent to load them once, up front.
 
 | Tool | Purpose |
 |---|---|
-| `prism_change_impact` | Deterministic change-set for a method signature change — declaration, override/implementation family, and all resolved callers in one engine call |
-| `prism_missing_implementations` | Types claiming a contract that do not implement the member — missing / abstract / unverifiable buckets |
-| `prism_rename_plan` | The change-impact set converted to concrete line edits with suggested substitutions — review-and-apply |
-| `prism_dead_code` | Unreachable production functions/methods — precision-first deletion candidates with caveats |
-| `prism_map` | Components and every component-level dependency, with weights, cycles, and the evidence tier of each claim |
-| `prism_query` | Graph-ranked context for a task + anchor terms, plus a real full-text pass over the same terms |
-| `prism_search` | Symbol names **and** raw source text in one call (`scope="text"` for a pure ripgrep, `regex=true` for patterns) |
-| `prism_read` | Full file content (unchanged re-reads collapse to a SHA pointer) |
+| `prism_query` | Graph-ranked, edit-ready context for a task + anchor terms — line-numbered source windows, callers, and "tested by" pointers to verified test callers |
+| `prism_search` | Symbol names **and** raw source text in one call. Batches up to 10 terms; `scope="text"` is a pure ripgrep; `context=N` inlines surrounding lines (locate and read, one turn); a truncated result carries a grouped-by-symbol rollup of the FULL hit set; an all-empty result carries retry guidance and closest-symbol suggestions |
+| `prism_read` | File content, whole or by line range. Unchanged re-reads collapse to a SHA pointer; files too large for one result degrade to a head window plus a complete symbol map instead of erroring |
 | `prism_lookup` | Single known symbol — function, method, type |
-| `prism_node` | One symbol's source plus its neighbour menu, or one file's contents plus its definitions and dependents |
-| `prism_references` | Every code use of a symbol, grouped by file |
-| `prism_verify` | Diff-completeness gate: what the change set should have been, and what the diff missed |
-| `prism_arch_check` | Declared architecture rules validated against real edges |
-| `prism_index` | Trigger reindex (delta indexing is automatic) |
+| `prism_change_impact` | Deterministic change-set for a method signature change — declaration, override/implementation family, and all resolved callers (test callers labeled) in one engine call; `file=` disambiguates same-named types |
+| `prism_verify` | Diff-completeness gate: what the change set should have been, and what the diff missed. `removed_symbols=[...]` is the cheap mid-loop residual check for removal tasks |
+
+Everything else — `rename_plan`, `missing_implementations`, `dead_code`,
+`map`, `arch_check`, `references`, and more — lives on the CLI and the HTTP
+dispatch surface, one `prism --help` away.
 
 ### Text search is built in
 

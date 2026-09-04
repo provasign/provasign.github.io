@@ -3,7 +3,7 @@ title: Grove
 layout: default
 nav_order: 6
 nav_exclude: true
-description: "A persistent code graph for your repository — impact, tests, and dependencies, queryable by humans, tools, and agents."
+description: "A persistent code graph for your repository — impact, callers, and dependencies, queryable by humans, tools, and agents."
 permalink: /grove/
 ---
 
@@ -14,13 +14,12 @@ Grep answers "does this string appear somewhere?" A language server answers
 before changing code:
 
 - *What does changing this function break — across the entire codebase?*
-- *Which tests cover this method, directly or transitively?*
 - *What is the full dependency chain from this file?*
 - *What types implement this interface, and which ones are missing a member?*
 
 **What Grove does:** it parses your repository (Tree-sitter, 11 languages,
 native semantic analyzers) into a persistent SQLite graph — symbols, calls,
-imports, tests, 8 edge types — and keeps it live with delta indexing. Files
+imports, 8 core edge types — and keeps it live with delta indexing. Files
 whose content hash hasn't changed are never re-parsed.
 
 ```sh
@@ -78,7 +77,7 @@ In-memory CodeGraph
   8 edge types · BFS traversal
      │
      ├── CLI commands
-     ├── MCP stdio (9 tools)
+     ├── MCP stdio (7 tools)
      └── Embedded Go API (pkg/grove)
 ```
 
@@ -114,7 +113,6 @@ positives.
 | `implements` | Class implements an interface |
 | `calls` | Function calls another function (scoped) |
 | `uses-type` | Function/field uses a type (scoped) |
-| `tests` | Test function covers a named symbol |
 
 ---
 
@@ -138,7 +136,7 @@ positives.
 
 Non-code files (`.md`, `.yaml`, `.json`, `.sh`, `.toml`, `.proto`, `.sql`,
 `Makefile`, `Dockerfile`, and more) are indexed as `document` symbols in the
-FTS5 full-text index, queryable semantically alongside code.
+FTS5 full-text index, queryable alongside code.
 
 ---
 
@@ -147,7 +145,7 @@ FTS5 full-text index, queryable semantically alongside code.
 | Surface | For |
 |---|---|
 | **CLI** | Humans, scripts, CI |
-| **MCP stdio** (`grove mcp .`) | Any MCP-capable AI agent — 9 tools |
+| **MCP stdio** (`grove mcp .`) | Any MCP-capable AI agent — 7 tools |
 | **Embedded Go API** (`pkg/grove`) | Your own tools, in-process — how [Prism]({{ '/prism/' | relative_url }}) and Fuse use it |
 
 Everything lives in `.grove/grove.db` — one SQLite file. Back it up, copy it,
@@ -168,7 +166,6 @@ wire), capped lists with true counts, compact JSON.
 | `grove_query` | Retrieve ranked context for an intent |
 | `grove_impact` | Blast radius — what breaks if this symbol changes? |
 | `grove_deps` | Dependency tree for a file |
-| `grove_tests` | Tests that cover a symbol (direct + transitive) |
 | `grove_icr` | Isolated Change Region for an intent |
 | `grove_conflicts` | Overlap check between two change regions |
 | `grove_certify` | Conservative certification report for a unified diff |
@@ -188,7 +185,7 @@ graph without Prism's context-ranking layer.
 ## Certification mode
 
 `grove certify` maps unified diff hunks to indexed symbols and emits a JSON
-report: changed files, changed symbols, impacted symbols, related tests,
+report: changed files, changed symbols, impacted symbols,
 unknowns, findings, and a verdict.
 
 | Verdict | Meaning |
@@ -214,7 +211,7 @@ grove certify <diff-file-or-> [dir]
 
 ```sh
 # Pin a specific version
-VERSION=v0.15.0 curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
+VERSION=v0.42.0 curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
 ```
 
 Installs to `~/bin` by default. Set `INSTALL_DIR=/usr/local/bin` to override.
@@ -294,6 +291,6 @@ the context-ranking layer on top of it, and
 and record drift evidence.
 [Shale]({{ '/shale/' | relative_url }}) plans to use it for intent-to-diff
 conformance. You can use Grove directly when you want graph queries — impact,
-tests, deps, symbols — without the higher-level tools.
+impact, deps, symbols — without the higher-level tools.
 
 [Get Grove on GitHub →](https://github.com/provasign/grove){: .btn .btn-primary }

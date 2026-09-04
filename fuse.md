@@ -81,7 +81,7 @@ Every decision is recorded in an audit log (`fuse status` shows recent
 merges), and each merge records **drift evidence** — which symbols were
 added, removed, changed, or renamed — in `.git/fuse/drift.json`.
 [Prism]({{ '/prism/' | relative_url }}) surfaces that drift to other agents
-mid-session (`prism_drift`), so an agent whose context predates the merge
+mid-session (`prism drift`, CLI), so an agent whose context predates the merge
 learns the ground shifted *before* it edits from stale memory.
 
 ---
