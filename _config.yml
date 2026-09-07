@@ -1,5 +1,5 @@
 title: Provasign
-description: "Open-source tools that help AI-written changes explain themselves: Prism before the edit, Shale after it, and Mason as the reference agent."
+description: "Local open-source tools for understandable AI-written changes, backed by public tasks, oracles, and run evidence."
 theme: just-the-docs
 
 url: https://provasign.dev

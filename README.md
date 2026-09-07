@@ -2,76 +2,37 @@
 title: Provasign Documentation
 layout: default
 nav_order: 1
-description: "Documentation for Prism, Shale, and Mason."
+description: "Documentation for Prism, Grove, Shale, Mason, and the public evaluation program."
 permalink: /docs/
 ---
 
-# Provasign Documentation
+# Provasign documentation
 
-Prism and Shale are the core open-source projects. Mason is the incubating
-reference agent that integrates both. Grove is shared engine infrastructure,
-not a fourth product users must adopt.
+Source for [provasign.dev](https://provasign.dev), built with GitHub Pages and Jekyll.
 
-| Project | Role | Status |
-|---|---|---|
-| **Prism** | Semantic change intelligence for developers, coding agents, and CI | Core project, Apache-2.0 |
-| **Shale** | Agent intent, session evidence, local checks, and pull-request cards | Core project, Apache-2.0 |
-| **Mason** | Reference coding agent with Prism and Shale built into the harness | Incubating, Apache-2.0 |
+Provasign builds local tools for understandable AI-authored changes. Prism provides semantic context before an edit; Shale carries intent and evidence into review; Mason is the reference agent; Grove is the shared graph engine. The Research repository publishes the tasks, oracles, run records, and transcripts behind performance claims.
 
----
+## Start here
 
-## Start Here
+- [Prism](https://provasign.dev/prism/) — semantic change intelligence for coding agents
+- [Grove](https://provasign.dev/grove/) — local multilingual code graph
+- [Shale](https://provasign.dev/shale/) — local agent-session evidence for pull requests
+- [Mason](https://provasign.dev/mason/) — reference coding agent
+- [Benchmarks](https://provasign.dev/benchmarks/) — current accuracy and efficiency evidence
 
-| Goal | Link |
-|---|---|
-| Understand the complete impact of a code change | [Prism]({{ '/prism/' | relative_url }}) |
-| Add agent PR evidence to a repo | [Shale]({{ '/shale/' | relative_url }}) |
-| Run the integrated reference agent | [Mason]({{ '/mason/' | relative_url }}) |
-| Full setup walkthrough | [Getting started](https://github.com/provasign/shale/blob/main/docs/getting-started.md) |
-| Something looks off | [Troubleshooting](https://github.com/provasign/shale/blob/main/docs/troubleshooting.md) |
-| See real cards on real PRs | [Live demo pull requests](https://github.com/provasign/shale-test-bed/pulls?q=is%3Apr) |
-| Review published performance evidence | [Benchmarks]({{ '/benchmarks/' | relative_url }}) |
+## Source repositories
 
----
+- [provasign/prism](https://github.com/provasign/prism)
+- [provasign/grove](https://github.com/provasign/grove)
+- [provasign/research](https://github.com/provasign/research)
+- [provasign/shale](https://github.com/provasign/shale)
+- [provasign/mason](https://github.com/provasign/mason)
 
-## Install Shale
+## Local preview
 
 ```sh
-brew tap provasign/shale
-brew install shale
-cd your-repo
-shale init
+bundle install
+bundle exec jekyll serve
 ```
 
-If Homebrew asks you to trust the tap:
-
-```sh
-brew trust --formula provasign/shale/shale
-brew install shale
-```
-
-No account, token paste, GitHub App, hosted server, or background service is
-required.
-
----
-
-## What Shale Adds to a PR
-
-- the agent's stated intent
-- the agent/model/session metadata available locally
-- changed files with hook evidence or git-derived fallback evidence
-- checks observed during the agent session
-- explicit gaps where files changed without session evidence
-- a neutral PR card that never blocks a merge by default
-
-Shale is intentionally advisory and fail-open. It gives reviewers better
-evidence without turning local agent workflows into a hosted compliance product.
-
----
-
-## Repositories
-
-- [provasign/prism](https://github.com/provasign/prism) — core project
-- [provasign/shale](https://github.com/provasign/shale) — core project
-- [provasign/mason](https://github.com/provasign/mason) — incubating reference agent
-- [provasign/grove](https://github.com/provasign/grove) — shared semantic graph engine
+Changes merged to `main` are published by GitHub Pages.
