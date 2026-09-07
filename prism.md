@@ -26,7 +26,7 @@ You can also use the installer:
 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
 
 # Pin the current release
-VERSION=v0.71.1 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
+VERSION=v0.72.0 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
 ```
 
 `prism init` creates the local configuration, registers MCP for detected clients, and writes concise agent instructions. Indexing happens automatically on first use and updates incrementally.
