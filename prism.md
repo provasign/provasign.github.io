@@ -78,7 +78,7 @@ The hardest current case is Grafana's `QueryData` interface, declared in an exte
 
 ## Language support
 
-Prism indexes Go, TypeScript/TSX, JavaScript/JSX, Python, Java, Rust, C/C++, C#, and PHP. Semantic depth depends on language support and the native toolchain available in the repository. `prism doctor .` reports the active capability and evidence tier.
+Prism indexes Go, TypeScript/TSX, JavaScript/JSX, Python, Java, Rust, C/C++, C#, PHP, Swift, Kotlin, Objective-C, COBOL, and JCL (via the embedded Grove engine). Semantic depth depends on language support and the native toolchain available in the repository; COBOL and JCL are structural/heuristic only, with no published accuracy oracle yet. `grove doctor .` reports the full per-language resolution tier and limitations breakdown.
 
 ## Learn more
 
