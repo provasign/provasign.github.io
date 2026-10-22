@@ -49,6 +49,11 @@ layout: null
     .terminal pre { margin: 0; padding: 20px; overflow-x: auto; color: #d1fae5; font: 13px/1.75 var(--mono); }
     .cyan { color: var(--accent2); }
     .green { color: var(--accent); }
+    button.operation { display: block; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); color: inherit; font: inherit; cursor: pointer; padding: 17px 12px; border-left: 3px solid transparent; }
+    button.operation:hover, button.operation:focus-visible { background: var(--panel); outline: none; }
+    button.operation[aria-pressed="true"] { border-left-color: var(--accent2); background: var(--panel); }
+    .op-pane[hidden] { display: none; }
+    .terminal .op-pane { min-height: 320px; }
     .operations { border-top: 1px solid var(--line); }
     .operation { padding: 17px 0; border-bottom: 1px solid var(--line); }
     .operation code { color: var(--accent2); font: 13px var(--mono); }
@@ -151,12 +156,58 @@ layout: null
         <h2 class="section-title">Know the whole change before you touch it.</h2>
         <p class="section-lead">Prism turns the multi-step investigations developers and agents repeat every day into task-shaped operations with explicit completeness. It works with Claude Code, Codex, Cursor, Copilot (VS Code), Gemini CLI, OpenCode, and Windsurf, as an MCP server or as a <code>prism</code> command the agent runs in its shell.</p>
         <div class="prism-demo">
-          <div class="terminal" aria-label="Example Prism change-impact output">
-            <div class="terminal-head">prism · change impact</div>
-            <pre><span class="green">$</span> prism change-impact ResponseWriter.Status   <span class="cyan"># in gin</span>
+          <div class="terminal" aria-label="Real Prism output on gin">
+            <div class="terminal-head">prism · <span class="op-name">change-impact</span> · real output on gin</div>
+            <pre class="op-pane" data-op="lookup" hidden><span class="green">$</span> prism lookup responseWriter.Status responseWriter.WriteHeader
+
+<span class="cyan">// method responseWriter.Status  response_writer.go:98-100</span>
+98  func (w *responseWriter) Status() int {
+99  	return w.status
+100 }
+<span class="cyan">// method responseWriter.WriteHeader  response_writer.go:67-75</span>
+67  func (w *responseWriter) WriteHeader(code int) {
+68  	if code &gt; 0 &amp;&amp; w.status != code {
+69  		if w.Written() {
+    ...
+73  		w.status = code</pre>
+            <pre class="op-pane" data-op="search" hidden><span class="green">$</span> prism search WriteHeaderNow --scope text
+
+<span class="cyan">// COMPLETE — 26 exact matches across 5 files</span>
+// 2 different symbols share the name: ResponseWriter.WriteHeaderNow,
+//   responseWriter.WriteHeaderNow
+response_writer.go:
+  43   WriteHeaderNow()            [ResponseWriter.WriteHeaderNow]
+  77   func (w *responseWriter) WriteHeaderNow() {
+  85   w.WriteHeaderNow()          [responseWriter.Write]
+context.go:
+  215  c.Writer.WriteHeaderNow()   [Context.AbortWithStatus]
+gin.go:
+  723  c.writermem.WriteHeaderNow()  [Engine.handleHTTPRequest]
+  ...
+// test files: 15 hits in 2 files</pre>
+            <pre class="op-pane" data-op="read" hidden><span class="green">$</span> prism read response_writer.go --from 77 --to 82
+
+<span class="cyan">// response_writer.go lines 77-82 of 148</span>
+77  func (w *responseWriter) WriteHeaderNow() {
+78  	if !w.Written() {
+79  		w.size = 0
+80  		w.ResponseWriter.WriteHeader(w.status)
+81  	}
+82  }</pre>
+            <pre class="op-pane" data-op="query" hidden><span class="green">$</span> prism query --terms WriteHeaderNow
+
+<span class="cyan">Anchors — callers</span>
+WriteHeaderNow  response_writer.go:77  16 callers
+  tested by TestContextBadAutoBind, TestContextBindRequestTooLarge, +3
+AbortWithStatus  context.go:213  14 callers
+  tested by TestContextAbortWithStatus, TestMiddlewareAbort, +3
+Render  context.go:1179  21 callers
+handleHTTPRequest  gin.go:690  2 callers
+<span class="cyan">Source</span>  context.go, gin.go, response_writer.go windows</pre>
+            <pre class="op-pane" data-op="change-impact"><span class="green">$</span> prism change-impact ResponseWriter.Status
 
 completeness: <span class="green">closed</span> (compiler-backed go)
-<span class="cyan">editSites</span> (14)
+<span class="cyan">editSites (14)</span>
   response_writer.go:30:2   Status() int
   response_writer.go:98:26  func (w *responseWriter) Status() int
   gin.go:770:17             if c.writermem.Status() == code
@@ -164,14 +215,24 @@ completeness: <span class="green">closed</span> (compiler-backed go)
   ... 10 more in tests
 <span class="cyan">not this change</span>   17 lines calling Context.Status
                   9 comments and docs</pre>
+            <pre class="op-pane" data-op="verify" hidden># after deleting WriteHeaderNow from response_writer.go
+<span class="green">$</span> prism verify --removed WriteHeaderNow
+
+<span class="cyan">exact identifier mentions remain (0/1 clean)</span>
+  WriteHeaderNow: 22 mentions
+    context.go:215   c.Writer.WriteHeaderNow()
+    context.go:1184  c.Writer.WriteHeaderNow()
+    gin.go:723       c.writermem.WriteHeaderNow()
+    gin.go:778       c.writermem.WriteHeaderNow()
+    ...</pre>
           </div>
-          <div class="operations">
-            <div class="operation"><code>lookup</code><p>The source of symbols the agent can name, up to ten in one call.</p></div>
-            <div class="operation"><code>search</code><p>Text or symbol search where every hit names its enclosing function, with complete file inventories.</p></div>
-            <div class="operation"><code>read</code><p>A known file range, without a separate open-and-scroll step.</p></div>
-            <div class="operation"><code>query</code><p>Callers, implementations and tests around the names the agent already has.</p></div>
-            <div class="operation"><code>change-impact</code><p>Every declaration, override, implementation and caller a change touches, with edit sites and an explicit completeness verdict.</p></div>
-            <div class="operation"><code>verify</code><p>Optional: after a removal, every remaining mention of the removed names.</p></div>
+          <div class="operations" role="group" aria-label="Prism operations: choose one to see its output">
+            <button type="button" class="operation" data-op="lookup" aria-pressed="false"><code>lookup</code><p>The source of symbols the agent can name, up to ten in one call.</p></button>
+            <button type="button" class="operation" data-op="search" aria-pressed="false"><code>search</code><p>Text or symbol search where every hit names its enclosing function, with complete file inventories.</p></button>
+            <button type="button" class="operation" data-op="read" aria-pressed="false"><code>read</code><p>A known file range, without a separate open-and-scroll step.</p></button>
+            <button type="button" class="operation" data-op="query" aria-pressed="false"><code>query</code><p>Callers, implementations and tests around the names the agent already has.</p></button>
+            <button type="button" class="operation" data-op="change-impact" aria-pressed="true"><code>change-impact</code><p>Every declaration, override, implementation and caller a change touches, with edit sites and an explicit completeness verdict.</p></button>
+            <button type="button" class="operation" data-op="verify" aria-pressed="false"><code>verify</code><p>Optional: after a removal, every remaining mention of the removed names.</p></button>
           </div>
         </div>
         <div class="cta">
@@ -247,5 +308,20 @@ completeness: <span class="green">closed</span> (compiler-backed go)
   <footer class="site-footer">
     <div class="site-footer-inner">Prism before the edit. Shale after it. Mason proves the loop.</div>
   </footer>
+<script>
+  (function () {
+    var buttons = document.querySelectorAll('button.operation');
+    var panes = document.querySelectorAll('.op-pane');
+    var name = document.querySelector('.op-name');
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var op = b.getAttribute('data-op');
+        buttons.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        panes.forEach(function (p) { p.hidden = p.getAttribute('data-op') !== op; });
+        if (name) name.textContent = op;
+      });
+    });
+  })();
+</script>
 </body>
 </html>
