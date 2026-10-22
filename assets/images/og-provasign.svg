@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#0d1117"/>
+  <g font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <text x="80" y="118" font-size="30" font-weight="700" fill="#748190" letter-spacing="1">PROVASIGN</text>
+    <text x="80" y="196" font-size="58" font-weight="800" fill="#e6edf3">Take the guesswork out of</text>
+    <text x="80" y="262" font-size="58" font-weight="800" fill="#e6edf3">your coding agent.</text>
+
+    <rect x="80" y="318" width="500" height="214" rx="12" fill="#161b22" stroke="#273241" stroke-width="2"/>
+    <rect x="80" y="318" width="500" height="6" rx="3" fill="#7dd3fc"/>
+    <text x="110" y="378" font-size="40" font-weight="800" fill="#e6edf3">Prism 1.0</text>
+    <text x="110" y="416" font-size="22" fill="#9aa7b4">Before the edit: every caller, override</text>
+    <text x="110" y="446" font-size="22" fill="#9aa7b4">and test a change touches, from the compiler.</text>
+    <text x="110" y="500" font-size="22" font-weight="700" fill="#7dd3fc">32/32 change tasks · 24% lower cost</text>
+
+    <rect x="620" y="318" width="500" height="214" rx="12" fill="#161b22" stroke="#273241" stroke-width="2"/>
+    <rect x="620" y="318" width="500" height="6" rx="3" fill="#38d996"/>
+    <text x="650" y="378" font-size="40" font-weight="800" fill="#e6edf3">Shale</text>
+    <text x="650" y="416" font-size="22" fill="#9aa7b4">After the edit: intent, files touched,</text>
+    <text x="650" y="446" font-size="22" fill="#9aa7b4">checks and gaps on the pull request.</text>
+    <text x="650" y="500" font-size="22" font-weight="700" fill="#38d996">Every agent PR explains itself</text>
+  </g>
+  <text x="80" y="584" font-family="'SF Mono', Menlo, Consolas, monospace" font-size="22" fill="#748190">provasign.dev  ·  brew install provasign/tap/prism</text>
+</svg>
