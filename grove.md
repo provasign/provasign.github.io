@@ -18,7 +18,7 @@ Most coding-agent users should install [Prism]({{ '/prism/' | relative_url }}), 
 curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
 
 # Pin the current release
-VERSION=v0.58.1 curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
+VERSION=v0.63.25 curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
 ```
 
 ```sh
@@ -36,7 +36,7 @@ grove status .
 - test relationships
 - component and diff evidence consumed by higher-level tools
 
-Grove supports Go, TypeScript/TSX, JavaScript/JSX, Python, Java, Rust, C/C++, C#, and PHP. Tree-sitter provides structural extraction; native analyzers enrich the graph when the repository toolchain is available. Capability and evidence tiers make those differences explicit.
+Grove supports Go, TypeScript/TSX, JavaScript/JSX, Python, Java, Rust, C/C++, C#, PHP, Swift, Kotlin, Objective-C, COBOL, and JCL. Tree-sitter provides structural extraction. Native analyzers enrich the graph when the repository toolchain is available. `grove doctor` reports each language's resolution tier and known limits.
 
 ## Task operations
 
@@ -62,7 +62,17 @@ Grove opens no network listener. Its index lives in `.grove/grove.db`, honors re
 
 ## Evidence
 
-Graph accuracy is regression-gated against typed-toolchain and independent oracles on pinned repositories. The agent-level effect of those graph operations is measured in the public [research repository](https://github.com/provasign/research) and summarized on the [benchmarks page]({{ '/benchmarks/' | relative_url }}).
+Call-edge accuracy is CI-gated against each language's compiler or runtime ground truth on pinned repositories. Grove v0.63.25, selected rows (precision / recall):
+
+| Language | Corpus | Ground truth | Precision | Recall |
+|---|---|---|---:|---:|
+| Go | gin / cobra | SSA + VTA | 0.979 / 0.995 | 0.997 / 1.000 |
+| Java | commons-lang / commons-io | javac + javap | 1.000 / 1.000 | 1.000 / 1.000 |
+| TypeScript | socket.io / p-queue | TypeScript compiler API | 0.937 / 0.959 | 0.992 / 1.000 |
+| Python | flask | pytest trace (dynamic) | 0.896 | 0.787 |
+| PHP | PHP-Parser | Xdebug trace (dynamic) | 0.922 | 0.683 |
+
+COBOL and JCL have a regression-tested graph; their accuracy is not yet independently scored. All twelve scored languages are on the [benchmarks page]({{ '/benchmarks/' | relative_url }}#engine-accuracy-grove-v06325).
 
 - [GitHub repository](https://github.com/provasign/grove)
 - [Prism]({{ '/prism/' | relative_url }})

@@ -2,89 +2,106 @@
 title: Benchmarks
 layout: default
 nav_order: 6
-description: "Current Prism accuracy and efficiency results, with repeated trials, methods, and limitations."
+description: "Prism v0.87.39 vs native Claude Code on change work and bug fixes, plus Grove engine accuracy."
 permalink: /benchmarks/
 ---
 
 # Prism benchmarks
 
-Prism is evaluated on whether a coding agent identifies every site affected by a code change. Accuracy is scored against committed ground truth; efficiency is reported beside it. The harness, tasks, oracles, run records, and transcripts are public in [provasign/research](https://github.com/provasign/research).
+Prism v0.87.39 (Grove v0.63.25, Astkit v0.16.10), measured 2026-10-21. Earlier benchmark results are archived.
 
-## Latest paired nine-task sample
+## Setup
 
-These are fresh Sonnet runs on isolated repository snapshots. Native cells used ordinary search/read tools. Prism cells used the current Prism workflow.
+Claude Code 2.1.302 with Claude Sonnet 5.5, run headless (`claude -p`). Each task ran twice: once with Claude Code's own tools (native), once with Prism set up through `prism init --interface cli`, where the agent runs the `prism` command in Bash and no MCP server is registered. Same task, same checkout, same tests in both arms.
 
-| Task | Native R/P | Native cost | Prism R/P | Prism cost | Cost ratio |
-|---|---:|---:|---:|---:|---:|
-| Jackson `JsonNode.get` | 0.625 / 1.000 | $0.77 | **1.000 / 1.000** | **$0.27** | 0.35× |
-| Jackson `SettableBeanProperty.set` | 0.591 / 0.867 | $0.16 | **1.000 / 1.000** | **$0.06** | 0.38× |
-| TypeORM driver `escape` | 0.405 / 0.517 | $0.11 | **1.000 / 0.974** | **$0.07** | 0.65× |
-| Django `quote_name` | 1.000 / 0.230 | $0.44 | **1.000 / 0.865** | **$0.08** | 0.19× |
-| Jackson `writeTypePrefix` | 0.868 / 0.868 | $0.12 | **1.000 / 1.000** | **$0.08** | 0.64× |
-| Guava forwarding `delegate` | 0.171 / 0.982 | $0.51 | **0.984 / 0.950** | **$0.23** | 0.46× |
-| Jackson `serialize` | 0.574 / 0.639 | $0.64 | **1.000 / 0.864** | **$0.20** | 0.31× |
-| Grafana `CheckHealth` | 1.000 / 0.922 | $0.23 | **1.000 / 0.983** | **$0.16** | 0.70× |
-| Grafana `QueryData` | 0.914 / 0.901 | $0.25 | **1.000 / 0.959** | **$0.13** | 0.51× |
-| **Aggregate** | **0.683 / 0.770 mean** | **$3.23** | **0.998 / 0.955 mean** | **$1.28** | **0.40×** |
+Runs were generated with prompt caching off, then every request was repriced at Sonnet 5.5's 5-minute-cache prices (input $2, cache write $2.50, cache read $0.10, output $10 per million tokens). **Startup** is the first request of a session (system prompt, tools, project instructions). **Task cost** is everything after it. Tool calls are the actions the agent takes (each grep, read, edit, test run or `prism` command). Requests are model API calls.
 
-Prism had higher recall in eight tasks, tied at full recall in one, and cost less in every task. Aggregate cost was 60% lower.
+A task is solved when its hidden tests pass (bug fixes), or when every affected site is changed and the project's tests pass (change work).
 
-Each cell is one run. Agent behavior is variable, so this table is a release-gate snapshot. It shows broad current behavior; it does not establish a confidence interval.
+## Change work: 32 tasks
 
-## Repeated evidence
+Seeded renames and signature changes in Python (12), Java (7), TypeScript (8) and Go (5). 24 rename an interface or base-class method that shares its name with unrelated methods, 4 rename a property or option, and 4 change a function's signature.
 
-Three paired Jackson `JsonNode.get` trials used distinct sessions and snapshots:
+| | Native | Prism v0.87.39 | Prism / native |
+|---|---:|---:|---:|
+| Solved | 31 / 32 | **32 / 32** | |
+| Task cost per task | $0.0646 | $0.0492 | **0.76×** |
+| Tool calls per task | 6.8 | 4.4 | **0.65×** |
+| Model requests per task (after startup) | 5.7 | 4.2 | **0.74×** |
+| Startup per session | $0.0607 | $0.0626 | 1.03× |
 
-| Workflow | Mean recall | Mean precision | Mean request tokens | Mean turns | Mean cost |
-|---|---:|---:|---:|---:|---:|
-| Native search/read | 0.625 | 1.000 | 656k | 30.0 | $0.404 |
-| Prism | **1.000** | **1.000** | **215k** | **8.3** | **$0.205** |
+By kind and language (Prism / native):
 
-For Grafana's external Go interfaces, three fresh Prism trials per task all reached full recall:
+| Slice | Tasks | Solved native / Prism | Task cost | Tool calls |
+|---|---:|---|---:|---:|
+| Method rename (shared name) | 24 | 23 / 24 | 0.72× | 0.62× |
+| Signature change | 4 | 4 / 4 | 0.85× | 0.60× |
+| Property/option rename | 4 | 4 / 4 | 0.92× | 0.83× |
+| Java | 7 | 7 / 7 | 0.74× | 0.58× |
+| TypeScript | 8 | 7 / 8 | 0.74× | 0.66× |
+| Go | 5 | 5 / 5 | 0.78× | 0.64× |
+| Python | 12 | 12 / 12 | 0.81× | 0.69× |
 
-| Task | Oracle sites | Recall | Precision | Mean turns | Mean cost |
-|---|---:|---:|---:|---:|---:|
-| `QueryData` | 70 | 1.000 in all 3 | 0.933–0.959 | 4.0 | $0.172 |
-| `CheckHealth` | 59 | 1.000 in all 3 | 0.983 | 5.0 | $0.229 |
+Slices with 4-5 tasks show direction, not a precise figure.
 
-The deterministic engine operation also scores 1.0 recall on both tasks. `QueryData` is structurally difficult because its interface is declared in the Grafana plugin SDK while dozens of unrelated local types satisfy it implicitly.
+The Prism arm comes from the v0.87.38-vs-v0.87.39 A/B run. The native arm comes from the same day's native-vs-v0.87.38 run on the same tasks and setup. v0.87.38 alone measured 31 / 32 solved, 0.84× task cost and 0.76× tool calls against native.
 
-## What changed after the regression
+## Bug fixes: 40 GitHub issues
 
-Early `QueryData` candidates guessed concrete type names one at a time and missed implementations. The product fixes were general:
+Real issues filed after the model's training cutoff, from Go, Java, TypeScript and Python projects (gin, chi, echo, urfave/cli, gson, jackson-databind, jackson-dataformat-xml, dubbo, hono, zod, urllib3, pydantic). Measured on Prism v0.87.37 (2026-10-20). v0.87.38 and v0.87.39 changed change-impact delivery and correctness, not the bug-fix path, and were not re-run on this set.
 
-- resolve local Go methods that satisfy a compatible external interface method
-- return exhaustive search overflow as a complete compact inventory of exact paths and enclosing symbols
-- reserve detailed signatures and call expressions for ambiguous or heuristic impact edges
-- steer agents from a small closure to exhaustive search instead of repeated name guessing
+| | Native | Prism v0.87.37 | Prism / native |
+|---|---:|---:|---:|
+| Solved | 23 / 40 | 25 / 40 | |
+| Task cost per task | $0.0520 | $0.0477 | **0.92×** |
+| Tool calls per task | 6.85 | 5.85 | **0.85×** |
+| Model requests per task (after startup) | 5.38 | 4.92 | 0.92× |
+| Startup per session | $0.0609 | $0.0626 | 1.03× |
 
-No repository or task names are embedded in Prism or Grove. Expected answers and thresholds live in the research harness.
+The solve difference (25 vs 23) is within run-to-run noise. Read it as the same result. 22 of the 40 are small one-file fixes (Prism 0.87× task cost, 0.88× tool calls). The other slices are too small to quote.
 
-## Oracle correction
+## Over a working session
 
-The original Grafana `QueryData` oracle contained 51 sites. A source audit found that it excluded valid middleware implementations, another external-interface implementation, a production fake, and direct handler callers. The corrected oracle contains 70 sites. This explains why precision remained low across several engine changes: the measurement contract was incomplete.
+Startup is paid once per session and task cost once per task. Projected saving of Prism vs native for a session of N tasks of one kind:
 
-The correction is part of the result. Ground truth is software and must be audited when a metric behaves implausibly.
+| Tasks in session | Change work | Bug fixes |
+|---:|---:|---:|
+| 1 | 11% | 2% |
+| 10 | 21% | 7% |
+| 20 | 22% | 8% |
+| 40 | 23% | 8% |
 
-## Session isolation
+The projection does not model context growth within a long session. It does not count Prism's one-time indexing, which costs time, not tokens.
 
-Freshness checks record the repository snapshot, model invocation ID, session ID, and transcript path for each cell. The repeated study used six distinct sessions and snapshots. Provider prompt caching reused static input prefixes where available; it did not share prior answers or conversation state.
+## Limits
 
-## How to read the claims
+- One model (Sonnet 5.5), one agent (Claude Code), one run per cell. Opus was not measured against native.
+- The change set has 4 signature-change and 4 property-rename tasks. Their rows are directional.
+- Two losses were adjudicated, not dropped. Prism's werkzeug `HTTPException.get_headers` miss in the v0.87.38 run was a macOS `sed` `\b` substitution that changed nothing; Prism's change-impact had listed the right sites. Native missed hono `Router.match`.
+- Claude Code's auto mode with Opus 5.5 adds a reminder to work through Bash with grep/cat. Under it, Prism still handled 80% (CLI) / 59% (MCP) of code searches. Savings under that reminder were not measured against native.
 
-- Recall and precision are the primary correctness measures.
-- Cost claims are meaningful only beside comparable accuracy.
-- Deterministic engine scores establish the graph's ceiling; agent scores include routing and response-assembly behavior.
-- One-run cells show current breadth. Repeated trials show variance and expected behavior.
-- Static analysis can be limited by reflection, runtime registration, generated code, or missing language toolchains. Completeness labels report those boundaries.
+## Engine accuracy (Grove v0.63.25)
 
-## Reproduce
+Call-edge precision and recall against each language's compiler or runtime ground truth on pinned repositories. CI-gated (`grove/eval/baseline.json`).
 
-```sh
-git clone https://github.com/provasign/research
-cd research/harness
-python3 -m unittest discover -s tests
-python3 impact_oracle.py tasks/grafana-querydata-impact.json
-```
+| Language | Corpus | Ground truth | Precision | Recall |
+|---|---|---|---:|---:|
+| Go | gin / cobra | SSA + VTA | 0.979 / 0.995 | 0.997 / 1.000 |
+| Java | commons-lang / commons-io | javac + javap | 1.000 / 1.000 | 1.000 / 1.000 |
+| C# | Newtonsoft.Json | Roslyn | 0.971 | 0.977 |
+| TypeScript | socket.io / p-queue | TypeScript compiler API | 0.937 / 0.959 | 0.992 / 1.000 |
+| JavaScript | express | TypeScript checker (checkJs) | 0.885 | 1.000 |
+| Rust | ripgrep / fd | rust-analyzer SCIP | 0.965 / 0.952 | 0.906 / 0.913 |
+| C | jansson / cJSON | clang | 1.000 / 0.998 | 0.998 / 0.999 |
+| Swift | SwiftyJSON / Files | SourceKit | 1.000 / 1.000 | 1.000 / 1.000 |
+| Kotlin | turtle / csv | kotlinc + javap | 1.000 / 0.947 | 1.000 / 0.837 |
+| Objective-C | json-framework / CocoaLumberjack | clang | 1.000 / 0.975 | 1.000 / 0.957 |
+| Python | flask | pytest trace (dynamic) | 0.896 | 0.787 |
+| PHP | PHP-Parser | Xdebug trace (dynamic) | 0.922 | 0.683 |
 
-The [research results](https://github.com/provasign/research/blob/main/RESULTS.md) link to the current protocols and raw records. Historical and invalid experiments remain available with their validity findings.
+COBOL and JCL are supported with a regression-tested graph. Their accuracy is not yet independently scored.
+
+## Sources
+
+- [Fact sheet: Prism v0.87.39 benchmark](https://github.com/provasign/prism/blob/main/docs/benchmarks/prism-v0.87.39-2026-10-21.md)
+- [Raw records, transcripts and tallies](https://github.com/provasign/research/tree/main/harness/results) (`change32-cli-vs-native-2026-10-21`, `change32-v08739cand-2026-10-21`, `v0837-vs-native41-2026-10-20`)

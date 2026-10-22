@@ -118,7 +118,7 @@ layout: null
           <article class="product prism">
             <span class="tag">before the edit · core project</span>
             <h3>Prism</h3>
-            <p>Ask a change-shaped question and get the declaration, implementations, callers, tests, and concrete edit sites in one deterministic result.</p>
+            <p>Ask a change-shaped question and get the declaration, implementations, callers, tests, and concrete edit sites in one deterministic result. Prism answers; the agent edits.</p>
             <a class="more" href="{{ '/prism/' | relative_url }}">How Prism works</a>
           </article>
           <article class="product shale">
@@ -139,7 +139,7 @@ layout: null
     <section class="section">
       <div class="wrap">
         <h2 class="section-title">Know the whole change before you touch it.</h2>
-        <p class="section-lead">Prism turns the multi-step investigations developers and agents repeat every day into task-shaped operations with explicit completeness.</p>
+        <p class="section-lead">Prism turns the multi-step investigations developers and agents repeat every day into task-shaped operations with explicit completeness. It works with Claude Code, Codex, Cursor, Copilot (VS Code), Gemini CLI, OpenCode, and Windsurf, as an MCP server or as a <code>prism</code> command the agent runs in its shell.</p>
         <div class="prism-demo">
           <div class="terminal" aria-label="Example Prism change-impact output">
             <div class="terminal-head">prism · change impact</div>
@@ -167,12 +167,12 @@ completeness: <span class="green">closed</span></pre>
 
     <section class="section">
       <div class="wrap">
-        <h2 class="section-title">Measured on complete change sets.</h2>
-        <p class="section-lead">In the latest nine-task paired Sonnet sample, Prism raised mean recall from 0.683 to 0.998 and reduced total estimated cost from $3.23 to $1.28. The tasks, oracles, run records, transcripts, and limitations are public.</p>
+        <h2 class="section-title">Measured against native Claude Code.</h2>
+        <p class="section-lead">Prism v0.87.39 on Sonnet 5.5: 32 of 32 change tasks solved (native 31 of 32) at 0.76× native task cost. On 40 real bug-fix issues it solved the same share as native at 0.92× task cost. The tasks, run records, transcripts, and limits are public.</p>
         <div class="principles">
-          <div class="principle"><strong>0.998 recall</strong><p>Mean Prism recall across nine Go, Java, TypeScript, and Python change-impact tasks.</p></div>
-          <div class="principle"><strong>0.40× cost</strong><p>Aggregate Prism cost relative to native search/read cells in the same release-gate sample.</p></div>
-          <div class="principle"><strong>Open evidence</strong><p>Independent oracles and raw agent records live in the public Research repository.</p></div>
+          <div class="principle"><strong>32 / 32 solved</strong><p>Seeded renames and signature changes in Python, Java, TypeScript, and Go. Native solved 31.</p></div>
+          <div class="principle"><strong>0.76× task cost</strong><p>Prism task cost relative to native on the same 32 change tasks, with 0.65× the tool calls.</p></div>
+          <div class="principle"><strong>Open evidence</strong><p>Tasks, raw agent records, and transcripts live in the public Research repository.</p></div>
         </div>
         <div class="cta">
           <a class="btn primary" href="{{ '/benchmarks/' | relative_url }}">Review the evidence</a>

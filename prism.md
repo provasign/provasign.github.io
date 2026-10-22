@@ -2,7 +2,7 @@
 title: Prism
 layout: default
 nav_order: 2
-description: "Semantic change intelligence for coding agents: complete impact, edit-ready context, and diff verification."
+description: "Semantic change intelligence for coding agents: change impact, edit-ready context, and diff verification. Answers questions; never edits code."
 permalink: /prism/
 ---
 
@@ -10,7 +10,9 @@ permalink: /prism/
 
 Prism gives coding agents semantic change intelligence before they edit. It combines repository text search with a typed code graph and returns task-shaped answers: the complete method family, resolved callers, edit-ready source, and every known site a diff missed.
 
-It runs locally as one binary, embeds [Grove]({{ '/grove/' | relative_url }}), and exposes both a CLI and a focused MCP interface.
+Prism answers questions. It never edits code; the agent makes every change.
+
+It runs locally as one binary and embeds [Grove]({{ '/grove/' | relative_url }}). Agents reach it one of two ways: as an MCP server, or through the `prism` command in their shell (`prism init --interface cli`).
 
 ## Start in one command
 
@@ -26,10 +28,16 @@ You can also use the installer:
 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
 
 # Pin the current release
-VERSION=v0.80.2 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
+VERSION=v0.87.39 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
 ```
 
-`prism init` creates the local configuration, registers MCP for detected clients, and writes concise agent instructions. Indexing happens automatically on first use and updates incrementally.
+`prism init` writes `prism.yaml` and agent instructions for the agents you pick: Claude Code, Codex, Cursor, Copilot (VS Code), Gemini CLI, OpenCode, and Windsurf. It asks which interface to use. MCP (the default) registers a project-local server. CLI registers no server; agents run `prism` in their shell. To choose without a prompt:
+
+```sh
+prism init --harness claude,codex --interface cli .
+```
+
+Indexing happens automatically on first use and updates incrementally.
 
 ## One route for each question
 
@@ -53,32 +61,32 @@ Exhaustive search returns a compact inventory of exact files and enclosing symbo
 
 ## Current measured result
 
-In the latest nine-task paired Sonnet release-gate sample, Prism improved mean recall from 0.683 to 0.998 and mean precision from 0.770 to 0.955. Total estimated cost fell from $3.23 to $1.28, or 0.40× the native-tool total.
+Prism v0.87.39 against native Claude Code (Sonnet 5.5, CLI interface, one run per cell):
 
-| Aggregate across nine tasks | Native tools | Prism |
-|---|---:|---:|
-| Mean recall | 0.683 | **0.998** |
-| Mean precision | 0.770 | **0.955** |
-| Total estimated cost | $3.23 | **$1.28** |
+| | Native | Prism | Prism / native |
+|---|---:|---:|---:|
+| Change work, 32 tasks: solved | 31 / 32 | 32 / 32 | |
+| Change work: task cost | $0.0646 | $0.0492 | 0.76× |
+| Change work: tool calls | 6.8 | 4.4 | 0.65× |
+| Bug fixes, 40 issues (v0.87.37): solved | 23 / 40 | 25 / 40 | |
+| Bug fixes: task cost | $0.0520 | $0.0477 | 0.92× |
 
-Each cell is one fresh run. Repeated trials are reported separately. Three paired Jackson `JsonNode.get` trials moved recall from 0.625 to 1.000 while reducing mean turns from 30.0 to 8.3 and mean cost from $0.404 to $0.205.
+The bug-fix solve difference is within run-to-run noise. Startup cost per session is 1.03× native.
 
-The hardest current case is Grafana's `QueryData` interface, declared in an external Go SDK and implemented implicitly by many unrelated local types. The audited oracle contains 70 sites. One deterministic Prism operation returns the full local family, and three fresh agent trials each reached 1.0 recall.
-
-[See the full table, methods, raw evidence, and limitations.]({{ '/benchmarks/' | relative_url }})
+[See the full tables, setup, and limits.]({{ '/benchmarks/' | relative_url }})
 
 ## Designed for reliable use
 
 - **Deterministic graph operations.** The engine solves traversal and returns the same result for the same repository state.
 - **Explicit completeness.** Results state when evidence is closed, project-local, heuristic, stale, or unsupported.
 - **Edit-ready delivery.** `prism query` returns line-numbered source around named anchors instead of another list of pointers.
-- **Session deduplication.** Re-reading an unchanged file through MCP returns a compact content pointer.
+- **Session deduplication.** Re-reading an unchanged file through MCP returns a short pointer instead of the content.
 - **Local operation.** Code and indexes stay in the working environment; the default MCP transport is stdio.
 - **CI gates.** `prism verify` and `prism arch` exit nonzero when their checks fail.
 
 ## Language support
 
-Prism indexes Go, TypeScript/TSX, JavaScript/JSX, Python, Java, Rust, C/C++, C#, PHP, Swift, Kotlin, Objective-C, COBOL, and JCL (via the embedded Grove engine). Semantic depth depends on language support and the native toolchain available in the repository; COBOL and JCL are structural/heuristic only, with no published accuracy oracle yet. `grove doctor .` reports the full per-language resolution tier and limitations breakdown.
+Prism indexes Go, TypeScript/TSX, JavaScript/JSX, Python, Java, Rust, C/C++, C#, PHP, Swift, Kotlin, Objective-C, COBOL, and JCL through the embedded Grove engine. Semantic depth depends on the language and on the native toolchain available in the repository. COBOL and JCL have a regression-tested graph; their accuracy is not yet independently scored. `grove doctor .` reports the full per-language resolution tier and limitations breakdown.
 
 ## Learn more
 
