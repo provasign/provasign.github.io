@@ -28,7 +28,7 @@ You can also use the installer:
 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
 
 # Pin the current release
-VERSION=v1.0.0 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
+VERSION=v1.0.1 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
 ```
 
 `prism init` writes `prism.yaml` and agent instructions for the agents you pick: Claude Code, Codex, Cursor, Copilot (VS Code), Gemini CLI, OpenCode, and Windsurf. It asks which interface to use. MCP (the default) registers a project-local server. CLI registers no server; agents run `prism` in their shell. To choose without a prompt:
