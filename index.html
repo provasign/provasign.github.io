@@ -153,14 +153,17 @@ layout: null
         <div class="prism-demo">
           <div class="terminal" aria-label="Example Prism change-impact output">
             <div class="terminal-head">prism · change impact</div>
-            <pre><span class="green">$</span> prism change-impact 'ResponseWriter.Status'
+            <pre><span class="green">$</span> prism change-impact ResponseWriter.Status   <span class="cyan"># in gin</span>
 
-<span class="cyan">declaration</span>     server/response.go:18
-<span class="cyan">family</span>          3 implementations
-<span class="cyan">callers</span>         8 resolved call sites
-<span class="cyan">declaringTypes</span>  1 interface block
-
-completeness: <span class="green">closed</span></pre>
+completeness: <span class="green">closed</span> (compiler-backed go)
+<span class="cyan">editSites</span> (14)
+  response_writer.go:30:2   Status() int
+  response_writer.go:98:26  func (w *responseWriter) Status() int
+  gin.go:770:17             if c.writermem.Status() == code
+  logger.go:301:31          param.StatusCode = c.Writer.Status()
+  ... 10 more in tests
+<span class="cyan">not this change</span>   17 lines calling Context.Status
+                  9 comments and docs</pre>
           </div>
           <div class="operations">
             <div class="operation"><code>lookup</code><p>The source of symbols the agent can name, up to ten in one call.</p></div>
