@@ -112,8 +112,8 @@ layout: null
             <h3>Prism</h3>
             <p>Every caller, override, implementation and test a change affects, resolved by the language's own compiler, not grep. Prism answers; the agent edits.</p>
             <ul class="proof">
-              <li>32 of 32 change tasks solved (native Claude Code 31)</li>
-              <li>24% lower task cost, 35% fewer agent steps</li>
+              <li>Change work, 32 tasks: all solved (native 31), 24% lower task cost, 35% fewer agent steps</li>
+              <li>Bug fixes, 40 real issues: same results, 8% lower task cost, 15% fewer agent steps</li>
               <li>Claude Code, Codex, Cursor, Copilot, Gemini CLI, OpenCode, Windsurf</li>
             </ul>
             <code class="install">brew install provasign/tap/prism</code>
@@ -163,9 +163,12 @@ layout: null
 completeness: <span class="green">closed</span></pre>
           </div>
           <div class="operations">
-            <div class="operation"><code>change-impact</code><p>Everything affected by a method signature change, including resolved callers text search misses.</p></div>
-            <div class="operation"><code>rename-plan</code><p>The same complete set converted into concrete, drift-checked line edits.</p></div>
-            <div class="operation"><code>verify</code><p>Every site an agent-authored diff missed — line-precise, exit 1 if incomplete.</p></div>
+            <div class="operation"><code>lookup</code><p>The source of symbols the agent can name, up to ten in one call.</p></div>
+            <div class="operation"><code>search</code><p>Text or symbol search where every hit names its enclosing function, with complete file inventories.</p></div>
+            <div class="operation"><code>read</code><p>A known file range, without a separate open-and-scroll step.</p></div>
+            <div class="operation"><code>query</code><p>Callers, implementations and tests around the names the agent already has.</p></div>
+            <div class="operation"><code>change-impact</code><p>Every declaration, override, implementation and caller a change touches, with edit sites and an explicit completeness verdict.</p></div>
+            <div class="operation"><code>verify</code><p>Optional: after a removal, every remaining mention of the removed names.</p></div>
           </div>
         </div>
         <div class="cta">
@@ -178,10 +181,10 @@ completeness: <span class="green">closed</span></pre>
     <section class="section">
       <div class="wrap">
         <h2 class="section-title">Measured against native Claude Code.</h2>
-        <p class="section-lead">Prism 1.0 (measured on v0.87.39) on Sonnet 5.5: 32 of 32 change tasks solved (native 31 of 32) at 0.76× native task cost. On 40 real bug-fix issues it solved the same share as native at 0.92× task cost. The tasks, run records, transcripts, and limits are public.</p>
+        <p class="section-lead">Prism 1.0 (measured on v0.87.39) against Claude Code's own tools, Sonnet 5.5, on two task sets: 32 change tasks and 40 real bug-fix issues. The tasks, run records, transcripts, and limits are public.</p>
         <div class="principles">
-          <div class="principle"><strong>32 / 32 solved</strong><p>Seeded renames and signature changes in Python, Java, TypeScript, and Go. Native solved 31.</p></div>
-          <div class="principle"><strong>0.76× task cost</strong><p>Prism task cost relative to native on the same 32 change tasks, with 0.65× the tool calls.</p></div>
+          <div class="principle"><strong>Change work: 0.76× cost</strong><p>32 renames and signature changes in Python, Java, TypeScript and Go. Prism solved all 32 (native 31) with 0.65× the tool calls. About 22% cheaper over a working session.</p></div>
+          <div class="principle"><strong>Bug fixes: 0.92× cost</strong><p>40 GitHub issues filed after the model's training cutoff. Same results as native (25 vs 23 solved, within noise) with 0.85× the tool calls. About 8% cheaper over a session.</p></div>
           <div class="principle"><strong>Open evidence</strong><p>Tasks, raw agent records, and transcripts live in the public Research repository.</p></div>
         </div>
         <div class="cta">
