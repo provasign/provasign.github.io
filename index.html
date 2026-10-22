@@ -36,6 +36,9 @@ layout: null
     .tag { display: inline-block; margin-bottom: 14px; color: var(--accent); font: 12px var(--mono); }
     .product h3 { margin: 0 0 10px; font-size: 26px; letter-spacing: 0; }
     .product p { margin: 0; color: var(--muted); line-height: 1.65; }
+    .product .proof { margin: 16px 0 0; padding-left: 18px; color: var(--text); line-height: 1.7; }
+    .product .install { display: block; margin-top: 18px; padding: 10px 12px; overflow-x: auto; color: var(--accent2); background: #0b1320; border-radius: 6px; font: 13px var(--mono); white-space: nowrap; }
+    .product .cta { margin-top: 18px; }
     .more { display: inline-block; margin-top: 20px; color: var(--accent2); font-weight: 700; text-decoration: none; }
     .reference-row { display: grid; grid-template-columns: 180px 1fr auto; gap: 24px; align-items: center; margin-top: 24px; padding: 22px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
     .reference-row strong { font-size: 20px; }
@@ -97,35 +100,42 @@ layout: null
     <section class="hero">
       <div class="wrap">
         <div class="eyebrow">Prism before the edit · Shale after it</div>
-        <h1>Every AI-written change should explain itself.</h1>
+        <h1>Complete context before your agent edits. Honest evidence after.</h1>
         <p class="lead">
-          Prism shows what a change can affect before code is touched. Shale
-          records what was intended, changed, and checked so the pull request
-          carries its own evidence. Mason is the reference agent that uses both.
+          Two local tools for AI-written code. Prism gives the agent the
+          compiler's map of what a change affects. Shale puts what the agent was
+          asked, touched and checked on the pull request.
         </p>
-        <div class="cta">
-          <a class="btn primary" href="{{ '/prism/' | relative_url }}">Explore Prism</a>
-          <a class="btn" href="{{ '/shale/' | relative_url }}">Explore Shale</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="wrap">
-        <h2 class="section-title">Two tools for the same code change.</h2>
-        <p class="section-lead">Prism helps the work begin with complete context. Shale helps review begin with an honest record.</p>
         <div class="core-grid">
           <article class="product prism">
-            <span class="tag">before the edit · core project</span>
+            <span class="tag">before the edit · v1.0</span>
             <h3>Prism</h3>
-            <p>Ask a change-shaped question and get the declaration, implementations, callers, tests, and concrete edit sites in one deterministic result. Prism answers; the agent edits.</p>
-            <a class="more" href="{{ '/prism/' | relative_url }}">How Prism works</a>
+            <p>Every caller, override, implementation and test a change affects, resolved by the language's own compiler, not grep. Prism answers; the agent edits.</p>
+            <ul class="proof">
+              <li>32 of 32 change tasks solved (native Claude Code 31)</li>
+              <li>24% lower task cost, 35% fewer agent steps</li>
+              <li>Claude Code, Codex, Cursor, Copilot, Gemini CLI, OpenCode, Windsurf</li>
+            </ul>
+            <code class="install">brew install provasign/tap/prism</code>
+            <div class="cta">
+              <a class="btn primary" href="{{ '/prism/' | relative_url }}">Get started with Prism</a>
+              <a class="btn" href="{{ '/benchmarks/' | relative_url }}">See the benchmark</a>
+            </div>
           </article>
           <article class="product shale">
-            <span class="tag">after the edit · core project</span>
+            <span class="tag">after the edit</span>
             <h3>Shale</h3>
-            <p>Carry intent, touched files, observed checks, integrity signals, and explicit gaps with the code into pull-request review.</p>
-            <a class="more" href="{{ '/shale/' | relative_url }}">How Shale works</a>
+            <p>Records the agent session (intent, files touched, checks run, model and cost) and renders it as a card reviewers read before the diff. Gaps are shown, never hidden.</p>
+            <ul class="proof">
+              <li>Five minutes to set up: no account, no server</li>
+              <li>Works across coding agents</li>
+              <li>A real card on a <a href="https://github.com/provasign/shale-test-bed/pull/1">live demo PR</a></li>
+            </ul>
+            <code class="install">brew install provasign/tap/shale</code>
+            <div class="cta">
+              <a class="btn primary" href="{{ '/shale/' | relative_url }}">Get started with Shale</a>
+              <a class="btn" href="https://github.com/provasign/shale-test-bed/pull/1">See a PR card</a>
+            </div>
           </article>
         </div>
         <div class="reference-row">
@@ -168,7 +178,7 @@ completeness: <span class="green">closed</span></pre>
     <section class="section">
       <div class="wrap">
         <h2 class="section-title">Measured against native Claude Code.</h2>
-        <p class="section-lead">Prism v0.87.39 on Sonnet 5.5: 32 of 32 change tasks solved (native 31 of 32) at 0.76× native task cost. On 40 real bug-fix issues it solved the same share as native at 0.92× task cost. The tasks, run records, transcripts, and limits are public.</p>
+        <p class="section-lead">Prism 1.0 (measured on v0.87.39) on Sonnet 5.5: 32 of 32 change tasks solved (native 31 of 32) at 0.76× native task cost. On 40 real bug-fix issues it solved the same share as native at 0.92× task cost. The tasks, run records, transcripts, and limits are public.</p>
         <div class="principles">
           <div class="principle"><strong>32 / 32 solved</strong><p>Seeded renames and signature changes in Python, Java, TypeScript, and Go. Native solved 31.</p></div>
           <div class="principle"><strong>0.76× task cost</strong><p>Prism task cost relative to native on the same 32 change tasks, with 0.65× the tool calls.</p></div>

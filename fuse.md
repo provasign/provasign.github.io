@@ -24,7 +24,7 @@ resolution, and only then to a conflict handoff an AI agent (or a human) can
 resolve with full context.
 
 ```sh
-brew install provasign/shale/fuse
+brew install provasign/tap/fuse
 cd your-repo
 fuse init
 ```
@@ -176,7 +176,7 @@ Fuse never changes how your history is stored.
 
 ## Installation
 
-{% include install.html repo="provasign/fuse" formula="provasign/shale/fuse" curl="curl -fsSL https://raw.githubusercontent.com/provasign/fuse/main/install.sh | bash" ps="irm https://raw.githubusercontent.com/provasign/fuse/main/install.ps1 | iex" %}
+{% include install.html repo="provasign/fuse" formula="provasign/tap/fuse" curl="curl -fsSL https://raw.githubusercontent.com/provasign/fuse/main/install.sh | bash" ps="irm https://raw.githubusercontent.com/provasign/fuse/main/install.ps1 | iex" %}
 
 ```sh
 # Pin a version

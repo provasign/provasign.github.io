@@ -63,7 +63,7 @@ precisely because it never pretends to know more than it does.
 
 ## Five minutes, one person, whole team
 
-{% include install.html repo="provasign/shale" formula="provasign/shale/shale" curl="curl -fsSL https://raw.githubusercontent.com/provasign/shale/main/install.sh | sh" %}
+{% include install.html repo="provasign/shale" formula="provasign/tap/shale" curl="curl -fsSL https://raw.githubusercontent.com/provasign/shale/main/install.sh | sh" %}
 
 ```sh
 cd your-repo

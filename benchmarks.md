@@ -8,7 +8,7 @@ permalink: /benchmarks/
 
 # Prism benchmarks
 
-Prism v0.87.39 (Grove v0.63.25, Astkit v0.16.10), measured 2026-10-21. Earlier benchmark results are archived.
+Prism v0.87.39 (Grove v0.63.25, Astkit v0.16.10), measured 2026-10-21. Prism 1.0.0 is v0.87.39 plus a CLI help-text change, so these results apply to it. Earlier benchmark results are archived.
 
 ## Setup
 

@@ -17,7 +17,7 @@ It runs locally as one binary and embeds [Grove]({{ '/grove/' | relative_url }})
 ## Start in one command
 
 ```sh
-brew install provasign/shale/prism
+brew install provasign/tap/prism
 cd your-repo
 prism init .
 ```
@@ -28,7 +28,7 @@ You can also use the installer:
 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
 
 # Pin the current release
-VERSION=v0.87.39 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
+VERSION=v1.0.0 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
 ```
 
 `prism init` writes `prism.yaml` and agent instructions for the agents you pick: Claude Code, Codex, Cursor, Copilot (VS Code), Gemini CLI, OpenCode, and Windsurf. It asks which interface to use. MCP (the default) registers a project-local server. CLI registers no server; agents run `prism` in their shell. To choose without a prompt:
@@ -61,7 +61,7 @@ Exhaustive search returns a compact inventory of exact files and enclosing symbo
 
 ## Current measured result
 
-Prism v0.87.39 against native Claude Code (Sonnet 5.5, CLI interface, one run per cell):
+Prism 1.0.0 against native Claude Code (measured on v0.87.39, which 1.0.0 matches apart from CLI help text; Sonnet 5.5, CLI interface, one run per cell):
 
 | | Native | Prism | Prism / native |
 |---|---:|---:|---:|
