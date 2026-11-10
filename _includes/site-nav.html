@@ -10,9 +10,9 @@
       <span>Provasign</span>
     </a>
     <nav class="navlinks" aria-label="Primary navigation">
+      <a href="{{ '/stele/' | relative_url }}"{% if page.url == '/stele/' %} aria-current="page"{% endif %}>Stele</a>
       <a href="{{ '/prism/' | relative_url }}"{% if page.url == '/prism/' %} aria-current="page"{% endif %}>Prism</a>
       <a href="{{ '/shale/' | relative_url }}"{% if page.url == '/shale/' %} aria-current="page"{% endif %}>Shale</a>
-      <a href="{{ '/mason/' | relative_url }}"{% if page.url == '/mason/' %} aria-current="page"{% endif %}>Mason</a>
       <a href="{{ '/benchmarks/' | relative_url }}"{% if page.url == '/benchmarks/' %} aria-current="page"{% endif %}>Benchmarks</a>
       <a href="{{ '/docs/' | relative_url }}"{% if page.url == '/docs/' %} aria-current="page"{% endif %}>Docs</a>
       <a href="https://github.com/provasign">GitHub</a>

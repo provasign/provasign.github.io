@@ -203,7 +203,13 @@ everything go silent for you. No account to close, nothing left running.
 
 ## Where it fits
 
-Shale and [Prism]({{ '/prism/' | relative_url }}) are the two core projects:
-Prism provides change intelligence before an edit; Shale makes the resulting
-work reviewable after it. [Mason]({{ '/mason/' | relative_url }}) is the
-incubating reference agent that integrates both.
+Shale is one of three Provasign tools, and each works on its own.
+[Stele]({{ '/stele/' | relative_url }}) keeps what the owner decided, before
+the agent plans. [Prism]({{ '/prism/' | relative_url }}) provides change
+intelligence before an edit. Shale makes the resulting work reviewable after
+it.
+
+When the repository also uses Stele, the card gains a **Requirements**
+section: whether the owner approved the requirements the change adds, changes
+or retires, the owner's decisions, and which approved requirements the code
+touches. Shale renders that as data and never runs Stele.

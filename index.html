@@ -6,16 +6,16 @@ layout: null
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Provasign — Prism 1.0 and Shale: take the guesswork out of your coding agent</title>
-  <meta name="description" content="Prism gives your coding agent the compiler's map of what a change affects: 32/32 change tasks solved at 24% lower cost. Shale puts intent, checks and gaps on the pull request.">
+  <title>Provasign — Stele, Prism and Shale: three questions a diff cannot answer</title>
+  <meta name="description" content="Three local, open-source tools for code written with coding agents. Stele keeps what you decided. Prism gives the agent the compiler's map of what a change affects. Shale puts intent, checks and gaps on the pull request.">
   <link rel="canonical" href="{{ '/' | absolute_url }}">
   <meta property="og:site_name" content="Provasign">
-  <meta property="og:title" content="Prism 1.0 and Shale: take the guesswork out of your coding agent">
-  <meta property="og:description" content="Prism gives your coding agent the compiler's map of what a change affects. Shale puts intent, checks and gaps on the pull request.">
+  <meta property="og:title" content="Stele, Prism and Shale: three questions a diff cannot answer">
+  <meta property="og:description" content="Stele keeps what you decided. Prism gives your coding agent the compiler's map of what a change affects. Shale puts intent, checks and gaps on the pull request.">
   <meta property="og:image" content="{{ '/assets/images/og-provasign.png' | absolute_url }}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Prism 1.0 and Shale: take the guesswork out of your coding agent">
+  <meta property="og:image:alt" content="Stele, Prism and Shale: three questions a diff cannot answer">
   <meta property="og:url" content="{{ '/' | absolute_url }}">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
@@ -34,16 +34,21 @@ layout: null
     .section { padding: 68px 0; border-top: 1px solid var(--line); }
     .section-title { max-width: 760px; margin: 0; font-size: 36px; line-height: 1.15; letter-spacing: 0; }
     .section-lead { max-width: 780px; margin: 16px 0 0; color: var(--muted); font-size: 17px; line-height: 1.7; }
-    .core-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 34px; }
-    .product { padding: 26px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+    .core-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 34px; }
+    .product { display: flex; flex-direction: column; padding: 26px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+    .product.stele { border-top: 3px solid var(--accent3); }
     .product.prism { border-top: 3px solid var(--accent2); }
     .product.shale { border-top: 3px solid var(--accent); }
     .tag { display: inline-block; margin-bottom: 14px; color: var(--accent); font: 12px var(--mono); }
+    .product.stele .tag { color: var(--accent3); }
+    .product.prism .tag { color: var(--accent2); }
+    .product .asks { margin: 0 0 12px; color: var(--text); font-size: 18px; font-weight: 700; line-height: 1.35; }
     .product h3 { margin: 0 0 10px; font-size: 26px; letter-spacing: 0; }
     .product p { margin: 0; color: var(--muted); line-height: 1.65; }
-    .product .proof { margin: 16px 0 0; padding-left: 18px; color: var(--text); line-height: 1.7; }
+    .product .proof { margin: 16px 0 0; padding-left: 18px; color: var(--text); line-height: 1.7; flex: 1; }
     .product .install { display: block; margin-top: 18px; padding: 10px 12px; overflow-x: auto; color: var(--accent2); background: #0b1320; border-radius: 6px; font: 13px var(--mono); white-space: nowrap; }
     .product .cta { margin-top: 18px; }
+    .product .proof a { color: var(--accent2); }
     .more { display: inline-block; margin-top: 20px; color: var(--accent2); font-weight: 700; text-decoration: none; }
     .reference-row { display: grid; grid-template-columns: 180px 1fr auto; gap: 24px; align-items: center; margin-top: 24px; padding: 22px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
     .reference-row strong { font-size: 20px; }
@@ -86,8 +91,17 @@ layout: null
     .foundation { margin-top: 38px; padding-top: 20px; color: var(--muted); border-top: 1px solid var(--line); line-height: 1.65; }
     .foundation strong { color: var(--text); }
     .foundation a { color: var(--accent2); }
+    .stele-demo { display: grid; grid-template-columns: 1.25fr .75fr; gap: 28px; margin-top: 34px; align-items: start; }
+    .stele-demo img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; }
+    .steps { border-top: 1px solid var(--line); }
+    .step { padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .step strong { display: block; margin-bottom: 6px; }
+    .step p { margin: 0; color: var(--muted); line-height: 1.55; }
+    @media (max-width: 1000px) {
+      .core-grid { grid-template-columns: 1fr; }
+    }
     @media (max-width: 900px) {
-      .prism-demo, .demo-grid { grid-template-columns: 1fr; }
+      .prism-demo, .demo-grid, .stele-demo { grid-template-columns: 1fr; }
       .principles { grid-template-columns: 1fr; gap: 18px; }
     }
     @media (max-width: 700px) {
@@ -109,17 +123,34 @@ layout: null
   <main>
     <section class="hero">
       <div class="wrap">
-        <div class="eyebrow">Prism before the edit · Shale after it</div>
-        <h1>Complete context before your agent edits. Honest evidence after.</h1>
+        <div class="eyebrow">Stele before the plan · Prism before the edit · Shale after it</div>
+        <h1>Three questions a diff cannot answer.</h1>
         <p class="lead">
-          Two local tools for AI-written code. Prism gives the agent the
-          compiler's map of what a change affects. Shale puts what the agent was
-          asked, touched and checked on the pull request.
+          Your coding agent hands you a diff. It does not say whether the change
+          breaks something you decided, whether it reached every place it had
+          to, or what the agent did and checked. Three local, open-source tools
+          answer one question each.
         </p>
         <div class="core-grid">
+          <article class="product stele">
+            <span class="tag">before the plan · preview</span>
+            <h3>Stele</h3>
+            <p class="asks">Does this break what we decided?</p>
+            <p>Checks every requirement against every one approved before it, and hands the agent the approved requirements a request touches. A request that cannot keep one makes the agent stop and ask you.</p>
+            <ul class="proof">
+              <li>Reads Spec Kit, OpenSpec, Kiro or plain Markdown</li>
+              <li>A model proposes each contradiction; a solver confirms it</li>
+              <li>You approve in one prompt. Works with Claude Code</li>
+            </ul>
+            <code class="install">brew install provasign/tap/stele</code>
+            <div class="cta">
+              <a class="btn primary" href="{{ '/stele/' | relative_url }}">Try the Stele preview</a>
+            </div>
+          </article>
           <article class="product prism">
             <span class="tag">before the edit · v1.0</span>
             <h3>Prism</h3>
+            <p class="asks">Did it change everything it had to?</p>
             <p>Every caller, override, implementation and test a change affects, resolved by the language's own compiler, not grep. Prism answers; the agent edits.</p>
             <ul class="proof">
               <li>Change work, 32 tasks: all solved (native 31), 24% lower task cost, 35% fewer agent steps</li>
@@ -129,12 +160,12 @@ layout: null
             <code class="install">brew install provasign/tap/prism</code>
             <div class="cta">
               <a class="btn primary" href="{{ '/prism/' | relative_url }}">Get started with Prism</a>
-              <a class="btn" href="{{ '/benchmarks/' | relative_url }}">See the benchmark</a>
             </div>
           </article>
           <article class="product shale">
             <span class="tag">after the edit</span>
             <h3>Shale</h3>
+            <p class="asks">What did the agent actually do?</p>
             <p>Records the agent session (intent, files touched, checks run, model and cost) and renders it as a card reviewers read before the diff. Gaps are shown, never hidden.</p>
             <ul class="proof">
               <li>Five minutes to set up: no account, no server</li>
@@ -144,14 +175,29 @@ layout: null
             <code class="install">brew install provasign/tap/shale</code>
             <div class="cta">
               <a class="btn primary" href="{{ '/shale/' | relative_url }}">Get started with Shale</a>
-              <a class="btn" href="https://github.com/provasign/shale-test-bed/pull/1">See a PR card</a>
             </div>
           </article>
         </div>
-        <div class="reference-row">
-          <strong>Mason</strong>
-          <p>The incubating reference agent. It puts Prism change intelligence and Shale evidence into the harness so the complete loop can be measured end to end.</p>
-          <a class="more" href="{{ '/mason/' | relative_url }}">View Mason</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <h2 class="section-title">What you decided stays decided.</h2>
+        <p class="section-lead">Requirements written months apart contradict each other, and an agent builds whichever one it reads. Stele turns each requirement into a rule it can check, finds the ones that cannot all hold, and asks you. What you approve lives in the repository, and every later request is read against it.</p>
+        <div class="stele-demo">
+          <img src="{{ '/assets/images/stele-demo.gif' | relative_url }}" alt="A Claude Code session with Stele: the owner states a rule and approves it in a permission prompt; a later request that breaks the rule makes the agent stop and ask" width="920" height="517" loading="lazy">
+          <div class="steps">
+            <div class="step"><strong>You say it once.</strong><p>"A member must never hold more than 3 books." The agent writes it down as one requirement, and Stele checks it against everything approved before.</p></div>
+            <div class="step"><strong>You approve, not the agent.</strong><p>Claude Code asks you to allow the one command that records the approval, with Stele's summary in the prompt.</p></div>
+            <div class="step"><strong>A request that breaks it is caught.</strong><p>"Staff may hold up to 10." The agent quotes the requirement in the way and asks what should hold, before it edits anything.</p></div>
+            <div class="step"><strong>The hooks cost no model calls.</strong><p>Looking up the requirements a request touches takes milliseconds. A model reads a requirement once, when it is written or changed.</p></div>
+          </div>
+        </div>
+        <p class="note">A real Claude Code session on a small example project, with the waiting cut. Stele is a preview: it works with Claude Code, and its <a href="https://github.com/provasign/stele#what-to-expect">measured accuracy</a> is uneven and published.</p>
+        <div class="cta">
+          <a class="btn primary" href="https://github.com/provasign/stele">Get Stele</a>
+          <a class="btn" href="{{ '/stele/' | relative_url }}">Read the Stele guide</a>
         </div>
       </div>
     </section>
@@ -299,9 +345,9 @@ completeness: <span class="green">closed</span> (compiler-backed go)
     <section class="section">
       <div class="wrap">
         <h2 class="section-title">Local tools. Open evidence.</h2>
-        <p class="section-lead">Each project works on its own and fits the tools developers already use. There is no shared account or hosted control plane.</p>
+        <p class="section-lead">Each tool works on its own and fits the tools developers already use. There is no shared account or hosted control plane. Where two are installed they work together: the requests an agent declares with Shale can become requirements Stele checks, and Shale shows on the pull request what a change does to those requirements.</p>
         <div class="principles">
-          <div class="principle"><strong>Local first</strong><p>Code analysis and session capture stay with the repository and developer workflow.</p></div>
+          <div class="principle"><strong>Local first</strong><p>Code analysis, approved requirements and session capture stay with the repository and developer workflow.</p></div>
           <div class="principle"><strong>Measured claims</strong><p>Correctness results are tied to published tasks, independent oracles, and raw runs.</p></div>
           <div class="principle"><strong>Honest boundaries</strong><p>Unsupported analysis and missing evidence are labeled instead of silently promoted to certainty.</p></div>
         </div>
@@ -311,7 +357,7 @@ completeness: <span class="green">closed</span> (compiler-backed go)
   </main>
 
   <footer class="site-footer">
-    <div class="site-footer-inner">Prism before the edit. Shale after it. Mason proves the loop.</div>
+    <div class="site-footer-inner">Stele before the plan. Prism before the edit. Shale after it.</div>
   </footer>
 <script>
   (function () {
