@@ -81,6 +81,20 @@ On a project with specs already, the first commit that touches them says how
 to adopt: Stele reads every requirement once and asks you about each
 contradiction it finds.
 
+- **Start small if the project is large.** `stele adopt --list` shows each spec
+  and how many requirements it holds. `stele adopt --spec <name>` reads only
+  the specs you name, and a later run reads more, checked against what you
+  approved.
+- **You do not have to settle everything to finish.** Specs written over years
+  disagree in places. For each contradiction you can say that one requirement
+  is the exception to the other, which Stele recommends when one is a check or
+  an error case, or decide later: the contradiction is recorded as open,
+  `stele check` lists it, and no new one may join it. Neither answer edits
+  your specs.
+- **Not everything can be checked.** Expect a quarter to a third of the
+  requirements to be recorded unchecked: those about how the code is built,
+  about the process, or matters of judgment. The summary gives the count.
+
 ## How it works
 
 1. **Read.** Each requirement becomes a rule over one vocabulary shared by the
@@ -122,14 +136,16 @@ labelled sets.
   independently labelled sets it found every labelled pair.
 - **The solver path** finds fewer, and each one it reports is a checked
   contradiction among the approved rules: 16 of 20 labelled conflicts on one
-  held-out set with every finding real, 4 of 13 on another, 4 of 10 on a
-  third.
+  held-out set, with 20 of its 21 findings a labelled one; 5 and 8 of 13 on
+  another in two runs; 4 of 10 on a third.
 - **Reading requirements into rules** is the weak stage. On a blind-graded
   sample of 20 statements, 5 rules said exactly what their statement said, and
   most of the rest were weaker than the statement rather than wrong. That is
   why you approve every reading, with Stele's findings beside it.
-- **Cost.** Adopting a 177-statement project cost $2.28 in model calls. The
-  hooks call no model: a request about specified behaviour adds about 400 to
+- **Cost.** The first check of a 179-requirement adoption took about ten
+  minutes and $3.96 in model calls, and asked its owner five questions; the
+  adoption cost $5.41 by the time it was approved. A spec of 46 requirements
+  adopted on its own cost $1.18 and asked nothing. The hooks call no model: a request about specified behaviour adds about 400 to
   600 tokens of approved requirements to the agent's context, in under 25 ms.
 
 A reported conflict is proved for the rules as approved. "No conflict" is a
