@@ -2,7 +2,7 @@
 title: Provasign Documentation
 layout: default
 nav_order: 1
-description: "Documentation for Prism, Grove, Shale, Mason, and the public evaluation program."
+description: "Documentation for Stele, Prism, Shale, Grove, Mason, and the public evaluation program."
 permalink: /docs/
 ---
 
@@ -10,10 +10,11 @@ permalink: /docs/
 
 Source for [provasign.dev](https://provasign.dev), built with GitHub Pages and Jekyll.
 
-Provasign builds local tools for understandable AI-authored changes. Prism provides semantic context before an edit; Shale carries intent and evidence into review; Mason is the reference agent; Grove is the shared graph engine. The Research repository publishes the tasks, oracles, run records, and transcripts behind performance claims.
+Provasign builds local tools for understandable AI-authored changes. Stele keeps a project's requirements consistent and the agent inside them; Prism provides semantic context before an edit; Shale carries intent and evidence into review; Mason is the reference agent; Grove is the shared graph engine. The Research repository publishes the tasks, oracles, run records, and transcripts behind performance claims.
 
 ## Start here
 
+- [Stele](https://provasign.dev/stele/) — requirements that stay consistent, checked before the agent plans (preview)
 - [Prism](https://provasign.dev/prism/) — semantic change intelligence for coding agents
 - [Grove](https://provasign.dev/grove/) — local multilingual code graph
 - [Shale](https://provasign.dev/shale/) — local agent-session evidence for pull requests
@@ -22,6 +23,7 @@ Provasign builds local tools for understandable AI-authored changes. Prism provi
 
 ## Source repositories
 
+- [provasign/stele](https://github.com/provasign/stele)
 - [provasign/prism](https://github.com/provasign/prism)
 - [provasign/grove](https://github.com/provasign/grove)
 - [provasign/research](https://github.com/provasign/research)
