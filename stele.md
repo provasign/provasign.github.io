@@ -155,9 +155,10 @@ question the diff cannot.
 Measured on case studies and held-out sets. These are single runs on small
 labelled sets, and a rerun can read a requirement differently.
 
-- **On real projects.** In three open-source projects built with Spec Kit,
-  OpenSpec and Kiro, one for each tool, we confirmed by hand requirements that
-  contradict each other. Stele shows its owner 9 of those 10 contradictions
+- **On real projects.** We read the specs of 13 open-source projects built
+  with Spec Kit, OpenSpec and Kiro. Every one has requirements that contradict
+  each other, confirmed by hand against the spec text. In three, one for each
+  tool, we traced the contradictions to the code and to real bugs. Stele shows its owner 9 of those 10 contradictions
   before anything is approved; the tenth rests on a design note, not on a
   requirement. All nine came from its review of the texts and were listed as
   possible; the solver proved none in these runs.
