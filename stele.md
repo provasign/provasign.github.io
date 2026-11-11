@@ -55,6 +55,10 @@ After that you do not run Stele. The agent does.
 - **When a requirement contradicts an approved one,** you get a question in
   the requirement's own words, with a concrete situation in which both cannot
   hold and what the code does today.
+- **Before you approve,** you see how each requirement was read: clause by
+  clause, with the rule that checks it in plain words ("Refuse “lend” on a tool
+  when the number of tools the member holds is at least 3"), or that nothing
+  checks it. A sentence the reading left out is listed too.
 - **When a change is ready,** you approve it in one act. Claude Code asks you
   to allow the one command that records the approval, with Stele's summary in
   the prompt. Allowing it is the approval; denying it records nothing.
@@ -62,7 +66,9 @@ After that you do not run Stele. The agent does.
   request touches. Its plan keeps them, or it quotes the one in the way and
   asks you.
 - **When you commit,** a pre-commit hook blocks specs and approved
-  requirements that disagree, and says what to run.
+  requirements that disagree, and says what to run. It also blocks what it
+  cannot check: a registry or `stele.yaml` that does not load, a registry
+  emptied or removed, a vocabulary change that alters what approved rules mean.
 
 The approval prompt holds back an agent that would approve for you by mistake.
 It is not a security boundary.
@@ -74,17 +80,18 @@ It is not a security boundary.
 | Spec Kit | `specs/` |
 | OpenSpec | `openspec/changes/` and the merged specs |
 | Kiro | `.kiro/specs/` |
-| Plain Markdown | A `requirements/` folder: one line for each requirement, with an ID and a MUST, MUST NOT or SHOULD |
+| Plain Markdown | A `requirements/` folder: one line for each requirement, with an ID and a MUST, MUST NOT, SHOULD or MAY |
 | Nothing yet | `stele init` sets up `requirements/`, and the agent keeps it |
 
 On a project with specs already, the first commit that touches them says how
-to adopt: Stele reads every requirement once and asks you about each
-contradiction it finds.
+to adopt: Stele reads every requirement once and asks you about the
+contradictions a reader of your specs would also find. Clashes only its own
+rules show, it settles itself and lists in the report.
 
-- **Start small if the project is large.** `stele adopt --list` shows each spec
-  and how many requirements it holds. `stele adopt --spec <name>` reads only
-  the specs you name, and a later run reads more, checked against what you
-  approved.
+- **Start small if the project is large.** On more than a hundred
+  requirements, `stele adopt` first offers the specs with their sizes and reads
+  nothing until you pick. `stele adopt --spec <name>` reads only the specs you
+  name, and a later run reads more, checked against what you approved.
 - **You do not have to settle everything to finish.** Specs written over years
   disagree in places. For each contradiction you can say that one requirement
   is the exception to the other, which Stele recommends when one is a check or
@@ -106,7 +113,8 @@ contradiction it finds.
    whole project, so one fact has one name. A requirement Stele cannot express
    is reported, not dropped.
 2. **Check the reading.** Stele asks whether each rule covers every clause of
-   its requirement and no more, and names what it could not cover.
+   its requirement and no more, reads a misread requirement once more, and
+   names what it could not cover.
 3. **Find contradictions.** A model proposes them. The Z3 solver confirms the
    ones it can express, each with a situation in which the rules cannot all
    hold.
@@ -116,6 +124,17 @@ contradiction it finds.
 5. **Guard.** Every later change is checked against every approved
    requirement, reading only what the change adds or edits. The hooks that
    inform the agent call no model.
+
+## What stays on your machine
+
+The approved requirements, your approvals and the lessons live in the
+registry, committed with your specs. While a change is open, Stele keeps its
+readings and your answers in `.stele/change/`, which is never committed and is
+removed when you approve. It keeps no copy of its prompts or of the model's
+replies, except the calls of a reading that failed, until that change is
+approved. What it reads from your project reaches the model marked as
+material, never as instructions. `--max-cost` limits what a whole check may
+spend.
 
 ## With Shale and Prism
 
@@ -150,10 +169,10 @@ labelled sets.
   sample of 20 statements, 5 rules said exactly what their statement said, and
   most of the rest were weaker than the statement rather than wrong. That is
   why you approve every reading, with Stele's findings beside it.
-- **Cost.** The first check of a 179-requirement adoption took about 13
-  minutes and $4.04 in model calls, and asked its owner five questions; the
-  adoption cost $5.41 by the time it was approved. A spec of 46 requirements
-  adopted on its own cost $1.18 and asked nothing. The hooks call no model: a request about specified behaviour adds about 400 to
+- **Cost.** Two specs of 86 requirements were read and checked in 8 minutes
+  for $1.64 on Sonnet, the model `stele init` names; a labelled set of 45 in two
+  and a half minutes for $0.81, with all 13 of its known contradictions shown.
+  A spec of 46 requirements adopted on its own cost $1.18 and asked nothing. The hooks call no model: a request about specified behaviour adds about 400 to
   600 tokens of approved requirements to the agent's context, in under 25 ms.
 
 A reported conflict is proved for the rules as approved. "No conflict" is a
