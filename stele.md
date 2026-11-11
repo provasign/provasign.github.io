@@ -153,29 +153,30 @@ question the diff cannot.
 ## What to expect
 
 Measured on case studies and held-out sets. These are single runs on small
-labelled sets.
+labelled sets, and a rerun can read a requirement differently.
 
-- **Finding contradictions** works best by review. On one project's ten known
-  contradictions, a model review found 9 at high reasoning effort. On two
-  independently labelled sets it found every labelled pair.
-- **The solver path** finds fewer, and each one it reports is a checked
-  contradiction among the approved rules: 16 of 20 labelled conflicts on one
-  held-out set, with 20 of its 21 findings a labelled one; 5 and 8 of 13 on
-  another in two runs; 4 of 10 on a third. At an adoption the two now work
-  together: the review's findings steer the readings, and what the rules
-  still do not prove is listed as possible. Two adoptions of the 13-conflict
-  set then showed 12 and 13 of them, and the 20-conflict set 19.
+- **On real projects.** We read the specs of 13 open-source projects built
+  with Spec Kit, OpenSpec and Kiro. In three, one for each tool, we confirmed
+  by hand requirements that contradict each other. Stele shows its owner 9 of
+  those 10 contradictions before anything is approved; the tenth rests on a
+  design note, not on a requirement. All nine came from its review of the
+  texts and were listed as possible; the solver proved none in these runs.
+- **On labelled sets.** On two independently labelled sets of 109 and 45
+  requirements, an adoption showed 20 of 20 and 10 of 13 known
+  contradictions: 17 and 7 as solver-checked conflicts put to the owner, the
+  rest listed as possible.
 - **Reading requirements into rules** is the weak stage. On a blind-graded
-  sample of 20 statements, 5 rules said exactly what their statement said, and
-  most of the rest were weaker than the statement rather than wrong. That is
-  why you approve every reading, with Stele's findings beside it.
-- **Cost.** Two specs of 86 requirements were read and checked in 8 minutes
-  for $1.64 on Sonnet, the model `stele init` names; a labelled set of 45 in two
-  and a half minutes for $0.81, with all 13 of its known contradictions shown.
-  A spec of 46 requirements adopted on its own cost $1.18 and asked nothing. The hooks call no model: a request about specified behaviour adds about 400 to
-  600 tokens of approved requirements to the agent's context, in under 25 ms.
+  sample of 20 statements, 5 rules said exactly what their statement said,
+  none misread it, and most of the rest said less. That is why you approve
+  every reading, shown clause by clause with what checks it.
+- **Cost.** About 1.5 cents a requirement for short requirements on Sonnet,
+  the model `stele init` names: eight requirements for $0.13, 109 for about
+  $1.50. Long requirements with scenarios cost more: the first check of a
+  179-requirement project cost $3.96 and took about ten minutes. The hooks
+  call no model: a request about specified behaviour adds about 400 to 600
+  tokens of approved requirements to the agent's context, in under 25 ms.
 
-A reported conflict is proved for the rules as approved. "No conflict" is a
+A conflict reported as proved holds for the rules as approved. "No conflict" is a
 statement about those rules, within stated bounds, not about the prose. Stele
 does not prove that the code implements the spec.
 [What a verdict means](https://github.com/provasign/stele/blob/main/docs/06-checker.md#what-a-verdict-means)
