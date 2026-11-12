@@ -22,7 +22,7 @@ stop and ask you before it edits anything.
 
 <img src="{{ '/assets/images/stele-demo.gif' | relative_url }}"
      alt="A Claude Code session with Stele: the owner states a rule and approves it in a permission prompt; a later request that breaks the rule makes the agent stop and ask"
-     width="920" style="max-width:100%; border-radius:10px; margin: 8px 0 4px;">
+     width="1100" style="max-width:100%; border-radius:10px; margin: 8px 0 4px;">
 
 *A real Claude Code session on a small example project, with the waiting cut.*
 
@@ -41,9 +41,9 @@ stele init
 
 `stele init` finds your spec format and writes Stele's short instructions and
 hooks for Claude Code into the repository. Commit what it writes, and every
-teammate's agent runs the same loop. Stele needs the
-[Z3](https://github.com/Z3Prover/z3) solver and [Node.js](https://nodejs.org)
-on your PATH; the installer names the command for your system.
+teammate's agent runs the same loop. Stele needs only the
+[Z3](https://github.com/Z3Prover/z3) solver on your PATH; the installer names
+the command for your system.
 
 After that you do not run Stele. The agent does.
 
