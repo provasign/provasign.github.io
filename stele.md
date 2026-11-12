@@ -41,9 +41,8 @@ stele init
 
 `stele init` finds your spec format and writes Stele's short instructions and
 hooks for Claude Code into the repository. Commit what it writes, and every
-teammate's agent runs the same loop. Stele needs only the
-[Z3](https://github.com/Z3Prover/z3) solver on your PATH; the installer names
-the command for your system.
+teammate's agent runs the same loop. Stele is one file with nothing else to
+install: the [Z3](https://github.com/Z3Prover/z3) solver is built into it.
 
 After that you do not run Stele. The agent does.
 
