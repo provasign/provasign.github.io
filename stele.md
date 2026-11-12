@@ -79,8 +79,22 @@ It is not a security boundary.
 | Spec Kit | `specs/` |
 | OpenSpec | `openspec/changes/` and the merged specs |
 | Kiro | `.kiro/specs/` |
-| Plain Markdown | A `requirements/` folder: one line for each requirement, with an ID and a MUST, MUST NOT, SHOULD or MAY |
-| Nothing yet | `stele init` sets up `requirements/`, and the agent keeps it |
+| Plain Markdown | `specs/`, `docs/specs/` or `docs/`, or the folder you name: every statement with a MUST, MUST NOT, SHOULD or MAY |
+| Nothing yet | `stele init` sets up `requirements/`, and the agent keeps it: one line for each requirement, with an ID |
+
+**Specs kept somewhere else in the repository** are one setting away. Name the
+folder in `stele.yaml`, and Stele reads every Markdown file under it:
+
+```yaml
+specs:
+  root: design/rules
+  format: markdown
+  snapshot: .stele/accepted-statements.yaml
+```
+
+A project has one spec folder, and it is inside the repository. Stele does not
+read specs spread over several folders with no common parent, or kept in a
+wiki or a shared document.
 
 On a project with specs already, the first commit that touches them says how
 to adopt: Stele reads every requirement once and asks you about the
@@ -204,6 +218,8 @@ adds is the span and the memory.
 - Running the gate in GitHub Actions without setting it up yourself.
 - Generating tests from the rules, or checking that a code change keeps the
   rules it touches.
+- Specs in more than one folder, or outside the repository (a wiki, a shared
+  document).
 
 ## Try it
 
