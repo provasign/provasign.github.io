@@ -4,6 +4,7 @@ layout: default
 nav_order: 2
 description: "Stele keeps what you decided: every requirement is checked against every one approved before it, and a request that breaks one makes the coding agent stop and ask. Open source, in preview."
 permalink: /stele/
+repo: stele
 ---
 
 # Stele: what you decided stays decided

@@ -15,7 +15,7 @@
       <a href="{{ '/shale/' | relative_url }}"{% if page.url == '/shale/' %} aria-current="page"{% endif %}>Shale</a>
       <a href="{{ '/benchmarks/' | relative_url }}"{% if page.url == '/benchmarks/' %} aria-current="page"{% endif %}>Benchmarks</a>
       <a href="{{ '/docs/' | relative_url }}"{% if page.url == '/docs/' %} aria-current="page"{% endif %}>Docs</a>
-      <a href="https://github.com/provasign">GitHub</a>
+      <a href="https://github.com/provasign{% if page.repo %}/{{ page.repo }}{% endif %}">GitHub</a>
     </nav>
   </div>
 </header>

@@ -4,6 +4,7 @@ layout: default
 nav_order: 3
 description: "Review evidence for AI-written code: intent, touched files, local checks, integrity signals, and explicit gaps on the pull request."
 permalink: /shale/
+repo: shale
 ---
 
 # Shale — every agent PR explains itself

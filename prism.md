@@ -4,6 +4,7 @@ layout: default
 nav_order: 2
 description: "Semantic change intelligence for coding agents: change impact, edit-ready context, and diff verification. Answers questions; never edits code."
 permalink: /prism/
+repo: prism
 ---
 
 # Prism
