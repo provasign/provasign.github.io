@@ -2,8 +2,8 @@
   <rect width="1200" height="630" fill="#0d1117"/>
   <g font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
     <text x="80" y="118" font-size="30" font-weight="700" fill="#748190" letter-spacing="1">PROVASIGN</text>
-    <text x="80" y="196" font-size="58" font-weight="800" fill="#e6edf3">Three questions a diff</text>
-    <text x="80" y="262" font-size="58" font-weight="800" fill="#e6edf3">cannot answer.</text>
+    <text x="80" y="196" font-size="58" font-weight="800" fill="#e6edf3">Questions your coding agent</text>
+    <text x="80" y="262" font-size="58" font-weight="800" fill="#e6edf3">can't answer alone.</text>
 
     <rect x="80" y="318" width="330" height="214" rx="12" fill="#161b22" stroke="#273241" stroke-width="2"/>
     <rect x="80" y="318" width="330" height="6" rx="3" fill="#f0b86e"/>
