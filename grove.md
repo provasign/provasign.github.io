@@ -10,6 +10,8 @@ permalink: /grove/
 
 Grove is the local semantic graph under Prism. It parses a repository, stores symbols and typed relationships in SQLite, and answers deterministic questions about callers, implementations, dependencies, tests, and change impact.
 
+Since v0.64.0 an index also records where a repository uses other modules' symbols (Go, Java, TypeScript and Python, keyed by package and name) and what its build manifests declare and require. Prism uses that to answer change impact across linked repositories.
+
 Most coding-agent users should install [Prism]({{ '/prism/' | relative_url }}), which embeds Grove and presents a smaller task-focused interface. Grove is available directly for tool builders who need the CLI, MCP server, or Go API.
 
 ## Install
@@ -18,7 +20,7 @@ Most coding-agent users should install [Prism]({{ '/prism/' | relative_url }}), 
 curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
 
 # Pin the current release
-VERSION=v0.63.25 curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/provasign/grove/v0.64.0/install.sh | VERSION=v0.64.0 bash
 ```
 
 ```sh

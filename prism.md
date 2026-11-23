@@ -26,13 +26,13 @@ prism init .
 You can also use the installer:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
-
-# Pin the current release
-VERSION=v1.1.2 curl -fsSL https://raw.githubusercontent.com/provasign/prism/main/install.sh | bash
+# Pinned to the current release; verifies the checksum and, with cosign or gh, the provenance
+curl -fsSL https://raw.githubusercontent.com/provasign/prism/v1.3.0/install.sh | VERSION=v1.3.0 bash
 ```
 
-`prism init` writes `prism.yaml` and agent instructions for the agents you pick: Claude Code, Codex, Cursor, Copilot (VS Code), Gemini CLI, OpenCode, and Windsurf. It asks which interface to use. MCP (the default) registers a project-local server. CLI registers no server; agents run `prism` in their shell. To choose without a prompt:
+`prism init --dry-run .` shows the diff of every file it would write, and `prism uninstall .` later removes exactly what init added.
+
+`prism init` writes `prism.yaml` and agent instructions for the agents you pick: Claude Code, Codex, Cursor, Copilot (VS Code), Gemini CLI, OpenCode, and Windsurf. It asks which interface to use. CLI (the default) registers no server; agents run `prism` in their shell. MCP registers a project-local server. To choose without a prompt:
 
 ```sh
 prism init --harness claude,codex --interface cli .
@@ -47,6 +47,10 @@ Indexing happens automatically on first use and updates incrementally.
 | Where is this name or text? | `prism search` |
 | What source does this task need? | `prism query` |
 | What must change with this method? | `prism change-impact` |
+| What does my diff reach? | `prism change-impact --diff` |
+| Who uses this type or field, and how? | `prism references --kind` |
+| What reaches this, and through what path? | `prism callers`, `prism path` |
+| Which tests should run first? | `prism test-plan` |
 | What are the exact rename edits? | `prism rename-plan` |
 | Which types lack a new interface member? | `prism missing-implementations` |
 | Did this diff miss a required site? | `prism verify` |
@@ -83,7 +87,20 @@ The bug-fix solve difference is within run-to-run noise. Startup cost per sessio
 - **Edit-ready delivery.** `prism query` returns line-numbered source around named anchors instead of another list of pointers.
 - **Session deduplication.** Re-reading an unchanged file through MCP returns a short pointer instead of the content.
 - **Local operation.** Code and indexes stay in the working environment; the default MCP transport is stdio.
-- **CI gates.** `prism verify` and `prism arch` exit nonzero when their checks fail.
+- **CI gates.** `prism ci` fails a pull request on a missed site or a new architecture violation, with annotations; `prism verify` and `prism arch` exit nonzero when their checks fail.
+- **Safe by default.** For a repository you mark untrusted (`prism untrust`), Prism never runs its build tools. Search and read withhold `.env`, key and credential files unless asked.
+
+## Across repositories
+
+A change in a library reaches the services that use it. Link those repositories and the same commands answer for them:
+
+```sh
+cd library
+prism workspace add ../app        # or a git URL, fetched read-only at a commit
+prism change-impact Client.Send   # the call sites in app first, then this repository's
+```
+
+Each repository keeps its own index; links are followed when a question is asked. `lookup`, `read`, `search`, `change-impact`, `verify` and `test-plan` cover linked repositories, and every answer says which ones it covered and how strongly: resolved by the other repository's compiler for Go, Java, TypeScript and Python, or name-matched. A link committed in a cloned repository takes effect only after you confirm it on your machine. For consumers that are not checked out, their CI can upload link data to a link server. [The guide](https://github.com/provasign/prism/blob/main/docs/MULTI_REPO.md).
 
 ## Language support
 
