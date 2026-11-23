@@ -148,13 +148,14 @@ layout: null
             </div>
           </article>
           <article class="product prism">
-            <span class="tag">before the edit · v1.1</span>
+            <span class="tag">before the edit · v1.3</span>
             <h3>Prism</h3>
             <p class="asks">Did it change everything it had to?</p>
             <p>Every caller, override, implementation and test a change affects, resolved by the language's own compiler, not grep. Prism answers; the agent edits.</p>
             <ul class="proof">
               <li>Change work, 32 tasks: all solved (native 31), 24% lower task cost, 35% fewer agent steps</li>
               <li>Bug fixes, 40 real issues: same results, 8% lower task cost, 15% fewer agent steps</li>
+              <li>Across repositories: link a library and the services that use it, and the same answers cover both</li>
               <li>Claude Code, Codex, Cursor, Copilot, Gemini CLI, OpenCode, Windsurf</li>
             </ul>
             <code class="install">brew install provasign/tap/prism</code>
@@ -205,7 +206,7 @@ layout: null
     <section class="section">
       <div class="wrap">
         <h2 class="section-title">Know the whole change before you touch it.</h2>
-        <p class="section-lead">Prism turns the multi-step investigations developers and agents repeat every day into task-shaped operations with explicit completeness. It works with Claude Code, Codex, Cursor, Copilot (VS Code), Gemini CLI, OpenCode, and Windsurf, as an MCP server or as a <code>prism</code> command the agent runs in its shell.</p>
+        <p class="section-lead">Prism turns the multi-step investigations developers and agents repeat every day into task-shaped operations with explicit completeness. It works with Claude Code, Codex, Cursor, Copilot (VS Code), Gemini CLI, OpenCode, and Windsurf, as a <code>prism</code> command the agent runs in its shell or as an MCP server. A change in a library reaches the services that use it: <code>prism workspace add ../app</code> links them, and change-impact, lookup, search, verify and test-plan then answer for both repositories, saying how each site was found.</p>
         <div class="prism-demo">
           <div class="terminal" aria-label="Real Prism output on gin">
             <div class="terminal-head">prism · <span class="op-name">change-impact</span> · real output on gin</div>
@@ -296,7 +297,7 @@ completeness: <span class="green">closed</span> (compiler-backed go)
     <section class="section">
       <div class="wrap">
         <h2 class="section-title">Measured against native Claude Code.</h2>
-        <p class="section-lead">Measured on Prism 1.0 (v0.87.39) against Claude Code's own tools, Sonnet 5.5, on two task sets: 32 change tasks and 40 real bug-fix issues. The current release is v1.1.2. The tasks, run records, transcripts, and limits are public.</p>
+        <p class="section-lead">Measured on Prism 1.0 (v0.87.39) against Claude Code's own tools, Sonnet 5.5, on two task sets: 32 change tasks and 40 real bug-fix issues. The current release is v1.3.0; before it shipped it was run against v1.2-era Prism on 41 bug-fix tasks: the same tasks solved, 8% lower task cost. The tasks, run records, transcripts, and limits are public.</p>
         <div class="principles">
           <div class="principle"><strong>Change work: 0.76× cost</strong><p>32 renames and signature changes in Python, Java, TypeScript and Go. Prism solved all 32 (native 31) with 0.65× the tool calls. About 22% cheaper over a working session.</p></div>
           <div class="principle"><strong>Bug fixes: 0.92× cost</strong><p>40 GitHub issues filed after the model's training cutoff. Same results as native (25 vs 23 solved, within noise) with 0.85× the tool calls. About 8% cheaper over a session.</p></div>

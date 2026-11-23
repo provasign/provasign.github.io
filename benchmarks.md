@@ -2,7 +2,7 @@
 title: Benchmarks
 layout: default
 nav_order: 6
-description: "Prism v0.87.39 vs native Claude Code on change work and bug fixes, plus Grove engine accuracy."
+description: "Prism v0.87.39 vs native Claude Code on change work and bug fixes, the v1.3.0 release gate, plus Grove engine accuracy."
 permalink: /benchmarks/
 ---
 
@@ -80,9 +80,21 @@ The projection does not model context growth within a long session. It does not 
 - Two losses were adjudicated, not dropped. Prism's werkzeug `HTTPException.get_headers` miss in the v0.87.38 run was a macOS `sed` `\b` substitution that changed nothing; Prism's change-impact had listed the right sites. Native missed hono `Router.match`.
 - Claude Code's auto mode with Opus 5.5 adds a reminder to work through Bash with grep/cat. Under it, Prism still handled 80% (CLI) / 59% (MCP) of code searches. Savings under that reminder were not measured against native.
 
+## Release gate: Prism v1.3.0
+
+Before release, v1.3.0 (Grove v0.64.0) ran against v1.2-era Prism on the same 41 bug-fix tasks, same setup as above (Sonnet 5.5, CLI interface, prompt caching off, repriced at 5-minute prices). The gate asks whether a release loses anything, not how Prism compares with native.
+
+| | v1.2-era Prism | v1.3.0 |
+|---|---:|---:|
+| Solved | 24 / 41 | 24 / 41 |
+| Task cost | $3.060 | $2.826 (0.92×) |
+| Requests | 319 | 297 |
+
+No task changed outcome between the two builds. One run per arm; per-task cost varies ±40-70% between runs, so the cost ratio is indicative. Write-up: [ab-backlog-2026-11-23](https://github.com/provasign/prism/blob/main/docs/research/ab-backlog-2026-11-23/README.md).
+
 ## Engine accuracy (Grove v0.63.25)
 
-Call-edge precision and recall against each language's compiler or runtime ground truth on pinned repositories. CI-gated (`grove/eval/baseline.json`).
+Call-edge precision and recall against each language's compiler or runtime ground truth on pinned repositories. CI-gated (`grove/eval/baseline.json`): Grove v0.64.0, in Prism v1.3.0, passes the same gate, so no row is lower.
 
 | Language | Corpus | Ground truth | Precision | Recall |
 |---|---|---|---:|---:|

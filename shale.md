@@ -151,7 +151,14 @@ written. It catches vendor token shapes (AWS, GitHub, OpenAI, Anthropic, Slack,
 Stripe, and more) plus the command-line forms agents actually use: env-prefix
 assignments (`API_KEY=… ./run`), secret flags (`--token=…`, `--password …`),
 and bearer headers. The command stays on the card — knowing the agent ran
-`go test` is the point — only the secret *value* is masked.
+`go test` is the point — only the secret *value* is masked. Home directory
+paths (`/Users/<name>`, `/home/<name>`, `C:\Users\<name>`) are written as `~`
+(since v0.2.8), so committed evidence does not name the person or the machine.
+
+**How long is evidence kept?** As long as you choose. The card reads only the
+evidence a pull request adds, so evidence from merged work is history.
+`shale prune --older-than 30` deletes committed evidence finalized more than
+30 days ago (`--dry-run` lists it first); commit the deletions.
 
 **Does prompt text leave the laptop?** No — period, in current builds.
 Shale can capture the raw prompts developers type and redact them (secrets,
