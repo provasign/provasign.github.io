@@ -96,6 +96,7 @@ A change in a library reaches the services that use it. Link those repositories 
 
 ```sh
 cd library
+prism init                        # once; workspace add needs prism.yaml
 prism workspace add ../app        # or a git URL, fetched read-only at a commit
 prism change-impact Client.Send   # the call sites in app first, then this repository's
 ```
