@@ -27,7 +27,7 @@ You can also use the installer:
 
 ```sh
 # Pinned to the current release; verifies the checksum and, with cosign or gh, the provenance
-curl -fsSL https://raw.githubusercontent.com/provasign/prism/v1.3.2/install.sh | VERSION=v1.3.2 bash
+curl -fsSL https://raw.githubusercontent.com/provasign/prism/v1.3.3/install.sh | VERSION=v1.3.3 bash
 ```
 
 `prism init --dry-run .` shows the diff of every file it would write, and `prism uninstall .` later removes exactly what init added.
