@@ -27,7 +27,7 @@ You can also use the installer:
 
 ```sh
 # Pinned to the current release; verifies the checksum and, with cosign or gh, the provenance
-curl -fsSL https://raw.githubusercontent.com/provasign/prism/v1.3.1/install.sh | VERSION=v1.3.1 bash
+curl -fsSL https://raw.githubusercontent.com/provasign/prism/v1.3.2/install.sh | VERSION=v1.3.2 bash
 ```
 
 `prism init --dry-run .` shows the diff of every file it would write, and `prism uninstall .` later removes exactly what init added.
@@ -96,7 +96,6 @@ A change in a library reaches the services that use it. Link those repositories 
 
 ```sh
 cd library
-prism init                        # once; workspace add needs prism.yaml
 prism workspace add ../app        # or a git URL, fetched read-only at a commit
 prism change-impact Client.Send   # the call sites in app first, then this repository's
 ```
