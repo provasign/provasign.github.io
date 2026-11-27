@@ -55,6 +55,10 @@ This guide describes v1.4.0. Differences from v1.3.x are marked; see also
 
 ## How it works
 
+![Prism link server architecture](/assets/images/link-server-architecture.svg)
+
+The same flow in text:
+
 ```
  consumer repositories (CI, on each merge to main)          shared host(s)
  ┌──────────────┐  prism index .                           ┌──────────────────────────────┐

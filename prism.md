@@ -100,7 +100,21 @@ prism workspace add ../app        # or a git URL, fetched read-only at a commit
 prism change-impact Client.Send   # the call sites in app first, then this repository's
 ```
 
-Each repository keeps its own index; links are followed when a question is asked. `lookup`, `read`, `search`, `change-impact`, `verify` and `test-plan` cover linked repositories, and every answer says which ones it covered and how strongly: resolved by the other repository's compiler for Go, Java, TypeScript and Python, or name-matched. A link committed in a cloned repository takes effect only after you confirm it on your machine. For consumers that are not checked out, their CI can upload link data to a [link server](/prism/link-server/) your organization runs: per-token access, storage on S3, Azure Blob Storage, Google Cloud Storage or a private object store with replicas, TLS and mTLS, an audit log, and a container image with a Helm chart. [The multi-repository guide](https://github.com/provasign/prism/blob/main/docs/MULTI_REPO.md).
+Each repository keeps its own index; links are followed when a question is asked. `lookup`, `read`, `search`, `change-impact`, `verify` and `test-plan` cover linked repositories, and every answer says which ones it covered and how strongly: resolved by the other repository's compiler for Go, Java, TypeScript and Python, or name-matched. A link committed in a cloned repository takes effect only after you confirm it on your machine. [The multi-repository guide](https://github.com/provasign/prism/blob/main/docs/MULTI_REPO.md).
+
+## Link server: the whole organization
+
+**New in v1.4.** For the services nobody has checked out, each consumer's CI uploads where it uses other repositories' symbols to a link server your organization runs. `change-impact`, `verify`, `test-plan` and `lookup` in the library then list every readable consumer site, each pinned to its commit, and say what they could not cover.
+
+![Prism link server architecture](/assets/images/link-server-architecture.svg)
+
+- **Storage:** AWS S3, Azure Blob Storage, Google Cloud Storage, S3-compatible stores in your data centre (MinIO, Ceph, …), or a local disk. Any number of replicas on shared storage.
+- **Access:** per-token rights. CI tokens upload one repository, and read tokens see a team's repositories. Expiry and instant revocation.
+- **Security:** TLS and mTLS, an audit log of every request, and rate limits. Only one line per use and signatures are stored.
+- **Operations:** a container image and Helm chart, Prometheus metrics, retention, integrity check, backup and restore.
+- **Scale:** p99 under 25 ms at 1,000 repositories and about a million references.
+
+[The link server guide](/prism/link-server/) covers architecture, deployment on every platform, credentials, CI setup, the HTTP API, sizing and what was tested.
 
 ## Language support
 

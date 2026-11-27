@@ -85,6 +85,8 @@ layout: null
     .note { margin-top: 22px; color: var(--dim); font-size: 14px; }
     .note a { color: var(--accent); }
     .principles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 34px; }
+    .arch { margin-top: 34px; }
+    .arch img { display: block; width: 100%; height: auto; border-radius: 14px; }
     .principle { padding-top: 16px; border-top: 2px solid var(--line); }
     .principle strong { display: block; margin-bottom: 8px; }
     .principle p { margin: 0; color: var(--muted); line-height: 1.6; }
@@ -148,7 +150,7 @@ layout: null
             </div>
           </article>
           <article class="product prism">
-            <span class="tag">before the edit · v1.3</span>
+            <span class="tag">before the edit · v1.4</span>
             <h3>Prism</h3>
             <p class="asks">Did it change everything it had to?</p>
             <p>Every caller, override, implementation and test a change affects, resolved by the language's own compiler, not grep. Prism answers; the agent edits.</p>
@@ -156,6 +158,7 @@ layout: null
               <li>Change work, 32 tasks: all solved (native 31), 24% lower task cost, 35% fewer agent steps</li>
               <li>Bug fixes, 40 real issues: same results, 8% lower task cost, 15% fewer agent steps</li>
               <li>Across repositories: link a library and the services that use it, and the same answers cover both</li>
+              <li><strong>New: the <a href="{{ '/prism/link-server/' | relative_url }}">link server</a></strong>, change impact across every repository in your organization, self-hosted on AWS, Azure, Google Cloud or in your data centre</li>
               <li>Claude Code, Codex, Cursor, Copilot, Gemini CLI, OpenCode, Windsurf</li>
             </ul>
             <code class="install">brew install provasign/tap/prism</code>
@@ -290,6 +293,29 @@ completeness: <span class="green">closed</span> (compiler-backed go)
         <div class="cta">
           <a class="btn primary" href="https://github.com/provasign/prism">Get Prism</a>
           <a class="btn" href="{{ '/benchmarks/' | relative_url }}">See the benchmarks</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="link-server">
+      <div class="wrap">
+        <div class="eyebrow">New in Prism v1.4 · the link server</div>
+        <h2 class="section-title">Every repository in your organization, in one answer.</h2>
+        <p class="section-lead">A change to a shared library reaches services nobody has checked out. With the Prism link server, each consumer's CI uploads where it uses other repositories' symbols, resolved by its own compiler. When you or your coding agent run <code>change-impact</code> in the library, every consumer site across the organization is listed next to the local callers. Each site is pinned to its commit, and the answer says what it could not cover. No cloning hundreds of repositories, and no source bodies leave them.</p>
+        <figure class="arch">
+          <img src="{{ '/assets/images/link-server-architecture.svg' | relative_url }}" alt="Prism link server architecture. Consumer repositories' CI uploads link bundles with a token scoped to each repository. The self-hosted link server runs as replicas behind HTTPS, on AWS S3, Azure Blob Storage, Google Cloud Storage, an S3-compatible store in a private data centre, or a local disk. Developers and coding agents ask it from the library and get every readable consumer site, with what was not covered." width="1200" height="640" loading="lazy">
+        </figure>
+        <div class="principles">
+          <div class="principle"><strong>Runs where your code lives</strong><p>Self-hosted on AWS S3, Azure Blob Storage, Google Cloud Storage, MinIO or Ceph in your data centre, or a local disk. Container image and Helm chart.</p></div>
+          <div class="principle"><strong>Access by token</strong><p>CI tokens upload one repository; read tokens see only a team's repositories; answers say how many were not readable. Expiry and instant revocation.</p></div>
+          <div class="principle"><strong>Fast at scale</strong><p>Any number of replicas on shared storage. p99 under 25 ms at 1,000 repositories and a million references, measured and published.</p></div>
+          <div class="principle"><strong>Secure by default</strong><p>TLS and mTLS, an audit log of every request, rate limits. Only one line per use and signatures are stored: no bodies, no secrets, no machine paths.</p></div>
+          <div class="principle"><strong>Honest coverage</strong><p>Every answer names the repositories it searched, the commit of each, and what it missed. An agent cannot claim completeness the server did not give it.</p></div>
+          <div class="principle"><strong>Same commands</strong><p><code>change-impact</code>, <code>verify</code>, <code>test-plan</code> and <code>lookup</code>, from the CLI or MCP. Go, Java, TypeScript and Python consumers.</p></div>
+        </div>
+        <div class="cta">
+          <a class="btn primary" href="{{ '/prism/link-server/' | relative_url }}">Read the link server guide</a>
+          <a class="btn" href="https://github.com/provasign/prism/tree/main/deploy">Deploy: image, Helm, Compose</a>
         </div>
       </div>
     </section>
