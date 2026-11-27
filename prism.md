@@ -27,7 +27,7 @@ You can also use the installer:
 
 ```sh
 # Pinned to the current release; verifies the checksum and, with cosign or gh, the provenance
-curl -fsSL https://raw.githubusercontent.com/provasign/prism/v1.3.5/install.sh | VERSION=v1.3.5 bash
+curl -fsSL https://raw.githubusercontent.com/provasign/prism/v1.4.0/install.sh | VERSION=v1.4.0 bash
 ```
 
 `prism init --dry-run .` shows the diff of every file it would write, and `prism uninstall .` later removes exactly what init added.
@@ -100,7 +100,7 @@ prism workspace add ../app        # or a git URL, fetched read-only at a commit
 prism change-impact Client.Send   # the call sites in app first, then this repository's
 ```
 
-Each repository keeps its own index; links are followed when a question is asked. `lookup`, `read`, `search`, `change-impact`, `verify` and `test-plan` cover linked repositories, and every answer says which ones it covered and how strongly: resolved by the other repository's compiler for Go, Java, TypeScript and Python, or name-matched. A link committed in a cloned repository takes effect only after you confirm it on your machine. For consumers that are not checked out, their CI can upload link data to a [link server](/prism/link-server/) your organization runs. [The multi-repository guide](https://github.com/provasign/prism/blob/main/docs/MULTI_REPO.md).
+Each repository keeps its own index; links are followed when a question is asked. `lookup`, `read`, `search`, `change-impact`, `verify` and `test-plan` cover linked repositories, and every answer says which ones it covered and how strongly: resolved by the other repository's compiler for Go, Java, TypeScript and Python, or name-matched. A link committed in a cloned repository takes effect only after you confirm it on your machine. For consumers that are not checked out, their CI can upload link data to a [link server](/prism/link-server/) your organization runs: per-token access, storage on S3, Azure Blob Storage, Google Cloud Storage or a private object store with replicas, TLS and mTLS, an audit log, and a container image with a Helm chart. [The multi-repository guide](https://github.com/provasign/prism/blob/main/docs/MULTI_REPO.md).
 
 ## Language support
 

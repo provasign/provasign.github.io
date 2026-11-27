@@ -20,7 +20,7 @@ Most coding-agent users should install [Prism]({{ '/prism/' | relative_url }}), 
 curl -fsSL https://raw.githubusercontent.com/provasign/grove/main/install.sh | bash
 
 # Pin the current release
-curl -fsSL https://raw.githubusercontent.com/provasign/grove/v0.64.5/install.sh | VERSION=v0.64.5 bash
+curl -fsSL https://raw.githubusercontent.com/provasign/grove/v0.64.6/install.sh | VERSION=v0.64.6 bash
 ```
 
 ```sh
