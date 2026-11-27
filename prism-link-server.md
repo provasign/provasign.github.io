@@ -15,7 +15,7 @@ repositories' symbols. When you run `change-impact`, `verify`, `test-plan` or `l
 the server and lists those sites next to the ones it found locally.
 
 It is one of three ways to bring another repository into an answer
-([the multi-repository guide](https://github.com/provasign/prism/blob/main/docs/MULTI_REPO.md) covers all three):
+([docs/MULTI_REPO.md](https://github.com/provasign/prism/blob/main/docs/MULTI_REPO.md) covers all three):
 
 | Kind | Use it when | Source on your machine |
 |---|---|---|
@@ -489,7 +489,9 @@ Suggested alerts:
 | Header size | 1 MiB |
 | Concurrent connections | `--max-conns` (512); further connections wait to be accepted |
 | Rate | `--rate` per token (50/s, burst 100). Requests with a bad token share a bucket per client address, so guessing is limited too. Over the limit: 429 with `Retry-After: 1` |
-| Upload size | `--max-bundle-mb` (512); larger gets 413 |
+| Upload size | `--max-bundle-mb` (64); larger gets 413 |
+| References per symbol | 20,000 per bundle; more is refused at upload |
+| Text | Every uploaded line and signature is cleaned at upload and again before printing: control characters (terminal escapes) and bidirectional overrides removed, lines over 300 characters cut to a window around the referenced name |
 | Query bodies | 8 MiB (`consumers`), 1 MiB (`define`, admin) |
 
 ## Retention, deletion, integrity, backup
@@ -662,6 +664,8 @@ when your server needs them.
 | `verify` (after a signature change or removal) | The uploaded sites the change reaches. The verdict says they were **not checked** |
 | `test-plan` | A gap line: sites in other repositories whose tests are not traced from here |
 | `lookup` | For a name this repository does not define: where the server knows it is declared, with its signature. Bodies need a checkout or a cache clone |
+| `map` | `used by` edges from each readable uploaded repository's components into this repository's, at the uploaded commit |
+| `graph` | Each uploaded repository that uses this one as a node on the root view, and its sites in the change-impact panel |
 
 `search`, `read` and `query` don't ask the server; they work on source, which the server doesn't
 hold. A repository you also link locally is answered from the checkout, not repeated from the
@@ -755,6 +759,15 @@ Answer size grows with how widely a symbol is used: in this test a consumers ans
 - **Rate limits apply to bad tokens too,** per client address.
 - **No bodies and no machine paths are stored.** Each reference keeps its one source line, and
   each declaration its signature.
+- **Uploaded text cannot drive a terminal or flood an answer.** The server cleans every line and
+  signature at upload, and the client cleans again before printing, in case a server does not:
+  control characters and bidirectional overrides are removed, and long lines are cut to 300
+  characters around the referenced name. Every site is still listed; nothing is dropped.
+- **Malformed or absurd bundles are refused:** control characters in names, oversized fields, or
+  more than 20,000 references to one symbol.
+- **What it cannot stop:** an uploader can still write misleading words into its own repository's
+  source lines, as it could in its code. An agent reads them as code from that repository,
+  labelled with its name and commit.
 - **Dirty trees are refused** on both client and server, so a stored commit always describes
   what it holds.
 - **Clients never take credentials from a repository,** only from their environment.
