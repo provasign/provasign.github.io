@@ -244,7 +244,7 @@ Storage is one of `--dir`, `--s3`, `--azure` or `--gcs`; see [Storage and replic
 | `--audit-log <file\|-\|off>` | `-` (stdout) | One JSON line per request |
 | `--rate N` | 50 | Requests per second per token (burst 2N); 0 turns it off |
 | `--max-conns N` | 512 | Concurrent connections |
-| `--max-bundle-mb N` | 512 | Upload size limit |
+| `--max-bundle-mb N` | 64 | Upload size limit (real bundles are 0.4–2 MB) |
 | `--keep N` | 20 | Commits kept per repository; 0 keeps all |
 | `--refresh D` | 10s | How often to re-read the store for other replicas' uploads |
 | `--trust-proxy` | off | Take the client address from `X-Forwarded-For` (only behind your proxy) |
@@ -623,7 +623,7 @@ jobs:
       - uses: actions/setup-go@v5        # or setup-node / setup-java: what the build needs
         with: { go-version-file: go.mod }
       - run: go mod download
-      - run: curl -fsSL https://raw.githubusercontent.com/provasign/prism/v1.4.1/install.sh | VERSION=v1.4.1 bash
+      - run: curl -fsSL https://raw.githubusercontent.com/provasign/prism/v1.5.1/install.sh | VERSION=v1.5.1 bash
       - run: prism index .
       - run: prism workspace push --server "$PRISM_LINK_SERVER" --ref main
         env:
